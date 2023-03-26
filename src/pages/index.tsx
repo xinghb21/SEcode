@@ -1,19 +1,38 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Divider } from 'antd';
+import { useRouter } from "next/router";
+import { Form, Input, Button, Divider, Space } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { request } from "../utils/network";
+import {LOGIN_FAILURE, LOGIN_SUCCESS} from "../constants/string"
+import md5 from "md5"
 
 interface LoginFormProps {
-    onSubmit: (username: string, password: string) => {
-        
-    };
+    username: string,
+    password: string,
 }
 
-function LoginForm({ onSubmit }: LoginFormProps) {
+const LoginForm = (props: LoginFormProps) => {
     const [loading, setLoading] = useState(false);
+
+    const router = useRouter();
 
     const handleSubmit = (values: any) => {
         setLoading(true);
-        onSubmit(values.username, values.password);
+        request(
+            `/api/user/login`,
+            "POST",
+            {
+                name: values.username,
+                password: values.password
+            }
+        )
+            .then(() => {
+                router.push("/user")
+            })
+            .catch((err) => {
+                alert(LOGIN_FAILURE + err);
+                setLoading(false)
+            })
     };
 
     return (
@@ -32,6 +51,8 @@ function LoginForm({ onSubmit }: LoginFormProps) {
                         <Input prefix={<UserOutlined />} placeholder="用户名"/>
                     </Form.Item>
 
+                    <Space size={"large"} direction="vertical">
+                         
                     <Form.Item name="password" rules={[{ required: true, message: '请输入密码' }]}>
                         <Input prefix={<LockOutlined />} type="password" placeholder="密码" />
                     </Form.Item>
@@ -42,6 +63,8 @@ function LoginForm({ onSubmit }: LoginFormProps) {
                         </Button>
                     </Form.Item>
 
+                    </Space>
+                    
                 </Form>
                 <Divider >Or</Divider>
                 <Button block shape='round'>使用飞书登录</Button>
