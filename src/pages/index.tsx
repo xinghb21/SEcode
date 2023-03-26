@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useRouter } from "next/router";
 import { Form, Input, Button, Divider, Space } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import { request } from "../utils/network";
 import {LOGIN_FAILURE, LOGIN_SUCCESS} from "../constants/string"
 import md5 from "md5"
@@ -30,7 +31,7 @@ const LoginForm = (props: LoginFormProps) => {
                 router.push("/user")
             })
             .catch((err) => {
-                alert(LOGIN_FAILURE + err);
+                alert(LOGIN_FAILURE + " " + err.message);
                 setLoading(false)
             })
     };
@@ -54,7 +55,8 @@ const LoginForm = (props: LoginFormProps) => {
                     <Space size={"large"} direction="vertical">
                          
                     <Form.Item name="password" rules={[{ required: true, message: '请输入密码' }]}>
-                        <Input prefix={<LockOutlined />} type="password" placeholder="密码" />
+                        <Input.Password prefix={<LockOutlined />} type="password" placeholder="密码" 
+                        iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)} />
                     </Form.Item>
 
                     <Form.Item>
