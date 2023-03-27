@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { Form, Input, Button, Divider, Space, Modal } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
+import { Form, Input, Button, Divider, Space, Modal } from "antd";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { request } from "../utils/network";
-import md5 from "md5"
+import md5 from "md5";
 
 interface LoginFormProps {
     username: string,
@@ -20,7 +20,7 @@ const LoginForm = (props: LoginFormProps) => {
     const handleSubmit = (values: any) => {
         setLoading(true);
         request(
-            `/api/user/login`,
+            "/api/user/login",
             "POST",
             {
                 name: values.username,
@@ -28,55 +28,55 @@ const LoginForm = (props: LoginFormProps) => {
             }
         )
             .then(() => {
-                router.push("/user")
+                router.push("/user");
             })
             .catch((err) => {
-                setPassword(false)
+                setPassword(false);
                 // alert(err.message)
-                setLoading(false)
-            })
+                setLoading(false);
+            });
     };
 
     return (
         <div>
-        <div className="login-background" />
-        <div className="login-box">
-            <div style={{
-            position: 'absolute', left: '50%', top: '50%',
-            transform: 'translate(-50%, -50%)'}}>
-                <h1 className="login-title">Login</h1>
-                <Form onFinish={handleSubmit}
-                name="basic"
-                initialValues={{ remember: true }}>
+            <div className="login-background" />
+            <div className="login-box">
+                <div style={{
+                    position: "absolute", left: "50%", top: "50%",
+                    transform: "translate(-50%, -50%)"}}>
+                    <h1 className="login-title">Login</h1>
+                    <Form onFinish={handleSubmit}
+                        name="basic"
+                        initialValues={{ remember: true }}>
 
-                    <Form.Item name="username" rules={[{ required: true, message: '请输入用户名' }]}>
-                        <Input prefix={<UserOutlined />} placeholder="用户名"/>
-                    </Form.Item>
+                        <Form.Item name="username" rules={[{ required: true, message: "请输入用户名" }]}>
+                            <Input prefix={<UserOutlined />} placeholder="用户名"/>
+                        </Form.Item>
 
-                    <Space size={"large"} direction="vertical">
+                        <Space size={"large"} direction="vertical">
                          
-                    <Form.Item name="password" rules={[{ required: true, message: '请输入密码' }]}>
-                        <Input.Password prefix={<LockOutlined />} type="password" placeholder="密码" 
-                        iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)} />
-                    </Form.Item>
+                            <Form.Item name="password" rules={[{ required: true, message: "请输入密码" }]}>
+                                <Input.Password prefix={<LockOutlined />} type="password" placeholder="密码" 
+                                    iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)} />
+                            </Form.Item>
                     
-                    <Modal open={!correct} onOk={() => setPassword(true)} onCancel={() => setPassword(true)} centered>
-                        用户名或密码错误！
-                    </Modal>
+                            <Modal open={!correct} onOk={() => setPassword(true)} onCancel={() => setPassword(true)} centered>
+                                用户名或密码错误！
+                            </Modal>
 
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit" loading={loading} block shape='round'>
-                        登录
-                        </Button>
-                    </Form.Item>
+                            <Form.Item>
+                                <Button type="primary" htmlType="submit" loading={loading} block shape='round'>
+                                    登录
+                                </Button>
+                            </Form.Item>
 
-                    </Space>
+                        </Space>
                     
-                </Form>
-                <Divider >Or</Divider>
-                <Button block shape='round'>使用飞书登录</Button>
+                    </Form>
+                    <Divider >Or</Divider>
+                    <Button block shape='round'>使用飞书登录</Button>
+                </div>
             </div>
-        </div>
         </div>
     );
 };
