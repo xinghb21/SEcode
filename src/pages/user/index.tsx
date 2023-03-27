@@ -13,11 +13,11 @@ function getItem(
     type?: "group",
 ): MenuItem {
     return {
-      key,
-      icon,
-      children,
-      label,
-      type,
+      	key,
+      	icon,
+      	children,
+      	label,
+      	type,
     } as MenuItem;
 }
 
@@ -46,20 +46,20 @@ const items: MenuProps["items"] = [
 ];
 
 const User: React.FC = () => {
-	const onClick: MenuProps["onClick"] = (e) => {
-		console.log("click ", e);
-	};
+    const onClick: MenuProps["onClick"] = (e) => {
+        console.log("click ", e);
+    };
 
-	return (
-		<Menu
-			onClick={onClick}
-			style={{ width: 256 }}
-			defaultSelectedKeys={["1"]}
-			defaultOpenKeys={["sub1"]}
-			mode="inline"
-			items={items}
-		/>
-	);
+    return (
+        <Menu
+            onClick={onClick}
+            style={{ width: 256 }}
+            defaultSelectedKeys={["1"]}
+            defaultOpenKeys={["sub1"]}
+            mode="inline"
+            items={items}
+        />
+    );
 };
 
 export default User;
