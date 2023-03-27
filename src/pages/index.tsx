@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useRouter } from "next/router";
-import { Form, Input, Button, Divider, Space } from 'antd';
+import { Form, Input, Button, Divider, Space, Modal } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import { request } from "../utils/network";
-import {LOGIN_FAILURE, LOGIN_SUCCESS} from "../constants/string"
 import md5 from "md5"
 
 interface LoginFormProps {
@@ -13,6 +12,7 @@ interface LoginFormProps {
 }
 
 const LoginForm = (props: LoginFormProps) => {
+    const [correct, setPassword] = useState(true);
     const [loading, setLoading] = useState(false);
 
     const router = useRouter();
@@ -31,7 +31,8 @@ const LoginForm = (props: LoginFormProps) => {
                 router.push("/user")
             })
             .catch((err) => {
-                alert(LOGIN_FAILURE + " " + err.message);
+                setPassword(false)
+                // alert(err.message)
                 setLoading(false)
             })
     };
@@ -58,6 +59,10 @@ const LoginForm = (props: LoginFormProps) => {
                         <Input.Password prefix={<LockOutlined />} type="password" placeholder="密码" 
                         iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)} />
                     </Form.Item>
+                    
+                    <Modal open={!correct} onOk={() => setPassword(true)} onCancel={() => setPassword(true)} centered>
+                        用户名或密码错误！
+                    </Modal>
 
                     <Form.Item>
                         <Button type="primary" htmlType="submit" loading={loading} block shape='round'>
