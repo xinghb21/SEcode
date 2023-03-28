@@ -5,7 +5,7 @@ import {
     PieChartOutlined,
     UserOutlined,
 } from "@ant-design/icons";
-import type { MenuProps } from "antd";
+import { MenuProps, Skeleton } from "antd";
 import { useRouter } from "next/router";
 import { Breadcrumb, Layout, Menu, theme, Input } from "antd";
 import { request } from "../../utils/network";
@@ -58,6 +58,10 @@ const User: React.FC = () => {
     const router = useRouter();
     const query = router.query;
     let name:string="";
+
+    const [collapsed, setCollapsed] = useState(false);
+    const [load, setLoad] = useState(true);
+
     useEffect(() => {
         if (!router.isReady) {
             return;
@@ -68,7 +72,13 @@ const User: React.FC = () => {
         ;
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [router, query]);
-    const [collapsed, setCollapsed] = useState(false);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setLoad(false);
+          }, 1500);
+    }, []);
+
     const {
         token: { colorBgContainer },
     } = theme.useToken();
@@ -98,29 +108,31 @@ const User: React.FC = () => {
     const onSearch = (value: string) => {
     };
     return (
-        <Layout style={{ minHeight: "100vh" }}>
-            <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-                <div style={{ height: 32, margin: 16 }}>
-                    <Search placeholder="请输入查询内容" onSearch={onSearch} style={{ width: Sider.length }} />
-                </div>
-                <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline" items={items}
-                    onClick={handleClick} />
-            </Sider>
-            <Layout className="site-layout">
-                <Content style={{ margin: "0 16px" }}>
-                    <Breadcrumb style={{ margin: "16px 0" }}>
-                        <Breadcrumb.Item>Home</Breadcrumb.Item>
-                        <Breadcrumb.Item>Aplus</Breadcrumb.Item>
-                    </Breadcrumb>
-                    <div style={{ padding: 24, minHeight: 600, background: colorBgContainer }}>
-                        {/* 实现系统管理员的增添删减 */}
-                        <EStable/>
-                        {/* 实现系统管理员的增添删减 */}
+        <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
+            <Layout style={{ minHeight: "100vh" }}>
+                <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+                    <div style={{ height: 32, margin: 16 }}>
+                        <Search placeholder="请输入查询内容" onSearch={onSearch} enterButton/>
                     </div>
-                </Content>
-                <Footer style={{ textAlign: "center" }}>Ant Design ©2023 Created by Ant UED</Footer>
+                    <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline" items={items}
+                        onClick={handleClick} />
+                </Sider>
+                <Layout className="site-layout">
+                    <Content style={{ margin: "0 16px" }}>
+                        <Breadcrumb style={{ margin: "16px 0" }}>
+                            <Breadcrumb.Item>Home</Breadcrumb.Item>
+                            <Breadcrumb.Item>Aplus</Breadcrumb.Item>
+                        </Breadcrumb>
+                        <div style={{ padding: 24, minHeight: 600, background: colorBgContainer }}>
+                            {/* 实现系统管理员的增添删减 */}
+                            <EStable/>
+                            {/* 实现系统管理员的增添删减 */}
+                        </div>
+                    </Content>
+                    <Footer style={{ textAlign: "center" }}>Ant Design ©2023 Created by Ant UED</Footer>
+                </Layout>
             </Layout>
-        </Layout>
+        </Skeleton>
     );
 };
 
