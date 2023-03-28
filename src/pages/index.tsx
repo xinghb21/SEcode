@@ -4,7 +4,6 @@ import { Form, Input, Button, Divider, Space, Modal } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { request } from "../utils/network";
-import md5 from "md5";
 
 interface LoginFormProps {
     username: string,
@@ -28,7 +27,8 @@ const LoginForm = (props: LoginFormProps) => {
             }
         )
             .then(() => {
-                router.push("/user");
+                router.push({ pathname: "/user",
+                    query: { username: values.username}});
             })
             .catch((err) => {
                 setPassword(false);
