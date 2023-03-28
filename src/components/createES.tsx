@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button } from 'antd';
+import { Modal, Input } from 'antd';
 
 interface User{
     id:number;
@@ -29,25 +29,24 @@ const CreateES=(props: DialogProps) =>{
     props.onCreateUser(user);
     setUsername("");
     setPassword("");
+    setEntity("");
   };
 
   return (
-    <div style={{ display: props.isOpen ? "block" : "none" }}>
+    <Modal  title="Basic Modal" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} >
       <div>
         <label>用户名:</label>
-        <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+        <Input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
       </div>
       <div>
         <label>密码:</label>
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
       </div>
       <div>
         <label>所属业务实体:</label>
-        <input type="entity" value={entity} onChange={(e) => setEntity(e.target.value)} />
+        <Input type="entity" value={entity} onChange={(e) => setEntity(e.target.value)} />
       </div>
-      <Button onClick={handleCreateUser}>创建</Button>
-      <Button onClick={props.onClose}>取消</Button>
-    </div>
+    </Modal>
   );
 }
 export default CreateES;
