@@ -13,6 +13,7 @@ interface LoginFormProps {
 const LoginForm = (props: LoginFormProps) => {
     const [correct, setPassword] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(String);
 
     const router = useRouter();
 
@@ -32,7 +33,7 @@ const LoginForm = (props: LoginFormProps) => {
             })
             .catch((err) => {
                 setPassword(false);
-                // alert(err.message)
+                setError(err.message);
                 setLoading(false);
             });
     };
@@ -61,7 +62,7 @@ const LoginForm = (props: LoginFormProps) => {
                             </Form.Item>
                     
                             <Modal open={!correct} onOk={() => setPassword(true)} onCancel={() => setPassword(true)} centered>
-                                用户名或密码错误！
+                                {error}
                             </Modal>
 
                             <Form.Item>
