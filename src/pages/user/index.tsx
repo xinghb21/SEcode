@@ -1,7 +1,19 @@
-import React from "react";
-import { AppstoreOutlined, MailOutlined, SettingOutlined } from "@ant-design/icons";
+import React, { useState, useEffect } from "react";
+import {
+    HomeOutlined,
+    DesktopOutlined,
+    PieChartOutlined,
+    UserOutlined,
+} from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import { Menu } from "antd";
+import { useRouter } from "next/router";
+import { Breadcrumb, Layout, Menu, theme, Input } from "antd";
+import { request } from "../../utils/network";
+import EStable from "../../components/EStable";
+// import EStable from "../../components/EStable";
+
+
+const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -10,55 +22,105 @@ function getItem(
     key: React.Key,
     icon?: React.ReactNode,
     children?: MenuItem[],
-    type?: "group",
 ): MenuItem {
     return {
-      	key,
-      	icon,
-      	children,
-      	label,
-      	type,
+        key,
+        icon,
+        children,
+        label,
     } as MenuItem;
 }
 
-const items: MenuProps["items"] = [
-    getItem("Navigation One", "sub1", <MailOutlined />, [
-        getItem("Item 1", "g1", null, [getItem("Option 1", "1"), getItem("Option 2", "2")], "group"),
-        getItem("Item 2", "g2", null, [getItem("Option 3", "3"), getItem("Option 4", "4")], "group"),
+const { Search } = Input;
+
+//这里的item应该从后端获取数据后形成？
+const items: MenuItem[] = [
+    getItem("业务首页", "user/home", <HomeOutlined/>),
+    getItem("企业管理", "/cor", <DesktopOutlined  />, [
+        getItem("业务实体管理", "user/cor/entity"),
+        getItem("系统人员管理", "user/asset/crew"),
     ]),
-
-    getItem("Navigation Two", "sub2", <AppstoreOutlined />, [
-        getItem("Option 5", "5"),
-        getItem("Option 6", "6"),
-        getItem("Submenu", "sub3", null, [getItem("Option 7", "7"), getItem("Option 8", "8")]),
+    getItem("资产管理", "/asset", <PieChartOutlined />, [
+        getItem("资产查询", "user/asset/query"),
+        getItem("资产操作", "user/asset/op"),
+        getItem("资产统计", "user/asset/stata"),
     ]),
-
-    { type: "divider" },
-
-    getItem("Navigation Three", "sub4", <SettingOutlined />, [
-        getItem("Option 9", "9"),
-        getItem("Option 10", "10"),
-        getItem("Option 11", "11"),
-        getItem("Option 12", "12"),
+    getItem("用户", "/User", <UserOutlined />, [
+        getItem("信息", "user/User/info"),
+        getItem("设置", "user/User/set"),
+        getItem("登出", "logout"),
     ]),
-
-    getItem("Group", "grp", null, [getItem("Option 13", "13"), getItem("Option 14", "14")], "group"),
+    //这里的item应该从后端获取数据后形成？
 ];
 
-const User: React.FC = () => {
-    const onClick: MenuProps["onClick"] = (e) => {
-        console.log("click ", e);
-    };
 
+const User: React.FC = () => {
+    const router = useRouter();
+    const query = router.query;
+    let name:string="";
+    useEffect(() => {
+        if (!router.isReady) {
+            return;
+        }
+        if(query.username?.toString()){
+            name=query.username?.toString();
+        }
+        ;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [router, query]);
+    const [collapsed, setCollapsed] = useState(false);
+    const {
+        token: { colorBgContainer },
+    } = theme.useToken();
+    const handleClick = (menuItem: any) => {
+        if (menuItem.key != "logout") {
+            router.push(menuItem.key);
+        }
+        else {
+            //实现登出
+            request(
+                "/api/user/logout",
+                "POST",
+                {
+                    name: name
+                }
+            )
+                .then(() => {
+                //感觉登出实现得很草率，需要完善
+                    router.push("/");
+                })
+                .catch((err) => {
+                    alert(err.message);
+                });
+                //感觉登出实现得很草率，需要完善
+        }
+    };
+    const onSearch = (value: string) => {
+    };
     return (
-        <Menu
-            onClick={onClick}
-            style={{ width: 256 }}
-            defaultSelectedKeys={["1"]}
-            defaultOpenKeys={["sub1"]}
-            mode="inline"
-            items={items}
-        />
+        <Layout style={{ minHeight: "100vh" }}>
+            <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+                <div style={{ height: 32, margin: 16 }}>
+                    <Search placeholder="请输入查询内容" onSearch={onSearch} style={{ width: Sider.length }} />
+                </div>
+                <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline" items={items}
+                    onClick={handleClick} />
+            </Sider>
+            <Layout className="site-layout">
+                <Content style={{ margin: "0 16px" }}>
+                    <Breadcrumb style={{ margin: "16px 0" }}>
+                        <Breadcrumb.Item>Home</Breadcrumb.Item>
+                        <Breadcrumb.Item>Aplus</Breadcrumb.Item>
+                    </Breadcrumb>
+                    <div style={{ padding: 24, minHeight: 600, background: colorBgContainer }}>
+                        {/* 实现系统管理员的增添删减 */}
+                        <EStable/>
+                        {/* 实现系统管理员的增添删减 */}
+                    </div>
+                </Content>
+                <Footer style={{ textAlign: "center" }}>Ant Design ©2023 Created by Ant UED</Footer>
+            </Layout>
+        </Layout>
     );
 };
 
