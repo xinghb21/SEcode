@@ -21,11 +21,11 @@ const EStable=()=> {
     };
 
     return (
-        <>
+        <div key={1}>
             <Button onClick={() => setIsDialogOpen(true)} type="primary">创建企业系统管理员</Button>
             <UserTable users={users}/>
             <CreateES isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} onCreateUser={handleCreateUser} />
-        </>
+        </div>
     );
 };
 export default EStable;

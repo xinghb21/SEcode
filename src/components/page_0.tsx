@@ -30,9 +30,9 @@ const Page_0 = () => {
     };
 
     return (
-        <>
+        <div key={0}>
             <Button onClick={() => setIsDialogOpen(true)} type="primary">创建业务实体</Button>
-        </>
+        </div>
     );
 };
 
