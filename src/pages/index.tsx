@@ -25,11 +25,11 @@ const LoginForm = (props: LoginFormProps) => {
             "POST",
             {
                 name: values.username,
-                password: values.password
+                password: Md5.hashstr(values.password)
             }
         )
             .then(() => {
-                localStorage.setItem('username',values.username);
+                localStorage.setItem("username",values.username);
                 router.push({ pathname: "/user",
                     query: { username: values.username}});
             })

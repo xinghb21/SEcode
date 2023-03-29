@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from "react";
 // import { Input, Tree } from 'antd';
 // import type { DataNode } from 'antd/es/tree';
 
@@ -68,72 +68,72 @@ const Page_4 = () => {
 //   const [searchValue, setSearchValue] = useState('');
 //   const [autoExpandParent, setAutoExpandParent] = useState(true);
 
-//   const onExpand = (newExpandedKeys: React.Key[]) => {
-//     setExpandedKeys(newExpandedKeys);
-//     setAutoExpandParent(false);
-//   };
-//   useEffect(() => {
-//         fetchList();
-//     }, [props.entitys]);
-// const  fetchList = ()=> {
+    //   const onExpand = (newExpandedKeys: React.Key[]) => {
+    //     setExpandedKeys(newExpandedKeys);
+    //     setAutoExpandParent(false);
+    //   };
+    //   useEffect(() => {
+    //         fetchList();
+    //     }, [props.entitys]);
+    // const  fetchList = ()=> {
     
-// } 
-//   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const { value } = e.target;
-//     const newExpandedKeys = dataList
-//       .map((item) => {
-//         if (item.title.indexOf(value) > -1) {
-//           return getParentKey(item.key, defaultData);
-//         }
-//         return null;
-//       })
-//       .filter((item, i, self) => item && self.indexOf(item) === i);
-//     setExpandedKeys(newExpandedKeys as React.Key[]);
-//     setSearchValue(value);
-//     setAutoExpandParent(true);
-//   };
+    // } 
+    //   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const { value } = e.target;
+    //     const newExpandedKeys = dataList
+    //       .map((item) => {
+    //         if (item.title.indexOf(value) > -1) {
+    //           return getParentKey(item.key, defaultData);
+    //         }
+    //         return null;
+    //       })
+    //       .filter((item, i, self) => item && self.indexOf(item) === i);
+    //     setExpandedKeys(newExpandedKeys as React.Key[]);
+    //     setSearchValue(value);
+    //     setAutoExpandParent(true);
+    //   };
 
-//   const treeData = useMemo(() => {
-//     const loop = (data: DataNode[]): DataNode[] =>
-//       data.map((item) => {
-//         const strTitle = item.title as string;
-//         const index = strTitle.indexOf(searchValue);
-//         const beforeStr = strTitle.substring(0, index);
-//         const afterStr = strTitle.slice(index + searchValue.length);
-//         const title =
-//           index > -1 ? (
-//             <span>
-//               {beforeStr}
-//               <span className="site-tree-search-value">{searchValue}</span>
-//               {afterStr}
-//             </span>
-//           ) : (
-//             <span>{strTitle}</span>
-//           );
-//         if (item.children) {
-//           return { title, key: item.key, children: loop(item.children) };
-//         }
+    //   const treeData = useMemo(() => {
+    //     const loop = (data: DataNode[]): DataNode[] =>
+    //       data.map((item) => {
+    //         const strTitle = item.title as string;
+    //         const index = strTitle.indexOf(searchValue);
+    //         const beforeStr = strTitle.substring(0, index);
+    //         const afterStr = strTitle.slice(index + searchValue.length);
+    //         const title =
+    //           index > -1 ? (
+    //             <span>
+    //               {beforeStr}
+    //               <span className="site-tree-search-value">{searchValue}</span>
+    //               {afterStr}
+    //             </span>
+    //           ) : (
+    //             <span>{strTitle}</span>
+    //           );
+    //         if (item.children) {
+    //           return { title, key: item.key, children: loop(item.children) };
+    //         }
 
-//         return {
-//           title,
-//           key: item.key,
-//         };
-//       });
+    //         return {
+    //           title,
+    //           key: item.key,
+    //         };
+    //       });
 
-//     return loop(defaultData);
-//   }, [searchValue]);
+    //     return loop(defaultData);
+    //   }, [searchValue]);
 
-//   return (
-//     <div>
-//       <Search style={{ marginBottom: 8 }} placeholder="Search" onChange={onChange} />
-//       <Tree
-//         onExpand={onExpand}
-//         expandedKeys={expandedKeys}
-//         autoExpandParent={autoExpandParent}
-//         treeData={treeData}
-//       />
-//     </div>
-//   );
+    //   return (
+    //     <div>
+    //       <Search style={{ marginBottom: 8 }} placeholder="Search" onChange={onChange} />
+    //       <Tree
+    //         onExpand={onExpand}
+    //         expandedKeys={expandedKeys}
+    //         autoExpandParent={autoExpandParent}
+    //         treeData={treeData}
+    //       />
+    //     </div>
+    //   );
     return(
         <div>
             page_4

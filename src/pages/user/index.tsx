@@ -158,7 +158,7 @@ const User: React.FC = () => {
                 "/api/user/logout",
                 "POST",
                 {
-                    name: localStorage.getItem('username')
+                    name: localStorage.getItem("username")
                 }
             )
                 .then(() => {
