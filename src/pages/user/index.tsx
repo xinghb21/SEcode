@@ -4,8 +4,9 @@ import {
     DesktopOutlined,
     PieChartOutlined,
     UserOutlined,
+    CheckCircleOutlined,
 } from "@ant-design/icons";
-import { MenuProps, Skeleton } from "antd";
+import { Button, MenuProps, Row, Skeleton } from "antd";
 import { useRouter } from "next/router";
 import { Breadcrumb, Layout, Menu, theme, Input } from "antd";
 import { request } from "../../utils/network";
@@ -133,6 +134,7 @@ const User: React.FC = () => {
             })
             .catch((err) => {
                 alert(err.message);
+                router.push("/");
             });
     };
 
@@ -156,7 +158,7 @@ const User: React.FC = () => {
                 "/api/user/logout",
                 "POST",
                 {
-                    name: name
+                    name: localStorage.getItem('username')
                 }
             )
                 .then(() => {
@@ -179,8 +181,13 @@ const User: React.FC = () => {
         <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
             <Layout style={{ minHeight: "100vh" }}>
                 <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-                    <div style={{ height: 32, margin: 16 }}>
-                        <Search placeholder="请输入查询内容" onSearch={onSearch} enterButton />
+                    <div style={{ display:"flex", flexDirection: "row"}}  >
+                        <Button color="white" type="primary"  >
+                            Backlog
+                        </Button>
+                        <Button color="white" type="primary" >
+                            Message
+                        </Button>
                     </div>
                     <Menu theme="dark" mode="inline" items={items}
                         onClick={handleClick} />
