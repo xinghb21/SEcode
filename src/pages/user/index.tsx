@@ -48,7 +48,10 @@ const AppList: any[] = [
 
 //xhb_begin
 const PageList: any[] = [
-    <Page_0/>, <EStable/>, <Page_2/>, <Page_3/>, <Page_4/>, <Page_5/>, <Page_6/>, <Page_7/>, <Page_8/>, <Page_home/>, <Page_info/>, <Page_set/>
+    <div key={0}><Page_0/></div>, <div key={1}><EStable/></div>, <div key={2}><Page_2/></div>, 
+    <div key={3}><Page_3/></div>, <div key={4}><Page_4/></div>, <div key={5}><Page_5/></div>, 
+    <div key={6}><Page_6/></div>, <div key={7}><Page_7/></div>, <div key={8}><Page_8/></div>, 
+    <div key={9}><Page_home/></div> , <div key={10}><Page_home/></div>, <div key={11}><Page_home/></div>
 ]; 
 //xhb_end
 

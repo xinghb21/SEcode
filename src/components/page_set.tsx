@@ -2,7 +2,7 @@ import React from "react";
 
 const Page_set = () => {
     return (
-        <div key={11}>
+        <div>
             page: set
         </div>
     );

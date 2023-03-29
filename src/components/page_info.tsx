@@ -2,7 +2,7 @@ import React from "react";
 
 const Page_info = () => {
     return (
-        <div key={10}>
+        <div>
             page: info
         </div>
     );
