@@ -1,14 +1,14 @@
 import { useState } from "react";
-import CreateES from "./CreateES";
+import CreateES from "./createES";
 import UserTable from "./Table";
 import React from "react";
 import { Button } from "antd";
 
 interface User{
-  id:number;
-  username:string;
-  password:string;
-  entity:string;
+    key: React.Key;
+    username:string;
+    password:string;
+    entity:string;
 }
 
 const EStable=()=> {
@@ -22,8 +22,8 @@ const EStable=()=> {
 
     return (
         <>
-            <Button onClick={() => setIsDialogOpen(true)}>创建企业系统管理员</Button>
-            <UserTable users={users} width={100} height={100}/>
+            <Button onClick={() => setIsDialogOpen(true)} type="primary">创建企业系统管理员</Button>
+            <UserTable users={users}/>
             <CreateES isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} onCreateUser={handleCreateUser} />
         </>
     );

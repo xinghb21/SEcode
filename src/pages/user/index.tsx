@@ -9,8 +9,18 @@ import { MenuProps, Skeleton } from "antd";
 import { useRouter } from "next/router";
 import { Breadcrumb, Layout, Menu, theme, Input } from "antd";
 import { request } from "../../utils/network";
-import EStable from "../../components/EStable";
-
+import Page_0 from "../../components/page_0";
+import EStable from "../../components/page_1";
+import Page_2 from "../../components/page_2";
+import Page_3 from "../../components/page_3";
+import Page_4 from "../../components/page_4";
+import Page_5 from "../../components/page_5";
+import Page_6 from "../../components/page_6";
+import Page_7 from "../../components/page_7";
+import Page_8 from "../../components/page_8";
+import Page_home from "../../components/page_home";
+import Page_set from "../../components/page_set";
+import Page_info from "../../components/page_info";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -36,26 +46,14 @@ const AppList: any[] = [
     "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产查询", "资产操作", "资产统计", "资产申请",
 ];
 
-//这里的item应该从后端获取数据后形成？
-const items: MenuItem[] = [
-    // getItem("业务首页", "user/home", <HomeOutlined />),
-    // getItem("企业管理", "/cor", <DesktopOutlined />, [
-    //     getItem("业务实体管理", "user/cor/entity"),
-    //     getItem("系统人员管理", "user/asset/crew"),
-    // ]),
-    // getItem("资产管理", "/asset", <PieChartOutlined />, [
-    //     getItem("资产查询", "user/asset/query"),
-    //     getItem("资产操作", "user/asset/op"),
-    //     getItem("资产统计", "user/asset/stata"),
-    // ]),
-    // getItem("用户", "/User", <UserOutlined />, [
-    //     getItem("信息", "user/User/info"),
-    //     getItem("设置", "user/User/set"),
-    //     getItem("登出", "logout"),
-    // ]),
-    //这里的item应该从后端获取数据后形成？
-];
+//xhb_begin
+const PageList: any[] = [
+    <Page_0/>, <EStable/>, <Page_2/>, <Page_3/>, <Page_4/>, <Page_5/>, <Page_6/>, <Page_7/>, <Page_8/>, <Page_home/>, <Page_info/>, <Page_set/>
+]; 
+//xhb_end
 
+//这里的item应该从后端获取数据后形成？
+const items: MenuItem[] = [];
 
 const User: React.FC = () => {
     const router = useRouter();
@@ -65,6 +63,7 @@ const User: React.FC = () => {
 
     const [collapsed, setCollapsed] = useState(false);
     const [load, setLoad] = useState(true);
+    const [page, setPage] = useState(9);
 
     useEffect(() => {
         if (!router.isReady) {
@@ -74,7 +73,6 @@ const User: React.FC = () => {
             name = query.username?.toString();
         }
         fetchList();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [router, query]);
 
     //通过后端获取的funlist以及用户对应的identity实现侧边栏应用
@@ -82,52 +80,53 @@ const User: React.FC = () => {
     const fetchList = () => {
         request(`/api/user/${name}`, "GET")
             .then((res) => {
-                let funclist=res.funclist.toString()
-                identity=res.indentity;
-                items.push(getItem("业务首页", "user/home", <HomeOutlined />));
-                if(identity==1){
+                items.splice(0);
+                let funclist = res.funclist.toString();
+                identity = res.identity;
+                items.push(getItem("业务首页", 9, <HomeOutlined />));
+                if(identity == 1){
                     const child:MenuItem[]=[];
                     for (let index = 0; index < 2; index++) {
                         const element = funclist[index];
                         if(element){
-                            child.push(getItem(AppList[index],"user"));
+                            child.push(getItem(AppList[index], index));
                         }
                     }
-                    items.push(getItem("实体管理", "user/entity", <DesktopOutlined />,child));
+                    items.push(getItem("实体管理", "entity", <DesktopOutlined />,child));
                 }
                 else if(identity==2){
                     const child:MenuItem[]=[];
                     for (let index = 2; index < 5; index++) {
                         const element = funclist[index];
                         if(element){
-                            child.push(getItem(AppList[index],"user"));
+                            child.push(getItem(AppList[index], index));
                         }
                     }
-                    items.push(getItem("企业管理", "user/corp", <HomeOutlined />,child));
+                    items.push(getItem("企业管理", "corp", <HomeOutlined />,child));
                 }
                 else if(identity==3){
                     const child:MenuItem[]=[];
                     for (let index = 5; index < 8; index++) {
                         const element = funclist[index];
                         if(element){
-                            child.push(getItem(AppList[index],"user"));
+                            child.push(getItem(AppList[index], index));
                         }
                     }
-                    items.push(getItem("资产管理", "user/asset", <PieChartOutlined />,child));
+                    items.push(getItem("资产管理", "asset", <PieChartOutlined />,child));
                 }
                 else{
                     if(funclist[8]){
-                        items.push(getItem("员工操作", "user/oper", <PieChartOutlined />,[
+                        items.push(getItem("员工操作", "oper", <PieChartOutlined />,[
                             getItem("资产申请","user"),
                         ]));
                     }
-                    else items.push(getItem("员工操作", "user/oper", <PieChartOutlined />));
+                    else items.push(getItem("员工操作", "oper", <PieChartOutlined />));
                 }
                 items.push(getItem("用户", "/User", <UserOutlined />,[
-                        getItem("信息", "user/User/info"),
-                        getItem("设置", "user/User/set"),
-                        getItem("登出", "logout"),
-                    ]));
+                    getItem("信息", 10),
+                    getItem("设置", 11),
+                    getItem("登出", "logout"),
+                ]));
             })
             .catch((err) => {
                 alert(err.message);
@@ -137,7 +136,7 @@ const User: React.FC = () => {
     useEffect(() => {
         setTimeout(() => {
             setLoad(false);
-        }, 1500);
+        }, 2000);
     }, []);
 
     const {
@@ -146,9 +145,8 @@ const User: React.FC = () => {
 
     //对于点击每个应用相应跳转
     const handleClick = (menuItem: any) => {
-        if (menuItem.key != "logout") {
-            router.push(menuItem.key);
-        }
+        if (menuItem.key != "logout") 
+            setPage(Number(menuItem.key));
         else {
             //实现登出
             request(
@@ -181,7 +179,7 @@ const User: React.FC = () => {
                     <div style={{ height: 32, margin: 16 }}>
                         <Search placeholder="请输入查询内容" onSearch={onSearch} enterButton />
                     </div>
-                    <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline" items={items}
+                    <Menu theme="dark" mode="inline" items={items}
                         onClick={handleClick} />
                 </Sider>
                 <Layout className="site-layout">
@@ -192,7 +190,7 @@ const User: React.FC = () => {
                         </Breadcrumb>
                         <div style={{ padding: 24, minHeight: 600, background: colorBgContainer }}>
                             {/* 实现系统管理员的增添删减 */}
-                            <EStable />
+                            {PageList[page]}
                             {/* 实现系统管理员的增添删减 */}
                         </div>
                     </Content>
