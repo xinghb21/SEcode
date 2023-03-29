@@ -4,6 +4,7 @@ import { Form, Input, Button, Divider, Space, Modal } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { request } from "../utils/network";
+import { Md5 } from "ts-md5";
 
 interface LoginFormProps {
     username: string,
@@ -24,7 +25,7 @@ const LoginForm = (props: LoginFormProps) => {
             "POST",
             {
                 name: values.username,
-                password: values.password
+                password: Md5.hashStr(values.password)
             }
         )
             .then(() => {

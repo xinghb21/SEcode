@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Modal, Input } from "antd";
+import React from "react";
 
 interface User{
-    id:number;
+    key: React.Key;
     username:string;
     password:string;
     entity:string;
@@ -21,7 +22,7 @@ const CreateES=(props: DialogProps) =>{
 
     const handleCreateUser = () => {
         const user: User = {
-            id: Date.now(),
+            key: Date.now(),
             username,
             password,
             entity,
