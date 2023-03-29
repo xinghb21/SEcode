@@ -25,7 +25,7 @@ const LoginForm = (props: LoginFormProps) => {
             "POST",
             {
                 name: values.username,
-                password: Md5.hashstr(values.password)
+                password: Md5.hashStr(values.password)
             }
         )
             .then(() => {
