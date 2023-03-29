@@ -82,6 +82,7 @@ const User: React.FC = () => {
     const fetchList = () => {
         request(`/api/user/${name}`, "GET")
             .then((res) => {
+                items.splice(0)
                 let funclist=res.funclist.toString()
                 identity=res.indentity;
                 items.push(getItem("业务首页", "user/home", <HomeOutlined />));
@@ -147,7 +148,7 @@ const User: React.FC = () => {
     //对于点击每个应用相应跳转
     const handleClick = (menuItem: any) => {
         if (menuItem.key != "logout") {
-            router.push(menuItem.key);
+            alert(menuItem.key)
         }
         else {
             //实现登出
