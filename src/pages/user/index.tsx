@@ -22,7 +22,7 @@ import Page_home from "../../components/page_home";
 import Page_set from "../../components/page_set";
 import Page_info from "../../components/page_info";
 
-const { Header, Content, Footer, Sider } = Layout;
+const {Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
 
