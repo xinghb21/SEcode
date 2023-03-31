@@ -29,7 +29,6 @@ const LoginForm = (props: LoginFormProps) => {
             }
         )
             .then(() => {
-                localStorage.setItem("username",values.username);
                 router.push("/user");
             })
             .catch((err) => {
