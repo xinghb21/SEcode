@@ -5,6 +5,7 @@ import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { request } from "../utils/network";
 import { Md5 } from "ts-md5";
+import Cookies from "js-cookie";
 
 interface LoginFormProps {
     username: string,
@@ -29,9 +30,8 @@ const LoginForm = (props: LoginFormProps) => {
             }
         )
             .then(() => {
-                localStorage.setItem("username",values.username);
-                router.push({ pathname: "/user",
-                    query: { username: values.username}});
+                Cookies.set("username", values.username);
+                router.push("/user");
             })
             .catch((err) => {
                 setPassword(false);
@@ -46,23 +46,24 @@ const LoginForm = (props: LoginFormProps) => {
             <div className="login-box">
                 <div style={{
                     position: "absolute", left: "50%", top: "50%",
-                    transform: "translate(-50%, -50%)"}}>
+                    transform: "translate(-50%, -50%)"
+                }}>
                     <h1 className="login-title">Login</h1>
                     <Form onFinish={handleSubmit}
                         name="basic"
                         initialValues={{ remember: true }}>
 
                         <Form.Item name="username" rules={[{ required: true, message: "请输入用户名" }]}>
-                            <Input prefix={<UserOutlined />} placeholder="用户名"/>
+                            <Input prefix={<UserOutlined />} placeholder="用户名" />
                         </Form.Item>
 
                         <Space size={"large"} direction="vertical">
-                         
+
                             <Form.Item name="password" rules={[{ required: true, message: "请输入密码" }]}>
-                                <Input.Password prefix={<LockOutlined />} type="password" placeholder="密码" 
+                                <Input.Password prefix={<LockOutlined />} type="password" placeholder="密码"
                                     iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)} />
                             </Form.Item>
-                    
+
                             <Modal open={!correct} onOk={() => setPassword(true)} onCancel={() => setPassword(true)} centered>
                                 {error}
                             </Modal>
@@ -74,7 +75,7 @@ const LoginForm = (props: LoginFormProps) => {
                             </Form.Item>
 
                         </Space>
-                    
+
                     </Form>
                     <Divider >Or</Divider>
                     <Button block shape='round'>使用飞书登录</Button>

@@ -21,6 +21,7 @@ import Page_8 from "../../components/page_8";
 import Page_home from "../../components/page_home";
 import Page_set from "../../components/page_set";
 import Page_info from "../../components/page_info";
+import Cookies from "js-cookie";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -60,7 +61,7 @@ const items: MenuItem[] = [];
 const User: React.FC = () => {
     const router = useRouter();
     const query = router.query;
-    let name: string = "";
+    const name=Cookies.get("username");
     let identity: number;
 
     const [collapsed, setCollapsed] = useState(false);
@@ -71,11 +72,8 @@ const User: React.FC = () => {
         if (!router.isReady) {
             return;
         }
-        if (query.username?.toString()) {
-            name = query.username?.toString();
-        }
         fetchList();
-    }, [router, query]);
+    }, [router]);
 
     //通过后端获取的funlist以及用户对应的identity实现侧边栏应用
     //具体的key还需要完善
@@ -156,7 +154,7 @@ const User: React.FC = () => {
                 "/api/user/logout",
                 "POST",
                 {
-                    name: localStorage.getItem("username")
+                    name: name
                 }
             )
                 .then(() => {
