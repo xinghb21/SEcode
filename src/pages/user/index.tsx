@@ -4,11 +4,10 @@ import {
     DesktopOutlined,
     PieChartOutlined,
     UserOutlined,
-    CheckCircleOutlined,
 } from "@ant-design/icons";
-import { Button, MenuProps, Row, Skeleton } from "antd";
+import { Button, MenuProps, Skeleton, Space } from "antd";
 import { useRouter } from "next/router";
-import { Breadcrumb, Layout, Menu, theme, Input } from "antd";
+import { Layout, Menu, theme } from "antd";
 import { request } from "../../utils/network";
 import Page_0 from "../../components/page_0";
 import EStable from "../../components/page_1";
@@ -41,7 +40,6 @@ function getItem(
     } as MenuItem;
 }
 
-const { Search } = Input;
 
 const AppList: any[] = [
     "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产查询", "资产操作", "资产统计", "资产申请",
@@ -49,11 +47,11 @@ const AppList: any[] = [
 
 //xhb_begin
 const PageList: any[] = [
-    <div key={0}><Page_0/></div>, <div key={1}><EStable/></div>, <div key={2}><Page_2/></div>, 
-    <div key={3}><Page_3/></div>, <div key={4}><Page_4/></div>, <div key={5}><Page_5/></div>, 
-    <div key={6}><Page_6/></div>, <div key={7}><Page_7/></div>, <div key={8}><Page_8/></div>, 
-    <div key={9}><Page_home/></div> , <div key={10}><Page_set/></div>, <div key={11}><Page_info/></div>
-]; 
+    <div key={0}><Page_0 /></div>, <div key={1}><EStable /></div>, <div key={2}><Page_2 /></div>,
+    <div key={3}><Page_3 /></div>, <div key={4}><Page_4 /></div>, <div key={5}><Page_5 /></div>,
+    <div key={6}><Page_6 /></div>, <div key={7}><Page_7 /></div>, <div key={8}><Page_8 /></div>,
+    <div key={9}><Page_home /></div>, <div key={10}><Page_set /></div>, <div key={11}><Page_info /></div>
+];
 //xhb_end
 
 //这里的item应该从后端获取数据后形成？
@@ -63,7 +61,7 @@ const User: React.FC = () => {
     const router = useRouter();
     const query = router.query;
     let name: string = "";
-    let identity:number;
+    let identity: number;
 
     const [collapsed, setCollapsed] = useState(false);
     const [load, setLoad] = useState(true);
@@ -88,45 +86,45 @@ const User: React.FC = () => {
                 let funclist = res.funclist.toString();
                 identity = res.identity;
                 items.push(getItem("业务首页", 9, <HomeOutlined />));
-                if(identity == 1){
-                    const child:MenuItem[]=[];
+                if (identity == 1) {
+                    const child: MenuItem[] = [];
                     for (let index = 0; index < 2; index++) {
                         const element = funclist[index];
-                        if(element){
+                        if (element) {
                             child.push(getItem(AppList[index], index));
                         }
                     }
-                    items.push(getItem("实体管理", "entity", <DesktopOutlined />,child));
+                    items.push(getItem("实体管理", "entity", <DesktopOutlined />, child));
                 }
-                else if(identity==2){
-                    const child:MenuItem[]=[];
+                else if (identity == 2) {
+                    const child: MenuItem[] = [];
                     for (let index = 2; index < 5; index++) {
                         const element = funclist[index];
-                        if(element){
+                        if (element) {
                             child.push(getItem(AppList[index], index));
                         }
                     }
-                    items.push(getItem("企业管理", "corp", <HomeOutlined />,child));
+                    items.push(getItem("企业管理", "corp", <HomeOutlined />, child));
                 }
-                else if(identity==3){
-                    const child:MenuItem[]=[];
+                else if (identity == 3) {
+                    const child: MenuItem[] = [];
                     for (let index = 5; index < 8; index++) {
                         const element = funclist[index];
-                        if(element){
+                        if (element) {
                             child.push(getItem(AppList[index], index));
                         }
                     }
-                    items.push(getItem("资产管理", "asset", <PieChartOutlined />,child));
+                    items.push(getItem("资产管理", "asset", <PieChartOutlined />, child));
                 }
-                else{
-                    if(funclist[8]){
-                        items.push(getItem("员工操作", "oper", <PieChartOutlined />,[
-                            getItem("资产申请","user"),
+                else {
+                    if (funclist[8]) {
+                        items.push(getItem("员工操作", "oper", <PieChartOutlined />, [
+                            getItem("资产申请", "user"),
                         ]));
                     }
                     else items.push(getItem("员工操作", "oper", <PieChartOutlined />));
                 }
-                items.push(getItem("用户", "/User", <UserOutlined />,[
+                items.push(getItem("用户", "/User", <UserOutlined />, [
                     getItem("信息", 10),
                     getItem("设置", 11),
                     getItem("登出", "logout"),
@@ -150,7 +148,7 @@ const User: React.FC = () => {
 
     //对于点击每个应用相应跳转
     const handleClick = (menuItem: any) => {
-        if (menuItem.key != "logout") 
+        if (menuItem.key != "logout")
             setPage(Number(menuItem.key));
         else {
             //实现登出
@@ -172,32 +170,24 @@ const User: React.FC = () => {
         }
     };
 
-    //搜索栏还未实现
-    const onSearch = (value: string) => {
-    };
-    //搜索栏还未实现
 
     return (
         <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
             <Layout style={{ minHeight: "100vh" }}>
                 <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-                    <div style={{ display:"flex", flexDirection: "row"}}  >
-                        <Button color="white" type="primary"  >
-                            Backlog
-                        </Button>
-                        <Button color="white" type="primary" >
-                            Message
-                        </Button>
-                    </div>
                     <Menu theme="dark" mode="inline" items={items}
                         onClick={handleClick} />
                 </Sider>
                 <Layout className="site-layout">
                     <Content style={{ margin: "0 16px" }}>
-                        <Breadcrumb style={{ margin: "16px 0" }}>
-                            <Breadcrumb.Item>Home</Breadcrumb.Item>
-                            <Breadcrumb.Item>Aplus</Breadcrumb.Item>
-                        </Breadcrumb>
+                        <Space  style={{ margin: 5, display:"flex",justifyContent:"flex-end",alignItems:"center"}} >
+                            <Button color="white" type="primary" style={{ margin: 2 }} block={true}>
+                                Backlog
+                            </Button>
+                            <Button color="white" type="primary" style={{ margin: 2 }} block={true}>
+                                Message
+                            </Button>
+                        </Space>
                         <div style={{ padding: 24, minHeight: 600, background: colorBgContainer }}>
                             {/* 实现系统管理员的增添删减 */}
                             {PageList[page]}
