@@ -5,7 +5,6 @@ import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { request } from "../utils/network";
 import { Md5 } from "ts-md5";
-import Cookies from "js-cookie";
 
 interface LoginFormProps {
     username: string,
@@ -30,7 +29,7 @@ const LoginForm = (props: LoginFormProps) => {
             }
         )
             .then(() => {
-                Cookies.set("username", values.username);
+                localStorage.setItem("username",values.username);
                 router.push("/user");
             })
             .catch((err) => {

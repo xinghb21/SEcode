@@ -2,6 +2,7 @@ import { Button , Table} from "antd";
 import { useRouter } from "next/router";
 import type { ColumnsType } from "antd/es/table";
 import React, { useEffect, useState } from "react";
+import { request } from "../../utils/network";
 
 interface Entity {
     key: React.Key;
@@ -26,7 +27,6 @@ const Page_0 = () => {
     }, [router, query]);
 
     const fetchList = () => {
-
     };
 
     return (
