@@ -62,7 +62,7 @@ const User: React.FC = () => {
     const router = useRouter();
     const query = router.query;
     let identity: number;
-    const username1= localStorage.getItem('username');
+    const username1= localStorage.getItem("username");
 
     const [collapsed, setCollapsed] = useState(false);
     const [load, setLoad] = useState(true);
@@ -154,7 +154,7 @@ const User: React.FC = () => {
                 "/api/user/logout",
                 "POST",
                 {
-                    name: localStorage.getItem('username')
+                    name: localStorage.getItem("username")
                 }
             )
                 .then(() => {
