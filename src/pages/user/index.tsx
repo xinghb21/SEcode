@@ -76,7 +76,7 @@ const User: React.FC = () => {
     //通过后端获取的funlist以及用户对应的identity实现侧边栏应用
     //具体的key还需要完善
     const fetchList = () => {
-        request(`/api/user/${localStorage.getItem("username")}`, "GET")
+        request(`/user/home/${localStorage.getItem("username")}`, "GET")
             .then((res) => {
                 items.splice(0);
                 let funclist = res.funclist.toString();
