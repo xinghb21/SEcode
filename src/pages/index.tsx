@@ -30,9 +30,11 @@ const LoginForm = (props: LoginFormProps) => {
         )
             .then(() => {
                 localStorage.setItem("username",values.username);
+                console.log("hah");
                 router.push("/user");
             })
             .catch((err) => {
+                console.log("failed");
                 setPassword(false);
                 setError(err.message);
                 setLoading(false);
