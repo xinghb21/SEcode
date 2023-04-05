@@ -24,7 +24,7 @@ type Props = {
 
 const { confirm } = Modal;
 const Page_4 = () => {
-    const[json,setJson]=useState({});
+    const [json, setJson] = useState({});
     // let json = { "Apple": { "商务分析部门": "$", "技术部门": { "芯片研发部门": "$" }, "应用设计部门": { "UI界面": "$", "服务器维护": "$", "创意部门": { "设计部门": "$" } } } };
     const router = useRouter();
     useEffect(() => {
@@ -145,11 +145,11 @@ const Page_4 = () => {
         };
         const treeData = parseTreeData(data);
         const handleCreateDt = (department: string) => {
-            console.log(parent+department+localStorage.getItem("entity"));
+            console.log(parent + department + localStorage.getItem("entity"));
             request("/api/user/es/createdepart", "POST", {
                 entity: localStorage.getItem("entity"),
                 depname: department,
-                parent: (parent==localStorage.getItem("entity"))?"":parent
+                parent: (parent == localStorage.getItem("entity")) ? "" : parent
             })
                 .then(() => {
                     if (!router.isReady) {
