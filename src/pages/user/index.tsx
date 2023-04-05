@@ -9,16 +9,15 @@ import { Button, MenuProps, Skeleton, Space } from "antd";
 import { useRouter } from "next/router";
 import { Layout, Menu, theme } from "antd";
 import { request } from "../../utils/network";
-import Page_0 from "../../components/page_0";
-import EStable from "../../components/page_1";
-import Page_2 from "../../components/page_2";
-import Page_3 from "../../components/page_3";
-import Page_4 from "../../components/page_4";
-import Page_5 from "../../components/page_5";
-import Page_6 from "../../components/page_6";
-import Page_7 from "../../components/page_7";
-import Page_8 from "../../components/page_8";
-import Page_home from "../../components/page_home";
+import Page_0 from "../../components/page_0/page_0";
+import EStable from "../../components/page_1/page_1";
+import Page_2 from "../../components/page_2/page_2";
+import Page_3 from "../../components/page_3/page_3";
+import Page_4 from "../../components/page_4/page_4";
+import Page_6 from "../../components/page_6/page_6";
+import Page_7 from "../../components/page_7/page_7";
+import Page_8 from "../../components/page_8/page_8";
+import Page_home from "../../components/page_home/page_home";
 import Page_set from "../../components/page_set";
 import Page_info from "../../components/page_info";
 
@@ -43,15 +42,15 @@ function getItem(
 
 
 const AppList: any[] = [
-    "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产查询", "资产操作", "资产统计", "资产申请",
+    "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产操作", "资产统计", "资产申请",
 ];
 
 //xhb_begin
 const PageList: any[] = [
     <div key={0}><Page_0 /></div>, <div key={1}><EStable /></div>, <div key={2}><Page_2 /></div>,
-    <div key={3}><Page_3 /></div>, <div key={4}><Page_4 /></div>, <div key={5}><Page_5 /></div>,
-    <div key={6}><Page_6 /></div>, <div key={7}><Page_7 /></div>, <div key={8}><Page_8 /></div>,
-    <div key={9}><Page_home /></div>, <div key={10}><Page_set /></div>, <div key={11}><Page_info /></div>
+    <div key={3}><Page_3 /></div>, <div key={4}><Page_4 /></div>, <div key={6}><Page_6 /></div>, 
+    <div key={7}><Page_7 /></div>, <div key={8}><Page_8 /></div>, <div key={9}><Page_home /></div>,
+    <div key={10}><Page_set /></div>, <div key={11}><Page_info /></div>
 ];
 //xhb_end
 
@@ -62,6 +61,7 @@ const User: React.FC = () => {
     const router = useRouter();
     const query = router.query;
     let identity: number;
+
     const [collapsed, setCollapsed] = useState(false);
     const [load, setLoad] = useState(true);
     const [page, setPage] = useState(9);
@@ -76,7 +76,8 @@ const User: React.FC = () => {
     //通过后端获取的funlist以及用户对应的identity实现侧边栏应用
     //具体的key还需要完善
     const fetchList = () => {
-        request(`/api/user/home/${localStorage.getItem("username")}`, "GET")
+        
+        request(`/api/user/home/${localStorage.getItem('username')}`, "GET")
             .then((res) => {
                 items.splice(0);
                 let funclist = res.funclist.toString();
@@ -127,7 +128,7 @@ const User: React.FC = () => {
                 ]));
             })
             .catch((err) => {
-                alert(err.message);
+                alert(err);
                 router.push("/");
             });
     };
