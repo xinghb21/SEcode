@@ -9,16 +9,16 @@ import { Button, MenuProps, Skeleton, Space } from "antd";
 import { useRouter } from "next/router";
 import { Layout, Menu, theme } from "antd";
 import { request } from "../../utils/network";
-import Page_0 from "../../components/page_0";
-import EStable from "../../components/page_1";
-import Page_2 from "../../components/page_2";
-import Page_3 from "../../components/page_3";
-import Page_4 from "../../components/page_4";
-import Page_5 from "../../components/page_5";
-import Page_6 from "../../components/page_6";
-import Page_7 from "../../components/page_7";
-import Page_8 from "../../components/page_8";
-import Page_home from "../../components/page_home";
+import Page_0 from "../../components/page_0/page_0";
+import EStable from "../../components/page_1/page_1";
+import Page_2 from "../../components/page_2/page_2";
+import Page_3 from "../../components/page_3/page_3";
+import Page_4 from "../../components/page_4/page_4";
+import Page_5 from "../../components/page_5/page_5";
+import Page_6 from "../../components/page_6/page_6";
+import Page_7 from "../../components/page_7/page_7";
+import Page_8 from "../../components/page_8/page_8";
+import Page_home from "../../components/page_home/page_home";
 import Page_set from "../../components/page_set";
 import Page_info from "../../components/page_info";
 
@@ -62,7 +62,6 @@ const User: React.FC = () => {
     const router = useRouter();
     const query = router.query;
     let identity: number;
-    const username1= localStorage.getItem('username');
 
     const [collapsed, setCollapsed] = useState(false);
     const [load, setLoad] = useState(true);
@@ -78,7 +77,8 @@ const User: React.FC = () => {
     //通过后端获取的funlist以及用户对应的identity实现侧边栏应用
     //具体的key还需要完善
     const fetchList = () => {
-        request(`/api/user/${username1}`, "GET")
+        
+        request(`/api/user/home/${localStorage.getItem('username')}`, "GET")
             .then((res) => {
                 items.splice(0);
                 let funclist = res.funclist.toString();
