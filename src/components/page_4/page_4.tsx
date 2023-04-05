@@ -32,7 +32,7 @@ const Page_4 = () => {
             return;
         }
         fetchJson();
-    }, [router, json]);
+    }, [router]);
     const { Title } = Typography;
     const fetchJson = () => {
         request("/api/user/es/departs", "GET")
@@ -59,9 +59,7 @@ const Page_4 = () => {
                             title: (<div>
                                 <span>{key}</span>
                                 <span>
-                                    <EditOutlined style={{ marginLeft: 20 }} onClick={() => onEdit(key)} />
-
-                                    <PlusCircleOutlined style={{ marginLeft: 10 }} onClick={() => onAdd(key)} />
+                                    <PlusCircleOutlined style={{ marginLeft: 20 }} onClick={() => onAdd(key)} />
                                 </span>
                             </div>), value: key, key
                         };
@@ -70,8 +68,6 @@ const Page_4 = () => {
                         title: (<div>
                             <span>{key}</span>
                             <span>
-                                <EditOutlined style={{ marginLeft: 20 }} onClick={() => onEdit(key)} />
-
                                 <PlusCircleOutlined style={{ marginLeft: 10 }} onClick={() => onAdd(key)} />
                             </span>
                         </div>),
@@ -149,10 +145,11 @@ const Page_4 = () => {
         };
         const treeData = parseTreeData(data);
         const handleCreateDt = (department: string) => {
+            console.log(parent+department+localStorage.getItem("entity"));
             request("/api/user/es/createdepart", "POST", {
                 entity: localStorage.getItem("entity"),
-                department: department,
-                parent: parent
+                depname: department,
+                parent: (parent==localStorage.getItem("entity"))?"":parent
             })
                 .then(() => {
                     if (!router.isReady) {

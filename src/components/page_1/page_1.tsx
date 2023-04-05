@@ -38,8 +38,8 @@ const EStable=()=> {
                 let initaluser :User[]=[];
                 let i:number=0;
                 for (i; i < size;i++){
-                    if(res.data[i].admin!=null){
-                        const newuser:User=(res.data[i].admin,"123456",res.data[i].name);
+                    if(res.data[i].admin!=""){
+                        const newuser:User={key:res.data[i].admin,username: res.data[i].admin,password: "123456",entity: res.data[i].name};
                         initaluser.push(newuser);
                     }
                 }
@@ -56,30 +56,31 @@ const EStable=()=> {
             let i=0;
             const size= selectedRowKeys.length;
             let deleteduser:User[]=[];
+            let deleteenbtityname:string[]=[];
             for (i ;i<size;i++){
                 let tobedeleteuser=(users).find((obj)=>{return obj.key===selectedRowKeys.at(i);});
                 if(tobedeleteuser != null ){
-                    request("/api/entity/deleteadmin","DELETE",{entity:tobedeleteuser.entity})
-                        .then((res)=>{
-                            if(tobedeleteuser != null ){
-                                deleteduser.push(tobedeleteuser);
-                            }
-                        })
-                        .catch((err)=>{
-                            alert(tobedeleteuser?.username+"delete failed");
-                        });
-                }         
-            }
-            let remained_user:User[]=[];
-            i=0;
-            let length_before=users.length;
-            for (i;i<length_before;i++){
-                if( deleteduser.find((obj)=>{return obj===users.at(i);}) == null){   
-                    remained_user.push(users[i]);
+                    deleteduser.push(tobedeleteuser);      
+                    deleteenbtityname.push(tobedeleteuser.entity);                  
                 }
             }
-            setUsers(remained_user);
-            setLoading(false);
+            request("/api/entity/deletealladmins","DELETE",{entity:deleteenbtityname})
+                .then((res)=>{
+                    let remained_user:User[]=[];
+                    let j=0;
+                    let length_before=users.length;
+                    for (j;j<length_before;j++){
+                        if( deleteduser.find((obj)=>{return obj===users.at(j);}) == null){   
+                            remained_user.push(users[i]);
+                        }
+                    }
+                    setUsers(remained_user);
+                    setLoading(false);
+                })
+                .catch((err)=>{
+                    alert(err);
+                });
+            
         }
     };
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
