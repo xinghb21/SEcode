@@ -30,18 +30,6 @@ const Page_0 = () => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const deleteentities =()=>{
 
-    }
-    const router = useRouter();
-    const query = router.query;
-
-    useEffect(() => {
-        if (!router.isReady) {
-            return;
-        }
-        fetchList();
-    }, [router, query]);
-
-    const fetchList = () => {
     };
 
     return (

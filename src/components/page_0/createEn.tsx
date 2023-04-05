@@ -14,14 +14,14 @@ interface DialogProps{
   }
 
 const CreateEn=(props: DialogProps) =>{
-    const [entity, setEntity] = useState("");
+    const [entity, setEntity] = useState<string>("");
 
     const handleCreateUser = () => {
-        const entity: EntityRegister = {
+        const newentity: EntityRegister = {
             key: Date.now(),
-            entityname:"",
+            entityname:entity,
         };
-        props.onCreateUser(entity);
+        props.onCreateUser(newentity);
         setEntity("");
     };
 

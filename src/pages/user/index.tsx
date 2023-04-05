@@ -78,7 +78,7 @@ const User: React.FC = () => {
     //具体的key还需要完善
     const fetchList = () => {
         
-        request(`/api/user/home/${localStorage.getItem('username')}`, "GET")
+        request(`/api/user/home/${localStorage.getItem("username")}`, "GET")
             .then((res) => {
                 items.splice(0);
                 let funclist = res.funclist.toString();
@@ -154,7 +154,7 @@ const User: React.FC = () => {
                 "/api/user/logout",
                 "POST",
                 {
-                    name: localStorage.getItem('username')
+                    name: localStorage.getItem("username")
                 }
             )
                 .then(() => {
