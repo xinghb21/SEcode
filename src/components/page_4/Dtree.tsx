@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Tree } from "antd";
+import { Modal, Tree } from "antd";
 import {
     EditOutlined,
     PlusCircleOutlined,
     MinusCircleOutlined,
+    ExclamationCircleFilled
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { request } from "../../utils/network";
@@ -19,11 +20,11 @@ type Props = {
     data: Record<string, any>;
 };
 
-
+const { confirm } = Modal;
 // const router = useRouter();
 const Dtree = ({ data }: Props) => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [parent,setParent]=useState("");
+    const [parent, setParent] = useState("");
     const parseTreeData = (data: Record<string, any>): TreeData[] => {
         return Object.entries(data).map(([key, keyvalue]) => {
             if (key == localStorage.getItem("entity")) {
@@ -84,31 +85,45 @@ const Dtree = ({ data }: Props) => {
             };
         });
     };
-    const onEdit=(key)=>{};
+    const onEdit = (key) => { };
     const onAdd = (key) => {
         setIsDialogOpen(true);
         setParent(key);
     };
-    const onDelete=(key)=>{
-        request("/api/user/es/deletedepart","DELETE",{
-            name:key
-        })
-        .then()
-        .catch((err) => {
-            alert(err.message);
+    const onDelete = (key) => {
+        confirm({
+            title: "Are you sure delete this task?",
+            icon: <ExclamationCircleFilled />,
+            content: "Some descriptions",
+            okText: "Yes",
+            okType: "danger",
+            cancelText: "No",
+            onOk() {
+                request("/api/user/es/deletedepart", "DELETE", {
+                    name: key
+                })
+                    .then()
+                    .catch((err) => {
+                        alert(err.message);
+                    });
+            },
+            onCancel() {
+                console.log("Cancel");
+            },
         });
+
     };
     const treeData = parseTreeData(data);
     const handleCreateDt = (department: string) => {
-        request("/api/user/es/createdepart","GET",{
-            entity:localStorage.getItem("entity"),
+        request("/api/user/es/createdepart", "GET", {
+            entity: localStorage.getItem("entity"),
             department: department,
-            parent:parent
+            parent: parent
         })
-        .then()
-        .catch((err) => {
-            alert(err.message);
-        });
+            .then()
+            .catch((err) => {
+                alert(err.message);
+            });
         setIsDialogOpen(false);
     };
     return (

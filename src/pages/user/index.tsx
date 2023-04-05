@@ -77,7 +77,7 @@ const User: React.FC = () => {
     //具体的key还需要完善
     const fetchList = () => {
         
-        request(`/api/user/home/${localStorage.getItem('username')}`, "GET")
+        request(`/api/user/home/${localStorage.getItem("username")}`, "GET")
             .then((res) => {
                 items.splice(0);
                 let funclist = res.funclist.toString();
@@ -188,7 +188,7 @@ const User: React.FC = () => {
                             </Button>
                         </Space>
                         <div style={{ paddingLeft: 24,paddingRight: 24,paddingTop:5,paddingBottom:5, minHeight: 600, background: colorBgContainer }}>
-                            {PageList[4]}
+                            {PageList[page]}
                         </div>
                     </Content>
                     <Footer style={{ textAlign: "center" }}>Ant Design ©2023 Created by Ant UED</Footer>

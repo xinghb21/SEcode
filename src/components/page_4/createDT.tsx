@@ -6,6 +6,8 @@ interface DialogProps{
     isOpen: boolean;
     onClose: () => void;
     onCreateDt: (department:string) => void;
+    title: string;
+    subtitle: string;
   }
 
 const CreateDT=(props: DialogProps) =>{
@@ -17,9 +19,9 @@ const CreateDT=(props: DialogProps) =>{
     };
 
     return (
-        <Modal  title="创建下属部门" open={props.isOpen} onOk={handleCreateDt} onCancel={props.onClose} >
+        <Modal  title={props.title} open={props.isOpen} onOk={handleCreateDt} onCancel={props.onClose} >
             <div>
-                <label>部门名称:</label>
+                <label>{props.subtitle}</label>
                 <Input type="Department" value={department} onChange={(e) => setDt(e.target.value)} />
             </div>
         </Modal>
