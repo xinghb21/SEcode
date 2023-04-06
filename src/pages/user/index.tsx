@@ -175,7 +175,7 @@ const User: React.FC = () => {
         <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
             <Layout style={{ minHeight: "100vh" }}>
                 <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-                    <Menu theme="dark" mode="inline" items={items}
+                    <Menu theme="dark" mode="inline" items={items} 
                         onClick={handleClick} />
                 </Sider>
                 <Layout className="site-layout">

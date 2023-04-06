@@ -1,14 +1,15 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
-import { Typography } from "antd";
+import { Space, Typography } from "antd";
 import { request } from "../../utils/network";
 import CreateDT from "./createDT";
-import { Modal, Tree } from "antd";
+import { Modal, Tree, Tooltip } from "antd";
 import {
-    EditOutlined,
-    PlusCircleOutlined,
-    MinusCircleOutlined,
-    ExclamationCircleFilled
+    FormOutlined,
+    PlusSquareOutlined,
+    MinusSquareOutlined,
+    ExclamationCircleFilled,
+    BarsOutlined
 } from "@ant-design/icons";
 
 
@@ -23,6 +24,7 @@ type Props = {
 };
 
 const { confirm } = Modal;
+
 const Page_4 = () => {
     const [json, setJson] = useState({});
     const router = useRouter();
@@ -46,28 +48,36 @@ const Page_4 = () => {
 
 
     const Dtree = ({ data }: Props) => {
+
         const [isDialogOpenCT, setIsDialogOpenCT] = useState(false);
         const [isDialogOpenCE, setIsDialogOpenCE] = useState(false);
         const [parent, setParent] = useState("");
         const [OldName, setOldName] = useState("");
+
         const parseTreeData = (data: Record<string, any>): TreeData[] => {
             return Object.entries(data).map(([key, keyvalue]) => {
                 if (key == localStorage.getItem("entity")) {
                     if (keyvalue === "$") {
                         return {
+                            disableCheckbox: true,
                             title: (<div>
                                 <span>{key}</span>
                                 <span>
-                                    <PlusCircleOutlined style={{ marginLeft: 20 }} onClick={() => onAdd(key)} />
+                                    <Tooltip placement="bottom" title={<span>添加部门</span>}>
+                                        <PlusSquareOutlined style={{ marginLeft: 20 }} onClick={() => onAdd(key)} />
+                                    </Tooltip>
                                 </span>
                             </div>), value: key, key
                         };
                     }
                     return {
+                        disableCheckbox: true,
                         title: (<div>
                             <span>{key}</span>
                             <span>
-                                <PlusCircleOutlined style={{ marginLeft: 10 }} onClick={() => onAdd(key)} />
+                                <Tooltip placement="bottom" title={<span>添加部门</span>}>
+                                    <PlusSquareOutlined style={{ marginLeft: 20 }} onClick={() => onAdd(key)} />
+                                </Tooltip>
                             </span>
                         </div>),
                         value: key,
@@ -80,11 +90,15 @@ const Page_4 = () => {
                         title: (<div>
                             <span>{key}</span>
                             <span>
-                                {/* <EditOutlined style={{ marginLeft: 20 }} onClick={() => onEdit(key)} /> */}
-                                <EditOutlined style={{ marginLeft: 20 }} />
-                                <PlusCircleOutlined style={{ marginLeft: 10 }} onClick={() => onAdd(key)} />
-
-                                <MinusCircleOutlined style={{ marginLeft: 10 }} onClick={() => onDelete(key)} />
+                                <Tooltip placement="bottomLeft" title={<span>修改部门名称</span>}>
+                                    <FormOutlined style={{ marginLeft: 20 }} onClick={() => onEdit(key)} />
+                                </Tooltip>
+                                <Tooltip placement="bottom" title={<span>添加部门</span>}>
+                                    <PlusSquareOutlined style={{ marginLeft: 15 }} onClick={() => onAdd(key)} />
+                                </Tooltip>
+                                <Tooltip placement="bottomRight" title={<span>删除部门</span>}>
+                                    < MinusSquareOutlined style={{ marginLeft: 15 }} onClick={() => onDelete(key)} />
+                                </Tooltip>
                             </span>
                         </div>), value: key, key
                     };
@@ -93,12 +107,15 @@ const Page_4 = () => {
                     title: (<div>
                         <span>{key}</span>
                         <span>
-                            {/* <EditOutlined style={{ marginLeft: 20 }} onClick={() => onEdit(key)} /> */}
-                            <EditOutlined style={{ marginLeft: 20 }} />
-
-                            <PlusCircleOutlined style={{ marginLeft: 10 }} onClick={() => onAdd(key)} />
-
-                            <MinusCircleOutlined style={{ marginLeft: 10 }} onClick={() => onDelete(key)} />
+                            <Tooltip placement="bottomLeft" title={<span>修改部门名称</span>}>
+                                <FormOutlined style={{ marginLeft: 20 }} onClick={() => onEdit(key)} />
+                            </Tooltip>
+                            <Tooltip placement="bottom" title={<span>添加部门</span>}>
+                                <PlusSquareOutlined style={{ marginLeft: 15 }} onClick={() => onAdd(key)} />
+                            </Tooltip>
+                            <Tooltip placement="bottomRight" title={<span>删除部门</span>}>
+                                < MinusSquareOutlined style={{ marginLeft: 15 }} onClick={() => onDelete(key)} />
+                            </Tooltip>
                         </span>
                     </div>),
                     value: key,
@@ -179,22 +196,29 @@ const Page_4 = () => {
             setIsDialogOpenCT(false);
         };
         return (
-            <div>
+            <Space align="start" direction="vertical">
                 <Tree
+                    style={{ backgroundColor: "#F5F5F5", minHeight: 500, minWidth: 300, borderRadius: 10 }}
+                    checkable
                     treeData={treeData}
                 />
                 <CreateDT title={"创建下属部门"} subtitle={"部门名称："} isOpen={isDialogOpenCT} onClose={() => setIsDialogOpenCT(false)} onCreateDt={handleCreateDt} />
                 <CreateDT title={"修改部门名称"} subtitle={"新名称："} isOpen={isDialogOpenCE} onClose={() => setIsDialogOpenCE(false)} onCreateDt={handleChangeDt} />
-            </div>
+            </Space>
         );
     };
 
     return (
         <div>
-            <Title level={3}>
-                {localStorage.getItem("entity") + "部门管理"}
-            </Title>
-            <Dtree data={json} />
+            <Space direction="vertical">
+                <Space align="center" direction="horizontal">
+                    <BarsOutlined style={{ marginTop: 20 }} />
+                    <Title level={4}>
+                        {localStorage.getItem("entity") + "部门管理"}
+                    </Title>
+                </Space>
+                <Dtree data={json} />
+            </Space>
         </div>
     );
 };

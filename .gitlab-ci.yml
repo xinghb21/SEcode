@@ -4,6 +4,7 @@ stages:
   - build
   - test
   - deploy
+  - newdeploy
 
 build:
   stage: build
@@ -25,10 +26,18 @@ build:
 style-test:
   extends: .test
   allow_failure: true
+
   script:
     - yarn lint
     - ret=$?
     - exit $ret
+
+unit-test:
+  extends: .test
+  allow_failure: true
+  script:
+    - yarn test
+    - ret=$?
   after_script:
     - SUFFIX=$RANDOM
     - curl "http://api.secoder.net/static/sonar-scanner.tar.gz" -s -o "/tmp/sonar-$SUFFIX.tar.gz"
@@ -37,5 +46,15 @@ style-test:
 
 deploy:
   stage: deploy
+  only: 
+    - master 
   script:
     - deployer dyno replace $CI_PROJECT_NAME $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG gitlab-ci-token $REGISTRY_PWD
+
+
+newdeploy:
+  stage: newdeploy
+  except: 
+    - master 
+  script:
+    - deployer dyno replace frontend-feature $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG gitlab-ci-token $REGISTRY_PWD
