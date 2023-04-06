@@ -35,6 +35,8 @@ unit-test:
   extends: .test
   allow_failure: true
   script:
+    - yarn test
+    - ret=$?
   after_script:
     - SUFFIX=$RANDOM
     - curl "http://api.secoder.net/static/sonar-scanner.tar.gz" -s -o "/tmp/sonar-$SUFFIX.tar.gz"
