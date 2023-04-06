@@ -81,8 +81,9 @@ const User: React.FC = () => {
             .then((res) => {
                 items.splice(0);
                 let funclist = res.funclist.toString();
-                localStorage.setItem("entity","Apple");
-                // localStorage.setItem("entity",res.entity);
+                if(res.entity!="0"){
+                    localStorage.setItem("entity",res.entity);
+                }
                 identity = res.identity;
                 items.push(getItem("业务首页", 9, <HomeOutlined />));
                 if (identity == 1) {
