@@ -62,7 +62,6 @@ const User: React.FC = () => {
     const router = useRouter();
     const query = router.query;
     let identity: number;
-
     const [collapsed, setCollapsed] = useState(false);
     const [load, setLoad] = useState(true);
     const [page, setPage] = useState(9);
@@ -77,7 +76,6 @@ const User: React.FC = () => {
     //通过后端获取的funlist以及用户对应的identity实现侧边栏应用
     //具体的key还需要完善
     const fetchList = () => {
-        
         request(`/api/user/home/${localStorage.getItem("username")}`, "GET")
             .then((res) => {
                 items.splice(0);
