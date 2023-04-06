@@ -25,7 +25,6 @@ type Props = {
 const { confirm } = Modal;
 const Page_4 = () => {
     const [json, setJson] = useState({});
-    // let json = { "Apple": { "商务分析部门": "$", "技术部门": { "芯片研发部门": "$" }, "应用设计部门": { "UI界面": "$", "服务器维护": "$", "创意部门": { "设计部门": "$" } } } };
     const router = useRouter();
     useEffect(() => {
         if (!router.isReady) {
