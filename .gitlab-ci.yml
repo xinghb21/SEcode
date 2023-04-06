@@ -31,6 +31,16 @@ style-test:
     - ret=$?
     - exit $ret
 
+unit-test:
+  extends: .test
+  allow_failure: true
+  script:
+  after_script:
+    - SUFFIX=$RANDOM
+    - curl "http://api.secoder.net/static/sonar-scanner.tar.gz" -s -o "/tmp/sonar-$SUFFIX.tar.gz"
+    - tar -xf "/tmp/sonar-$SUFFIX.tar.gz" -C /opt
+    - /opt/sonar-scanner/bin/sonar-scanner
+
 deploy:
   stage: deploy
   script:
