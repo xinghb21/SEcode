@@ -81,8 +81,8 @@ const Page_4 = () => {
                         title: (<div>
                             <span>{key}</span>
                             <span>
-                                <EditOutlined style={{ marginLeft: 20 }} onClick={() => onEdit(key)} />
-
+                                {/* <EditOutlined style={{ marginLeft: 20 }} onClick={() => onEdit(key)} /> */}
+                                <EditOutlined style={{ marginLeft: 20 }} />
                                 <PlusCircleOutlined style={{ marginLeft: 10 }} onClick={() => onAdd(key)} />
 
                                 <MinusCircleOutlined style={{ marginLeft: 10 }} onClick={() => onDelete(key)} />
@@ -94,7 +94,8 @@ const Page_4 = () => {
                     title: (<div>
                         <span>{key}</span>
                         <span>
-                            <EditOutlined style={{ marginLeft: 20 }} onClick={() => onEdit(key)} />
+                            {/* <EditOutlined style={{ marginLeft: 20 }} onClick={() => onEdit(key)} /> */}
+                            <EditOutlined style={{ marginLeft: 20 }} />
 
                             <PlusCircleOutlined style={{ marginLeft: 10 }} onClick={() => onAdd(key)} />
 
@@ -163,7 +164,7 @@ const Page_4 = () => {
             setIsDialogOpenCT(false);
         };
         const handleChangeDt = (department: string) => {
-            request("/api/api/es/renamedepart", "POST", {
+            request("/api/user/es/renamedepart", "POST", {
                 oldname: OldName,
                 newname: department
             })
