@@ -147,7 +147,7 @@ const Entitylist =( () => {
                         <Button key="1" type="primary" onClick={()=>{setIsDialogOpen(true);}}>
               创建业务实体
                         </Button>,
-                        <Button key="1" type="default" danger={true} onClick={delete_entity} disabled={!hasSelected}> 删除选中业务实体</Button>,
+                        <Button key="2" type="default" danger={true} onClick={delete_entity} disabled={!hasSelected}> 删除选中业务实体</Button>,
                     ];
                 }}
                 pagination={{
