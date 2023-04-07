@@ -60,7 +60,6 @@ const items: MenuItem[] = [];
 
 const User: React.FC = () => {
     const router = useRouter();
-    const query = router.query;
     let identity: number;
 
     const [collapsed, setCollapsed] = useState(false);
@@ -79,9 +78,13 @@ const User: React.FC = () => {
     const fetchList = () => {
         
         request(`/api/user/home/${localStorage.getItem("username")}`, "GET")
+        request(`/api/user/home/${localStorage.getItem("username")}`, "GET")
             .then((res) => {
                 items.splice(0);
                 let funclist = res.funclist.toString();
+                if(res.entity!="0"){
+                    localStorage.setItem("entity",res.entity);
+                }
                 identity = res.identity;
                 items.push(getItem("业务首页", 9, <HomeOutlined />));
                 if (identity == 1) {
@@ -155,6 +158,7 @@ const User: React.FC = () => {
                 "POST",
                 {
                     name: localStorage.getItem("username")
+                    name: localStorage.getItem("username")
                 }
             )
                 .then(() => {
@@ -173,7 +177,7 @@ const User: React.FC = () => {
         <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
             <Layout style={{ minHeight: "100vh" }}>
                 <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-                    <Menu theme="dark" mode="inline" items={items}
+                    <Menu theme="dark" mode="inline" items={items} 
                         onClick={handleClick} />
                 </Sider>
                 <Layout className="site-layout">
@@ -186,10 +190,8 @@ const User: React.FC = () => {
                                 Message
                             </Button>
                         </Space>
-                        <div style={{ padding: 24, minHeight: 600, background: colorBgContainer }}>
-                            {/* 实现系统管理员的增添删减 */}
+                        <div style={{ paddingLeft: 24,paddingRight: 24,paddingTop:5,paddingBottom:5, minHeight: 600, background: colorBgContainer }}>
                             {PageList[page]}
-                            {/* 实现系统管理员的增添删减 */}
                         </div>
                     </Content>
                     <Footer style={{ textAlign: "center" }}>Ant Design ©2023 Created by Ant UED</Footer>

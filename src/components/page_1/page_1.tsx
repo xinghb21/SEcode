@@ -2,9 +2,11 @@ import CreateES from "./createES";
 import UserTable from "../Table";
 import { Button, Table } from "antd";
 import { request } from "../../utils/network";
+import { request } from "../../utils/network";
 import { Md5 } from "ts-md5";
 import type { ColumnsType } from "antd/es/table";
 import React, { useEffect, useState } from "react";
+import User from "./createES";
 import User from "./createES";
 //start hqf
 
@@ -48,6 +50,22 @@ const EStable=()=> {
             .catch((err)=>{
                 alert(err);
             });
+        request("/api/entity/superget","GET")
+            .then((res)=>{
+                let size:number=res.data.length;
+                let initaluser :User[]=[];
+                let i:number=0;
+                for (i; i < size;i++){
+                    if(res.data[i].admin!=""){
+                        const newuser:User={key:res.data[i].admin,username: res.data[i].admin,password: "123456",entity: res.data[i].name};
+                        initaluser.push(newuser);
+                    }
+                }
+                setUsers(initaluser);
+            })
+            .catch((err)=>{
+                alert(err);
+            });
     },[]);
     const start = () => {
         if (window.confirm("确认删除所选企业系统管理员？")){
@@ -57,9 +75,14 @@ const EStable=()=> {
             const size= selectedRowKeys.length;
             let deleteduser:User[]=[];
             let deleteenbtityname:string[]=[];
+            let deleteenbtityname:string[]=[];
             for (i ;i<size;i++){
                 let tobedeleteuser=(users).find((obj)=>{return obj.key===selectedRowKeys.at(i);});
+                let tobedeleteuser=(users).find((obj)=>{return obj.key===selectedRowKeys.at(i);});
                 if(tobedeleteuser != null ){
+                    deleteduser.push(tobedeleteuser);      
+                    deleteenbtityname.push(tobedeleteuser.entity);                  
+                }
                     deleteduser.push(tobedeleteuser);      
                     deleteenbtityname.push(tobedeleteuser.entity);                  
                 }
@@ -96,6 +119,16 @@ const EStable=()=> {
     
     const handleCreateUser = (user: User) => {
         //在这里向后端发送请求
+        const userdata={"name":user.username,"entity":user.entity,"password":Md5.hashStr(user.password)};
+        request("/api/entity/assgin","POST",userdata)
+            .then((res)=>{
+                setUsers([...users, user]);
+                setIsDialogOpen(false);
+            })
+            .catch((err)=>{
+                alert("创建失败");
+                setIsDialogOpen(false);
+            });
         const userdata={"name":user.username,"entity":user.entity,"password":Md5.hashStr(user.password)};
         request("/api/entity/assgin","POST",userdata)
             .then((res)=>{
