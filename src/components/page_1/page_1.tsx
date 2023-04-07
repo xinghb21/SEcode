@@ -70,11 +70,12 @@ const EStable=()=> {
                     let j=0;
                     let length_before=users.length;
                     for (j;j<length_before;j++){
-                        if( deleteduser.find((obj)=>{return obj===users.at(j);}) == null){   
-                            remained_user.push(users[i]);
+                        if( deleteduser.find((obj)=>{return obj.key===users[j].key;}) == null){   
+                            remained_user.push(users[j]);
                         }
                     }
                     setUsers(remained_user);
+                    setSelectedRowKeys([]);
                     setLoading(false);
                 })
                 .catch((err)=>{
