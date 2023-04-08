@@ -1,10 +1,7 @@
-import { Avatar, List, Space, Button } from "antd";
+import { Button } from "antd";
 import React from "react";
 import { ProList } from "@ant-design/pro-components";
-import { Progress } from "antd";
-import type { ReactText } from "react";
 import { useState } from "react";
-import { BUILD_ID_FILE } from "next/dist/shared/lib/constants";
 import CreateEn from "./createEn";
 import {useEffect} from "react";
 import { request } from "../../utils/network";
