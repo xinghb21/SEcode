@@ -19,16 +19,9 @@ const CreateES=(props: DialogProps) =>{
     const [newusername, setUsername] = useState("");
     const [newpassword, setPassword] = useState("");
     const [newentity, setEntity] = useState("");
-    const [newusername, setUsername] = useState("");
-    const [newpassword, setPassword] = useState("");
-    const [newentity, setEntity] = useState("");
 
     const handleCreateUser = () => {
         const user: User = {
-            key: newusername,
-            username: newusername,
-            password: newpassword,
-            entity:newentity,
             key: newusername,
             username: newusername,
             password: newpassword,
