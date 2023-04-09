@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Modal, Input } from "antd";
 import React from "react";
 
-interface EntityRegister{
+interface UserRegister{
     key: React.Key;
     entityname:string;
+    department:string;
   }
 
 interface DialogProps{

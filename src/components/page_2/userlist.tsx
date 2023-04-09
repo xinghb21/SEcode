@@ -47,19 +47,19 @@ const Userlist =( () => {
     const [isassignopen,setIsassignOpen]=useState(false);
     const [assignentity,setAssignentity]=useState<string>("");
     useEffect((()=>{
-        // request("/api/entity/superget","GET")
-        //     .then((res)=>{
-        //         let size=res.data.length;
-        //         let i=0;
-        //         let initentities: User_to_show[]=[];
-        //         for(i;i<size;i++){
-        //             //initentities.push({key:res.data[i].name,entityname:(res.data)[i].name,admingname: (res.data)[i].admin});
-        //         }
-        //         setuserlist(initentities);
-        //     })
-        //     .catch((err)=>{
-        //         alert(err);
-        //     });
+        request(`api/user/es/checkall`,"GET")
+        .then((res)=>{
+            let initiallist:User_to_show[]=[];
+            let size:number=res.length;
+            let i=0;
+            for (i;i<size;i++){
+                initiallist.push({key:res[i].name,username:res[i].name,departmentname:res[i].department,entityname:res[i].entity,character:res[i].indentity,whetherlocked:res[i].locked,lockedapp:res[i].lockedapp});
+            }
+            setuserlist(initiallist);
+        })
+        .catch((err)=>{
+            alert(err);
+        });
     }),[]);
 
     
@@ -155,6 +155,7 @@ const Userlist =( () => {
     return (
         <div >
             <ProList<User_to_show>
+                search={{}}
                 toolBarRender={() => {
                     return [
                         <Button key="1" type="primary" onClick={()=>{setIsDialogOpen(true);}}>
@@ -213,6 +214,26 @@ const Userlist =( () => {
                             );
                         },
                     },
+                    status: {
+                        // 自己扩展的字段，主要用于筛选，不在列表中显示
+                        title: '状态',
+                        valueType: 'select',
+                        valueEnum: {
+                          all: { text: '全部', status: 'Default' },
+                          open: {
+                            text: '未解决',
+                            status: 'Error',
+                          },
+                          closed: {
+                            text: '已解决',
+                            status: 'Success',
+                          },
+                          processing: {
+                            text: '解决中',
+                            status: 'Processing',
+                          },
+                        },
+                      },
                 }}
                 rowKey="key"
                 headerTitle="业务实体内员工列表"
