@@ -16,16 +16,16 @@ interface Assert{
 
     key: React.Key;
     assertname: string;
-    person: string;
-    department: string;
-    parent: string;
-    child: string;
-    status: string;
+    person?: string;
+    department?: string;
+    parent?: string;
+    child?: string;
+    status?: string;
     category: string;
-    description: string;
+    description?: string;
     type: boolean;
-    number: Number;
-    addtion: string;
+    number?: Number;
+    addtion?: string;
 
 }
 
@@ -40,29 +40,10 @@ interface short_assert{
 
 }
 
-function getAssert(
-    key: React.Key,
-    name: string,
-    description: string,
-    category: string,
-    number_idle?: Number,
-    status?: Number,
-): short_assert {
-    return {
-        key,
-        name,
-        description,
-        number_idle,
-        category,
-        status,
-    } as short_assert;
-}
-
 const Assertlist = ( () => {
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-    const [asserts, setAsserts] = useState<short_assert[]>([{key:1,name:"2",description:"hhh",number_idle: 2,category:"hhh",status:2}]);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [asserts, setAsserts] = useState<short_assert[]>([]);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
 
     useEffect(() => {
@@ -82,6 +63,10 @@ const Assertlist = ( () => {
 
     const hasSelected = selectedRowKeys.length > 0;
 
+    const add_assert = ((assert: Assert) => {
+        
+    });
+
     const delete_assert = (() => {
         
     });
@@ -96,15 +81,15 @@ const Assertlist = ( () => {
     })
 
     return (
-        <div>
-            {/* <CreateAssert isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} ></CreateAssert> */}
-            
+        <div> 
             <div
                 style={{
                 margin: 24,
                 }}
             >
-                <QueryFilter labelWidth="auto" onFinish={async (values) => {
+                <QueryFilter 
+                    labelWidth="auto" 
+                    onFinish={async (values) => {
                         message.success('查询成功');
                     }}
                 >
@@ -254,9 +239,7 @@ const Assertlist = ( () => {
 
                 toolBarRender={() => {
                     return [
-                        <Button key="1" type="primary" onClick={() => {setIsDialogOpen(true)}}>
-                            创建资产
-                        </Button>,
+                        <CreateAssert onCreateAssert={add_assert}></CreateAssert>,
                         <Button key="2" type="default" danger={true} onClick = {delete_assert} disabled = {!hasSelected}> 
                             删除选中资产
                         </Button>
