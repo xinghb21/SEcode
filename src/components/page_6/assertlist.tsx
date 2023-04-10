@@ -34,9 +34,9 @@ interface short_assert{
     key: React.Key;
     name: string;
     description: string;
-    number: Number;
+    number_idle?: Number;
     category: string;
-    status: Number;
+    status?: Number;
 
 }
 
@@ -44,15 +44,15 @@ function getAssert(
     key: React.Key,
     name: string,
     description: string,
-    number: Number,
     category: string,
-    status: Number,
+    number_idle?: Number,
+    status?: Number,
 ): short_assert {
     return {
         key,
         name,
         description,
-        number,
+        number_idle,
         category,
         status,
     } as short_assert;
@@ -61,25 +61,17 @@ function getAssert(
 const Assertlist = ( () => {
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-    const [asserts, setAsserts] = useState<short_assert[]>([]);
+    const [asserts, setAsserts] = useState<short_assert[]>([{key:1,name:"2",description:"hhh",number_idle: 2,category:"hhh",status:2}]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
 
     useEffect(() => {
-        request("/asset/get", "GET")
+        request("/api/asset/get", "GET")
             .then((res) => {
-                let group = res.asserts;
-                let now_list: short_assert[] = [];
-                for(let i = 0; i < group.size(); i++) {
-                    if("number_idle" in group[i]) 
-                        now_list.push(getAssert(Date.now(), group[i].name, group[i].description, group[i].number_idle, group[i].category, 0));
-                    else 
-                        now_list.push(getAssert(Date.now(), group[i].name, group[i].description, -1, group[i].category, group[i].status));
-                }
-                setAsserts(now_list);
+                setAsserts(res.data);
             })
             .catch((err) => {
-                message.warning(err.detail);
+                alert(err);
             })
     }, []);
 
@@ -195,7 +187,7 @@ const Assertlist = ( () => {
                     },
                     content: {
                         render: (_, row) => {
-                            if(row.number == -1) {
+                            if(row.status != undefined) {
                                 return (
                                     <div key="label" style={{ display: 'flex', justifyContent: 'space-around' }}>
                                         <div key="status">
@@ -217,7 +209,7 @@ const Assertlist = ( () => {
                                         
                                     </div>
                                 );
-                            } else {
+                            } else if(row.number_idle != undefined){
                                 return (
                                     <div key="label" style={{ display: 'flex', justifyContent: 'space-around' }}>
                                         <div key="status">
@@ -225,9 +217,9 @@ const Assertlist = ( () => {
                                                 资产数量
                                             </div>
                                             <div style={{ color: '#000000D9' }}>
-                                                {row.number.toString()}
+                                                {row.number_idle.toString()}
                                             </div>
-                                        </div>,
+                                        </div>
                                         <div key="category">
                                             <div style={{ color: '#00000073' }}>
                                                 资产种类

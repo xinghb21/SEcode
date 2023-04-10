@@ -54,7 +54,7 @@ export const request = async (
 
         throw new NetworkError(
             NetworkErrorType.UNKNOWN_ERROR,
-            response?.data.info,
+            response?.data.detail,
         );
     }
 };

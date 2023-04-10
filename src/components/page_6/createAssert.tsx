@@ -2,31 +2,42 @@ import { useState } from "react";
 import { Modal, Input } from "antd";
 import React from "react";
 
-interface EntityRegister{
+interface Assert{
+
     key: React.Key;
-    entityname:string;
-  }
+    assertname: string;
+    person: string;
+    department: string;
+    parent: string;
+    child: string;
+    status: string;
+    category: string;
+    description: string;
+    type: boolean;
+    number: Number;
+    addtion: string;
+
+}
 
 interface DialogProps{
     isOpen: boolean;
     onClose: () => void;
-    onCreateUser: (entity:EntityRegister ) => void;
+    onCreateAssert: (assert: Assert) => void;
 }
 
 const CreateAssert = (props: DialogProps) =>{
     const [entity, setEntity] = useState("");
 
-    const handleCreateUser = () => {
-        const entity: EntityRegister = {
+    const handleCreateAssert = () => {
+        const assert: Assert = {
             key: Date.now(),
-            entityname:"",
         };
-        props.onCreateUser(entity);
+        props.onCreateAssert(assert);
         setEntity("");
     };
 
     return (
-        <Modal  title="创建业务实体" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} >
+        <Modal  title="添加资产" open={props.isOpen} onOk={handleCreateAssert} onCancel={props.onClose} >
         </Modal>
     );
 };

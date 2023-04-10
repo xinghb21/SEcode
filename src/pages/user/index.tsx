@@ -14,7 +14,7 @@ import EStable from "../../components/page_1/page_1";
 import Page_2 from "../../components/page_2/page_2";
 import Page_3 from "../../components/page_3/page_3";
 import Page_4 from "../../components/page_4/page_4";
-import Page_6 from "../../components/page_6/page_6";
+import App from "../../components/page_6/page_6";
 import Page_7 from "../../components/page_7/page_7";
 import Page_8 from "../../components/page_8/page_8";
 import Page_home from "../../components/page_home/page_home";
@@ -48,7 +48,7 @@ const AppList: any[] = [
 //xhb_begin
 const PageList: any[] = [
     <div key={0}><Page_0 /></div>, <div key={1}><EStable /></div>, <div key={2}><Page_2 /></div>,
-    <div key={3}><Page_3 /></div>, <div key={4}><Page_4 /></div>, <div key={6}><Page_6 /></div>, 
+    <div key={3}><Page_3 /></div>, <div key={4}><Page_4 /></div>, <div key={6}><App /></div>, 
     <div key={7}><Page_7 /></div>, <div key={8}><Page_8 /></div>, <div key={9}><Page_home /></div>,
     <div key={10}><Page_set /></div>, <div key={11}><Page_info /></div>
 ];

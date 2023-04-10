@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Assertlist from "./assertlist";
 
-
-const Page_6 = () => {
-    
-
+function App() {
     return (
-        <Assertlist/>
+      <Assertlist/>
     );
-};
-
-export default Page_6;
+  }
+  
+export default App;
