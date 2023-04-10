@@ -5,7 +5,7 @@ import {
     PieChartOutlined,
     UserOutlined,
 } from "@ant-design/icons";
-import { Button, MenuProps, Skeleton, Space } from "antd";
+import { Button, MenuProps, Skeleton, Space, Avatar } from "antd";
 import { useRouter } from "next/router";
 import { Layout, Menu, theme } from "antd";
 import { request } from "../../utils/network";
@@ -21,6 +21,7 @@ import Page_8 from "../../components/page_8/page_8";
 import Page_home from "../../components/page_home/page_home";
 import Page_set from "../../components/page_set";
 import Page_info from "../../components/page_info";
+import { ItemType } from "antd/es/breadcrumb/Breadcrumb";
 
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -57,6 +58,7 @@ const PageList: any[] = [
 
 //这里的item应该从后端获取数据后形成？
 const items: MenuItem[] = [];
+const dropitems: ItemType[] = [];
 
 const User: React.FC = () => {
     const router = useRouter();
@@ -65,25 +67,27 @@ const User: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false);
     const [load, setLoad] = useState(true);
     const [page, setPage] = useState(9);
-
+    const [name, setName] = useState("");
     useEffect(() => {
         if (!router.isReady) {
             return;
         }
         fetchList();
+        request("/api/user/username", "GET")
+            .then((res) => {
+                setName(res.name);
+            })
     }, [router]);
 
     //通过后端获取的funlist以及用户对应的identity实现侧边栏应用
     //具体的key还需要完善
     const fetchList = () => {
-        
-        request(`/api/user/home/${localStorage.getItem("username")}`, "GET");
         request(`/api/user/home/${localStorage.getItem("username")}`, "GET")
             .then((res) => {
                 items.splice(0);
                 let funclist = res.funclist.toString();
-                if(res.entity!="0"){
-                    localStorage.setItem("entity",res.entity);
+                if (res.entity != "0") {
+                    localStorage.setItem("entity", res.entity);
                 }
                 identity = res.identity;
                 items.push(getItem("业务首页", 9, <HomeOutlined />));
@@ -161,13 +165,11 @@ const User: React.FC = () => {
                 }
             )
                 .then(() => {
-                    //感觉登出实现得很草率，需要完善
                     router.push("/");
                 })
                 .catch((err) => {
                     alert(err.message);
                 });
-            //感觉登出实现得很草率，需要完善
         }
     };
 
@@ -176,24 +178,30 @@ const User: React.FC = () => {
         <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
             <Layout style={{ minHeight: "100vh" }}>
                 <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-                    <Menu theme="dark" mode="inline" items={items} 
+                    <Menu theme="dark" mode="inline" items={items}
                         onClick={handleClick} />
                 </Sider>
                 <Layout className="site-layout">
                     <Content style={{ margin: "0 16px" }}>
-                        <Space  style={{ margin: 5, display:"flex",justifyContent:"flex-end",alignItems:"center"}} >
-                            <Button color="white" type="primary" style={{ margin: 2 }} block={true}>
+                        <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
+                            <Button style={{ margin: 2 }} block={true}>
                                 Backlog
                             </Button>
-                            <Button color="white" type="primary" style={{ margin: 2 }} block={true}>
+                            <Button style={{ margin: 2 }} block={true}>
                                 Message
                             </Button>
+                            <Space>
+                                <Avatar size="small" icon={<UserOutlined />} />
+                                <text fontWeight='bold'>
+                                    {name}
+                                </text>
+                            </Space>
                         </Space>
-                        <div style={{ paddingLeft: 24,paddingRight: 24,paddingTop:5,paddingBottom:5, minHeight: 600, background: colorBgContainer }}>
+                        <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer }}>
                             {PageList[page]}
                         </div>
                     </Content>
-                    <Footer style={{ textAlign: "center" }}>Ant Design ©2023 Created by Ant UED</Footer>
+                    <Footer style={{ textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
                 </Layout>
             </Layout>
         </Skeleton>

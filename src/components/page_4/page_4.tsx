@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Space, Typography } from "antd";
+import { Space, Typography, Spin } from "antd";
 import { request } from "../../utils/network";
 import CreateDT from "./createDT";
 import { Modal, Tree, Tooltip } from "antd";
@@ -11,6 +11,8 @@ import {
     ExclamationCircleFilled,
     BarsOutlined
 } from "@ant-design/icons";
+import DUserTable from "./usertable";
+
 
 
 type TreeData = {
@@ -22,11 +24,13 @@ type TreeData = {
 type Props = {
     data: Record<string, any>;
 };
-
+type Key = string | number;
 const { confirm } = Modal;
 
 const Page_4 = () => {
     const [json, setJson] = useState({});
+    const [isSpinning, setSpnning] = useState(true);
+    let departs:String[]=[];
     const router = useRouter();
     useEffect(() => {
         if (!router.isReady) {
@@ -39,6 +43,10 @@ const Page_4 = () => {
         request("/api/user/es/departs", "GET")
             .then((res) => {
                 setJson(res.info);
+                //延时执行取消加载组件的动画功能
+                setTimeout(() => {
+                    setSpnning(false);
+                }, 500);
             })
             .catch((err) => {
                 alert(err.message);
@@ -46,9 +54,7 @@ const Page_4 = () => {
             });
     };
 
-
     const Dtree = ({ data }: Props) => {
-
         const [isDialogOpenCT, setIsDialogOpenCT] = useState(false);
         const [isDialogOpenCE, setIsDialogOpenCE] = useState(false);
         const [parent, setParent] = useState("");
@@ -141,6 +147,7 @@ const Page_4 = () => {
                 okType: "danger",
                 cancelText: "No",
                 onOk() {
+                    setSpnning(true);
                     request("/api/user/es/deletedepart", "DELETE", {
                         name: key
                     })
@@ -162,7 +169,8 @@ const Page_4 = () => {
         };
         const treeData = parseTreeData(data);
         const handleCreateDt = (department: string) => {
-            console.log(parent + department + localStorage.getItem("entity"));
+            // console.log(parent + department + localStorage.getItem("entity"));
+            setSpnning(true);
             request("/api/user/es/createdepart", "POST", {
                 entity: localStorage.getItem("entity"),
                 depname: department,
@@ -180,6 +188,7 @@ const Page_4 = () => {
             setIsDialogOpenCT(false);
         };
         const handleChangeDt = (department: string) => {
+            setSpnning(true);
             request("/api/user/es/renamedepart", "POST", {
                 oldname: OldName,
                 newname: department
@@ -195,16 +204,23 @@ const Page_4 = () => {
                 });
             setIsDialogOpenCT(false);
         };
+        //checked
+        const handleCheck = (checkedKeys) => {
+            departs=checkedKeys.checked;
+            console.log(checkedKeys.checked);
+        };
         return (
-            <Space align="start" direction="vertical">
+            <div>
                 <Tree
-                    style={{ backgroundColor: "#F5F5F5", minHeight: 500, minWidth: 300, borderRadius: 10 }}
+                    checkStrictly={true}
+                    style={{ paddingTop:10,backgroundColor: "#F5F5F5", minHeight: 500, minWidth: 300, borderRadius: 10 }}
                     checkable
                     treeData={treeData}
+                    onCheck={handleCheck}
                 />
                 <CreateDT title={"创建下属部门"} subtitle={"部门名称："} isOpen={isDialogOpenCT} onClose={() => setIsDialogOpenCT(false)} onCreateDt={handleCreateDt} />
                 <CreateDT title={"修改部门名称"} subtitle={"新名称："} isOpen={isDialogOpenCE} onClose={() => setIsDialogOpenCE(false)} onCreateDt={handleChangeDt} />
-            </Space>
+            </div>
         );
     };
 
@@ -217,7 +233,12 @@ const Page_4 = () => {
                         {localStorage.getItem("entity") + "部门管理"}
                     </Title>
                 </Space>
-                <Dtree data={json} />
+                <Space direction="horizontal" align="start">
+                    <Spin spinning={isSpinning}>
+                        <Dtree data={json} />
+                    </Spin>
+                    <DUserTable departs={departs} />
+                </Space>
             </Space>
         </div>
     );
