@@ -23,7 +23,7 @@ interface DialogProps{
     departmentlist:department_to_show[];
     onCreateUser: (user:UserRegister ) => void;
   }
-const CreateUser=(props: DialogProps) =>{
+const CreateUser2=(props: DialogProps) =>{
     const [newusername, setusername] = useState<string>("");
     const [newuserdepaertment,setdepartment]=useState<string>("");
     const [password,setpassword]=useState<string>("");
@@ -33,7 +33,7 @@ const CreateUser=(props: DialogProps) =>{
             key:newusername,
             username:newusername,
             password:password,
-            identity:3,
+            identity:4,
             entityname:props.entityname,
             department:newuserdepaertment
         }     
@@ -47,7 +47,7 @@ const CreateUser=(props: DialogProps) =>{
       };
 
     return (
-        <Modal  title="创建资产管理员" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} >
+        <Modal  title="创建企业员工" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} >
             <div>
                 <label>业务实体名称:{props.entityname}</label>
             </div>
@@ -71,4 +71,4 @@ const CreateUser=(props: DialogProps) =>{
         </Modal>
     );
 };
-export default CreateUser;
+export default CreateUser2;

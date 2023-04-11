@@ -25,7 +25,6 @@ interface EntityRegister{
   key:React.Key;
   entityname:string;
 }
-let data:Entity[] =[{key:1 ,entityname:"good",admingname:"good"},{key:2,entityname:"fuck",admingname:"se"},{key:5,entityname:"test",admingname:""}];
 
 const Entitylist =( () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);

@@ -12,6 +12,7 @@ import Manageapp from "./Manageapp";
 import resetpassword from "./resetpassword"
 import { Md5 } from "ts-md5";
 import Column from "antd/es/table/Column";
+import CreateUser2 from "./CreateUser2"
 interface User_to_show{
     key:React.Key;
     username:string;
@@ -27,35 +28,50 @@ interface User_to_store{
     departmentname:string;
     entityname:string;
 }
-interface User{
-  key: React.Key;
-  username:string;
-  password:string;
-  entity:string;
-}
 interface UserRegister{
-  key:React.Key;
-  entityname:string;
+    key: React.Key;
+    username:string;
+    password:string;
+    identity:number;
+    entityname:string;
+      department:string;
+}
+
+interface department_to_show{
+    value:string;
+    label:string;
 }
 
 const userlists:User_to_show[]=[{key:1,username:"11",departmentname:"111",entityname:"1111",character:3,whetherlocked:true,lockedapp:"111111111111"},{key:2,username:"12",departmentname:"112",entityname:"1111",character:4,whetherlocked:false,lockedapp:"1111111111"},{key:3,username:"112",departmentname:"111111",entityname:"1111111",character:4,whetherlocked:false,lockedapp:"11111221111111"}];
 
 const Userlist =( () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isDialogOpen1, setIsDialogOpen1] = useState(false);
+    const [isDialogOpen2,setIsDialogOpen2]=useState(false);
     const [userlist,setuserlist]=useState<User_to_show[]>([]);
     const [isassignopen,setIsassignOpen]=useState(false);
     const [assignentity,setAssignentity]=useState<string>("");
+    const [departmentlsit,setdepartmentlist]=useState<department_to_show[]>([]);
+    const [entity,setentityname]=useState<string>("");
     useEffect((()=>{
         request(`api/user/es/checkall`,"GET")
         .then((res)=>{
             let initiallist:User_to_show[]=[];
             let size:number=res.length;
             let i=0;
+            let departments:department_to_show[]=[];
             for (i;i<size;i++){
-                initiallist.push({key:res[i].name,username:res[i].name,departmentname:res[i].department,entityname:res[i].entity,character:res[i].indentity,whetherlocked:res[i].locked,lockedapp:res[i].lockedapp});
+                initiallist.push({key:res.data[i].name,username:res.data[i].name,departmentname:res.data[i].department,entityname:res.data[i].entity,character:res.data[i].indentity,whetherlocked:res.data[i].locked,lockedapp:res.data[i].lockedapp});
+                if(departments.find((obj)=>{return obj.value===res.data[i].department})!=null){
+
+                }else{
+                    departments.push({value:res.data[i].department,label:res.data[i].department});
+                }
             }
+            setdepartmentlist(departments);
             setuserlist(initiallist);
+            let entitynames =localStorage.getItem("entityname")?localStorage.getItem("entityname"):"";
+            setentityname( entitynames?entitynames:"" );
         })
         .catch((err)=>{
             alert(err);
@@ -64,29 +80,15 @@ const Userlist =( () => {
 
     
 
-    const handleCreateUser = (user: User) => {
-    //在这里向后端发送请求
-        const userdata={"name":user.username,"entity":user.entity,"password":Md5.hashStr(user.password)};
-        // request("/api/entity/assgin","POST",userdata)
-        //     .then((res)=>{
-        //         //let newEntitilist:Entity[]=[];
-        //         let i=0;
-        //         let size=Entitylist.length;
-        //         for(i;i<size;i++){
-        //             if(Entitylist[i].entityname===user.entity){
-        //                 Entitylist[i].admingname=user.username;
-        //                 //newEntitilist.push(Entitylist[i]);
-        //             }else{
-        //                 //newEntitilist.push(Entitylist[i]);
-        //             }
-        //         }
-        //         //setEntitylist(newEntitilist);
-        //         setIsassignOpen(false);
-        //     })
-        //     .catch((err)=>{
-        //         alert("创建失败");
-        //         setIsassignOpen(false);
-        //     });
+    const handleCreateUser = (user: UserRegister) => {
+        
+        request('api/user/createuser',"POST",{name:user.username,password:user.password,entity:user.entityname,department:user.department,identity:user.identity})
+        .then((res)=>{
+            setuserlist([...userlist,{key:user.username,username:user.username,departmentname:user.department,entityname:user.entityname,character:user.identity,whetherlocked:false,lockedapp:(user.identity===3?"000001110":"000000001")}]);
+        })
+        .catch((err)=>{
+            alert(err);
+        })
     };
 
     const handleCreateEntity=((newuser:User_to_show)=>{
@@ -109,60 +111,63 @@ const Userlist =( () => {
     const assign=((assign_entity:string)=>{
         setAssignentity(assign_entity);
         setIsassignOpen(true);
-
+        
     });
     const delete_users=(()=>{
-        // if (window.confirm("确认删除所选业务实体？")){
-        //     //在这里添加后端通信，删除业务实体，并更改前端
-        //     let i=0;
-        //     const size= selectedRowKeys.length;
-        //     let deleteentities:Entity[]=[];
-        //     let deleteentityname:string[]=[];
-        //     for (i ;i<size;i++){
-        //         let tobedeleteentity=(Entitylist).find((obj)=>{return obj.key===selectedRowKeys.at(i);});
-        //         if(tobedeleteentity != null ){
-        //             if(tobedeleteentity != null ){
-        //                 console.log("suscess");
-        //                 deleteentities.push(tobedeleteentity);
-        //                 deleteentityname.push(tobedeleteentity.entityname);
-        //                 console.log(tobedeleteentity);
-        //             }
-        //         }
-        //     }
-        //     request("/api/entity/deleteall","DELETE",{name:deleteentityname})
-        //         .then((res)=>{
-        //             console.log(deleteentities.length);
-        //             console.log(deleteentities);
-        //             let remained_Entities:Entity[]=[];
-        //             let j=0;
-        //             let length_before=Entitylist.length;
-        //             for (j;j<length_before;j++){
-        //                 let fuck=(deleteentities).find((obj)=>{return obj.entityname===Entitylist[j].entityname;});
-        //                 console.log(fuck);
-        //                 if( fuck != null){   
-        //                 }else{
-        //                     remained_Entities.push(Entitylist[j]);
-        //                 }
-        //             }
-        //             console.log(remained_Entities);
-        //             setEntitylist(remained_Entities);
-        //         })
-        //         .catch((err)=>{
-        //             alert(err);
-        //         });
-        // }
+         if (window.confirm("确认删除所选人员？")){
+             //在这里添加后端通信，删除业务实体，并更改前端
+             let i=0;
+             const size= selectedRowKeys.length;
+             let deleteuser:User_to_show[]=[];
+             let deletedusername:string[]=[];
+             //删除列表
+             for (i ;i<size;i++){
+                 let tobedeleteuser=(userlist).find((obj)=>{return obj.key===selectedRowKeys.at(i);});
+                 if(tobedeleteuser != null ){
+                     if(tobedeleteuser != null ){
+                         //console.log("suscess");
+                         deleteuser.push(tobedeleteuser);
+                         deletedusername.push(tobedeleteuser.username);
+                         //console.log(tobedeleteentity);
+                     }
+                 }
+             }
+             request("/api/user/es/batchdelete","DELETE",{name:deletedusername})
+                 .then((res)=>{
+                    // console.log(deletedusername.length);
+                    // console.log(deleteentities);
+                     let remained_user:User_to_show[]=[];
+                     let j=0;
+                     let length_before=userlist.length;
+                     for (j;j<length_before;j++){
+                         let fuck=(deleteuser).find((obj)=>{return obj.username===userlist[j].username;});
+                         console.log(fuck);
+                         if( fuck != null){   
+                         }else{
+                             remained_user.push(userlist[j]);
+                         }
+                     }
+                     //console.log(remained_Entities);
+                     setuserlist(remained_user);
+                 })
+                 .catch((err)=>{
+                     alert(err);
+                 });
+         }
     });
     return (
         <div >
+            <CreateUser isOpen={isDialogOpen1} onClose={()=>setIsDialogOpen1(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser>
+            <CreateUser2 isOpen={isDialogOpen2} onClose={()=>setIsDialogOpen2(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser2>
             <ProList<User_to_show>
                 search={{}}
                 toolBarRender={() => {
                     return [
-                        <Button key="1" type="primary" onClick={()=>{setIsDialogOpen(true);}}>
+                        <Button key="1" type="primary" onClick={()=>{setIsDialogOpen1(true);}}>
                             创建资产管理员
                         </Button>,
-                        <Button key="3" type="primary" onClick={()=>{setIsDialogOpen(true)}}>
-                            创建员工
+                        <Button key="3" type="primary" onClick={()=>{setIsDialogOpen2(true)}}>
+                            创建企业员工
                         </Button>,
                         <Button key="2" type="default" danger={true} onClick={delete_users} disabled={!hasSelected}> 删除选中人员</Button>,                        
                     ];
@@ -214,31 +219,11 @@ const Userlist =( () => {
                             );
                         },
                     },
-                    status: {
-                        // 自己扩展的字段，主要用于筛选，不在列表中显示
-                        title: '状态',
-                        valueType: 'select',
-                        valueEnum: {
-                          all: { text: '全部', status: 'Default' },
-                          open: {
-                            text: '未解决',
-                            status: 'Error',
-                          },
-                          closed: {
-                            text: '已解决',
-                            status: 'Success',
-                          },
-                          processing: {
-                            text: '解决中',
-                            status: 'Processing',
-                          },
-                        },
-                      },
                 }}
                 rowKey="key"
                 headerTitle="业务实体内员工列表"
                 rowSelection={rowSelection}
-                dataSource={userlists}
+                dataSource={userlist}
             />
         </div>
     );
