@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { request } from '../../utils/network';
 
-interface Assert{
+interface Asset{
 
     key: React.Key;
-    assertname: string;
+    assetname: string;
     person: string;
     department: string;
     parent: string;

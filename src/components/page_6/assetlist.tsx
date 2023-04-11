@@ -4,7 +4,8 @@ import {ProFormDatePicker, ProList} from '@ant-design/pro-components';
 import { useState } from 'react';
 import {useEffect} from "react";
 import { request } from '../../utils/network';
-import CreateAssert from './createAssert';
+import CreateAsset from "./createAsset";
+import CreateLabel from './createLabel';
   import {
     ProForm,
     ProFormSelect,
@@ -12,44 +13,43 @@ import CreateAssert from './createAssert';
     QueryFilter,
   } from '@ant-design/pro-components';
 
-interface Assert{
+interface Asset{
 
     key: React.Key;
-    assertname: string;
+    name: string;
     person?: string;
     department?: string;
     parent?: string;
     child?: string;
-    status?: string;
     category: string;
     description?: string;
-    type: boolean;
     number?: Number;
     addtion?: string;
+    status?: Number;
 
 }
 
-interface short_assert{
+interface short_asset{
 
     key: React.Key;
-    name: string;
-    description: string;
+    assetname: string;
+    description?: string;
     number_idle?: Number;
     category: string;
     status?: Number;
 
 }
 
-const Assertlist = ( () => {
+const Assetlist = ( () => {
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-    const [asserts, setAsserts] = useState<short_assert[]>([]);
+    const [assets, setAssets] = useState<short_asset[]>([]);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
 
     useEffect(() => {
         request("/api/asset/get", "GET")
             .then((res) => {
-                setAsserts(res.data);
+                setAssets(res.data);
             })
             .catch((err) => {
                 alert(err);
@@ -63,11 +63,12 @@ const Assertlist = ( () => {
 
     const hasSelected = selectedRowKeys.length > 0;
 
-    const add_assert = ((assert: Assert) => {
-        
+    const add_asset = ((asset: Asset) => {
+        let short : short_asset = {key: asset.key, assetname: asset.name, description: asset.description, category : asset.category};
+        setAssets([...assets, short]); 
     });
 
-    const delete_assert = (() => {
+    const delete_asset = (() => {
         
     });
 
@@ -127,7 +128,7 @@ const Assertlist = ( () => {
                         />
                         <ProFormDatePicker
                             width="md"
-                            name={['assert', 'createTime']}
+                            name={['asset', 'createTime']}
                             label="资产入库时间"
                         />
                     </ProForm.Group>
@@ -156,16 +157,16 @@ const Assertlist = ( () => {
                     <ProFormText width="xs" name="mangerName" disabled label="商务经理" initialValue="启途" />
                 </QueryFilter>
             </div>
-            <ProList<short_assert>
+            <ProList<short_asset>
 
                 pagination = {{pageSize: 10}}
                 metas = {{
-                    title: {dataIndex:"assertname"},
+                    title: {dataIndex:"assetname"},
                     description: {
                         render: (_,row) => {
                             return (
                               <div>
-                                {row.description}
+                                {row.description == undefined ? "暂无描述" : row.description}
                               </div>
                           );
                         }
@@ -235,12 +236,13 @@ const Assertlist = ( () => {
                 rowKey="key"
                 headerTitle="资产列表"
                 rowSelection={rowSelection}
-                dataSource={asserts}
+                dataSource={assets}
 
                 toolBarRender={() => {
                     return [
-                        <CreateAssert onCreateAssert={add_assert}></CreateAssert>,
-                        <Button key="2" type="default" danger={true} onClick = {delete_assert} disabled = {!hasSelected}> 
+                        <CreateLabel></CreateLabel>,
+                        <CreateAsset onCreateAsset={add_asset}></CreateAsset>,
+                        <Button key="2" type="default" danger={true} onClick = {delete_asset} disabled = {!hasSelected}> 
                             删除选中资产
                         </Button>
                     ];
@@ -251,4 +253,4 @@ const Assertlist = ( () => {
     }
 );
 
-export default Assertlist;
+export default Assetlist;

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import Assertlist from "./assertlist";
+import Assetlist from "./assetlist";
 
 function App() {
     return (
-      <Assertlist/>
+      <Assetlist/>
     );
   }
   
