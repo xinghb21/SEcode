@@ -52,7 +52,7 @@ const PageList: any[] = [
     <div key={0}><Page_0 /></div>, <div key={1}><EStable /></div>, <div key={2}><Page_2 /></div>,
     <div key={3}><Page_3 /></div>, <div key={4}><Page_4 /></div>, <div key={5}><Page_5 /></div>,
     <div key={6}><Page_6 /></div>, <div key={7}><Page_7 /></div>, <div key={8}><Page_8 /></div>,
-    <div key={9}><Page_home /></div>, <div key={10}><Page_set /></div>, <div key={11}><Page_info /></div>
+    <div key={9}><Page_home /></div>, <div key={10}><Page_info /></div>, <div key={11}><Page_set /></div>
 ];
 //xhb_end
 
@@ -197,7 +197,7 @@ const User: React.FC = () => {
                                 </text>
                             </Space>
                         </Space>
-                        <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer }}>
+                        <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer, borderRadius:10}}>
                             {PageList[page]}
                         </div>
                     </Content>
