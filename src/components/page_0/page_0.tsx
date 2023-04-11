@@ -1,8 +1,5 @@
-import { Button , Table} from "antd";
-import { useRouter } from "next/router";
 import type { ColumnsType } from "antd/es/table";
-import React, { useEffect, useState } from "react";
-import { request } from "../../utils/network";
+import React, { useState } from "react";
 import Entitylist from "./entitylist";
 interface Entity {
     key: React.Key;
@@ -20,29 +17,9 @@ const columns: ColumnsType<Entity> = [
         dataIndex: "admin",
     },
 ];
-interface EntityTableProps{
-    entities:Entity[];
-}
 
 const Page_0 = () => {
 
-    const [entity, setEntity] = useState<Entity[]>([]);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const deleteentities =()=>{
-
-    }
-    const router = useRouter();
-    const query = router.query;
-
-    useEffect(() => {
-        if (!router.isReady) {
-            return;
-        }
-        fetchList();
-    }, [router, query]);
-
-    const fetchList = () => {
-    };
 
     return (
         <>

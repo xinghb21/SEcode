@@ -11,26 +11,25 @@ interface User{
 
 interface DialogProps{
     isOpen: boolean;
+    entityname:string;
     onClose: () => void;
     onCreateUser: (user: User) => void;
   }
 
-const CreateES=(props: DialogProps) =>{
-    const [newusername, setUsername] = useState("");
-    const [newpassword, setPassword] = useState("");
-    const [newentity, setEntity] = useState("");
-
+const AssignEs=(props: DialogProps) =>{
+    const [newusername, setUsername] = useState<string>("");
+    const [newpassword, setPassword] = useState<string>("");
+    const [newentity,setEntity]=useState<string>(props.entityname);
     const handleCreateUser = () => {
         const user: User = {
-            key: newusername,
+            key: Date.now(),
             username: newusername,
             password: newpassword,
-            entity:newentity,
+            entity: props.entityname,
         };
         props.onCreateUser(user);
         setUsername("");
         setPassword("");
-        setEntity("");
     };
 
     return (
@@ -38,19 +37,16 @@ const CreateES=(props: DialogProps) =>{
             <div>
                 <label>用户名:</label>
                 <Input type="text" value={newusername} onChange={(e) => setUsername(e.target.value)} />
-                <Input type="text" value={newusername} onChange={(e) => setUsername(e.target.value)} />
             </div>
             <div>
                 <label>密码:</label>
                 <Input type="password" value={newpassword} onChange={(e) => setPassword(e.target.value)} />
-                <Input type="password" value={newpassword} onChange={(e) => setPassword(e.target.value)} />
             </div>
             <div>
                 <label>所属业务实体:</label>
-                <Input type="entity" value={newentity} onChange={(e) => setEntity(e.target.value)} />
-                <Input type="entity" value={newentity} onChange={(e) => setEntity(e.target.value)} />
+                <div>{props.entityname}</div>
             </div>
         </Modal>
     );
 };
-export default CreateES;
+export default AssignEs;

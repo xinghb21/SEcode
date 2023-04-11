@@ -5,7 +5,7 @@ import {
     PieChartOutlined,
     UserOutlined,
 } from "@ant-design/icons";
-import { Button, MenuProps, Skeleton, Space } from "antd";
+import { Button, MenuProps, Skeleton, Space, Avatar } from "antd";
 import { useRouter } from "next/router";
 import { Layout, Menu, theme } from "antd";
 import { request } from "../../utils/network";
@@ -14,12 +14,14 @@ import EStable from "../../components/page_1/page_1";
 import Page_2 from "../../components/page_2/page_2";
 import Page_3 from "../../components/page_3/page_3";
 import Page_4 from "../../components/page_4/page_4";
-import App from "../../components/page_6/page_6";
+import Page_5 from "../../components/page_5/page_5";
+import Page_6 from "../../components/page_6/page_6";
 import Page_7 from "../../components/page_7/page_7";
 import Page_8 from "../../components/page_8/page_8";
 import Page_home from "../../components/page_home/page_home";
 import Page_set from "../../components/page_set";
 import Page_info from "../../components/page_info";
+import { ItemType } from "antd/es/breadcrumb/Breadcrumb";
 
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -56,21 +58,25 @@ const PageList: any[] = [
 
 //这里的item应该从后端获取数据后形成？
 const items: MenuItem[] = [];
+const dropitems: ItemType[] = [];
 
 const User: React.FC = () => {
     const router = useRouter();
-    const query = router.query;
     let identity: number;
 
     const [collapsed, setCollapsed] = useState(false);
     const [load, setLoad] = useState(true);
     const [page, setPage] = useState(8);
-
+    const [name, setName] = useState("");
     useEffect(() => {
         if (!router.isReady) {
             return;
         }
         fetchList();
+        request("/api/user/username", "GET")
+            .then((res) => {
+                setName(res.name);
+            });
     }, [router]);
 
     //通过后端获取的funlist以及用户对应的identity实现侧边栏应用
@@ -81,6 +87,9 @@ const User: React.FC = () => {
             .then((res) => {
                 items.splice(0);
                 let funclist = res.funclist.toString();
+                if (res.entity != "0") {
+                    localStorage.setItem("entity", res.entity);
+                }
                 identity = res.identity;
                 items.push(getItem("业务首页", 9, <HomeOutlined />));
                 if (identity == 1) {
@@ -157,13 +166,11 @@ const User: React.FC = () => {
                 }
             )
                 .then(() => {
-                    //感觉登出实现得很草率，需要完善
                     router.push("/");
                 })
                 .catch((err) => {
                     alert(err.message);
                 });
-            //感觉登出实现得很草率，需要完善
         }
     };
 
@@ -177,21 +184,25 @@ const User: React.FC = () => {
                 </Sider>
                 <Layout className="site-layout">
                     <Content style={{ margin: "0 16px" }}>
-                        <Space  style={{ margin: 5, display:"flex",justifyContent:"flex-end",alignItems:"center"}} >
-                            <Button color="white" type="primary" style={{ margin: 2 }} block={true}>
+                        <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
+                            <Button style={{ margin: 2 }} block={true}>
                                 Backlog
                             </Button>
-                            <Button color="white" type="primary" style={{ margin: 2 }} block={true}>
+                            <Button style={{ margin: 2 }} block={true}>
                                 Message
                             </Button>
+                            <Space>
+                                <Avatar size="small" icon={<UserOutlined />} />
+                                <text fontWeight='bold'>
+                                    {name}
+                                </text>
+                            </Space>
                         </Space>
-                        <div style={{ padding: 24, minHeight: 600, background: colorBgContainer }}>
-                            {/* 实现系统管理员的增添删减 */}
+                        <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer }}>
                             {PageList[page]}
-                            {/* 实现系统管理员的增添删减 */}
                         </div>
                     </Content>
-                    <Footer style={{ textAlign: "center" }}>Ant Design ©2023 Created by Ant UED</Footer>
+                    <Footer style={{ textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
                 </Layout>
             </Layout>
         </Skeleton>

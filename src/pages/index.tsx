@@ -28,13 +28,13 @@ const LoginForm = (props: LoginFormProps) => {
                 password: Md5.hashStr(values.password)
             }
         ).then(() => {
-                localStorage.setItem("username",values.username);
-                router.push("/user");
-            })
+            localStorage.setItem("username",values.username);
+            router.push("/user");
+        })
             .catch((err) => {
                 console.log("failed");
                 setPassword(false);
-                setError(err.message);
+                setError(err.detail);
                 setLoading(false);
             });
     };
