@@ -1,4 +1,4 @@
-import { Avatar, List, Space, Button, Tag } from "antd";
+import { Avatar, List, Space, Button, Tag, message } from "antd";
 import React from "react";
 import { ProList, hrHRIntl } from "@ant-design/pro-components";
 import { Progress } from "antd";
@@ -56,6 +56,7 @@ interface User_Password{
 const userlists:User_to_show[]=[{key:1,username:"11",departmentname:"111",entityname:"1111",character:3,whetherlocked:true,lockedapp:"111111111111"},{key:2,username:"12",departmentname:"112",entityname:"1111",character:4,whetherlocked:false,lockedapp:"1111111111"},{key:3,username:"112",departmentname:"111111",entityname:"1111111",character:4,whetherlocked:false,lockedapp:"11111221111111"}];
 
 const Userlist =( () => {
+    const [castnum,setcastnum]=useState<number>(1);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [isDialogOpen1, setIsDialogOpen1] = useState(false);
     const [isDialogOpen2,setIsDialogOpen2]=useState(false);
@@ -69,6 +70,20 @@ const Userlist =( () => {
     const [isDEOpen,setisDEOpen]=useState<boolean>(false);
     const [apdDEname,setapdEDname]=useState<string>("");
     const [olddepartment,setdepartment]=useState<string>("");
+
+    const traverse=(( node:string ,depart:department_to_show[])=>{
+        let jsonobj=JSON.parse(node);
+        let keys=Object.keys(jsonobj);
+        let i=0;
+        let size=keys.length;
+        for(i;i<size;i++){
+            if(typeof (jsonobj[keys[i]]) === "string"){
+                depart.push({value:jsonobj[keys[i]],label:jsonobj[keys[i]]});
+            }else{
+                traverse(jsonobj[keys[i]] as string , depart);
+            }
+        }
+    });
     useEffect((()=>{
         request(`api/user/es/checkall`,"GET")
         .then((res)=>{
@@ -92,7 +107,18 @@ const Userlist =( () => {
         .catch((err)=>{
             alert(err);
         });
-    }),[]);
+        
+        if(castnum===1){
+            request('api/user/es/departs',"GET").then((res)=>{
+                let departs:department_to_show[]=[];
+                let origin:string= res.info.entity;
+                traverse(origin ,departs);
+                setdepartmentlist(departs);
+            }).catch((err)=>{
+                alert(err);
+            })
+        }
+    }),[castnum]);
 
     
 
@@ -107,25 +133,14 @@ const Userlist =( () => {
         })
     };
 
-    const handleCreateEntity=((newuser:User_to_show)=>{
-    //在这里实现后端通信，添加业务实体，不指派管理员，setEntitylist
-        // request("/api/entity/create","POST",{name:entitys.entityname})
-        //     .then((res)=>{
-        //         const newentity:Entity={key: entitys.entityname,entityname: entitys.entityname,admingname:""};
-        //         setEntitylist([...Entitylist,newentity]);
-        //         setIsDialogOpen(false);
-        //     })
-        //     .catch((err)=>{
-        //         alert(err);
-        //     });
-    });
+
     const reset=((newuser:User_Password)=>{
             request(`api/user/es/reset`,"POST",{name:newuser.username,newpassword:Md5.hashStr(newuser.newpassword)})
             .then((res)=>{
-                
+                message.success("成功重置该员工密码");
             })
             .catch((err)=>{
-
+                alert(err);
             })
     });
     const rowSelection = {
@@ -139,8 +154,24 @@ const Userlist =( () => {
     });
     const handleapdDE =((newde:User_DEpartment)=>{
         request(`api/user/es/alter`,"POST",{name:newde.username,department:newde.Department})
-        .then()
-        .catch()
+        .then((res)=>{
+            let i=0;
+            let size=userlist.length;
+            let newuserlist:User_to_show[]=[];
+            for(i;i<size;i++){
+                if(userlist[i].username===newde.username){
+                    newuserlist.push( userlist[i]);
+                    newuserlist[i].departmentname=newde.Department;
+                }else{
+                    newuserlist.push(userlist[i]);
+                }   
+            }
+            setuserlist(newuserlist);
+        })
+        .catch((err)=>{
+            alert(err);
+        })
+
     });
     const delete_users=(()=>{
          if (window.confirm("确认删除所选人员？")){
@@ -165,26 +196,45 @@ const Userlist =( () => {
                  .then((res)=>{
                     // console.log(deletedusername.length);
                     // console.log(deleteentities);
-                     let remained_user:User_to_show[]=[];
-                     let j=0;
-                     let length_before=userlist.length;
-                     for (j;j<length_before;j++){
-                         let fuck=(deleteuser).find((obj)=>{return obj.username===userlist[j].username;});
-                         console.log(fuck);
-                         if( fuck != null){   
-                         }else{
-                             remained_user.push(userlist[j]);
-                         }
-                     }
-                     //console.log(remained_Entities);
-                     setuserlist(remained_user);
+                    //  let remained_user:User_to_show[]=[];
+                    //  let j=0;
+                    //  let length_before=userlist.length;
+                    //  for (j;j<length_before;j++){
+                    //      let fuck=(deleteuser).find((obj)=>{return obj.username===userlist[j].username;});
+                    //      console.log(fuck);
+                    //      if( fuck != null){   
+                    //      }else{
+                    //          remained_user.push(userlist[j]);
+                    //      }
+                    //  }
+                    //  //console.log(remained_Entities);
+                    //  setuserlist(remained_user);
+                    let i=castnum+1;
+                    setcastnum(i);
                  })
                  .catch((err)=>{
                      alert(err);
                  });
          }
     });
-
+    const lock=((name:string)=>{
+        request(`api/user/es/lock`,"POST",{name:name})
+        .then((res)=>{
+            message.success("成功锁定该用户")
+        })
+        .catch((err)=>{
+            alert(err);
+        });
+    });
+    const unlock=((name:string)=>{
+        request(`api/user/es/unlock`,"POST",{name:name})
+        .then((res)=>{
+            message.success("成功解锁该用户")
+        })
+        .catch((err)=>{
+            alert(err);
+        });
+    });
     return (
         <div >
             <CreateUser isOpen={isDialogOpen1} onClose={()=>setIsDialogOpen1(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser>
@@ -234,8 +284,8 @@ const Userlist =( () => {
                         render: (_,row) =>{
                             return(
                             <div style={{display:"flex",flexDirection:"column"}}>
-                                <Button onClick={()=>{}} style={(row.whetherlocked)?{display:"block"}:{display:"none"}}> 解锁用户</Button>
-                                <Button onClick={()=>{}} style={(row.whetherlocked)?{display:"none"}:{display:"block"}}> 锁定用户</Button>
+                                <Button onClick={()=>{unlock(row.username);}} style={(row.whetherlocked)?{display:"block"}:{display:"none"}}> 解锁用户</Button>
+                                <Button onClick={()=>{lock(row.username);}} style={(row.whetherlocked)?{display:"none"}:{display:"block"}}> 锁定用户</Button>
                                 <Button onClick={()=>{setresetname(row.username)}}> 重置密码</Button>
                             </div>
                             );
