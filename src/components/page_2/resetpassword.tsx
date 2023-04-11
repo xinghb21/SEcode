@@ -2,36 +2,39 @@ import { useState } from "react";
 import { Modal, Input } from "antd";
 import React from "react";
 
-interface EntityRegister{
+interface User_Password{
     key: React.Key;
-    entityname:string;
+    username:string;
+    newpassword:string;
   }
 
 interface DialogProps{
     isOpen: boolean;
     onClose: () => void;
-    onCreateUser: (entity:EntityRegister ) => void;
+    username:string;
+    onCreateUser: (newuser:User_Password ) => void;
   }
 
-const resetpassword=(props: DialogProps) =>{
-    const [entity, setEntity] = useState<string>("");
+const Resetpassword=(props: DialogProps) =>{
+    const [newpassword, setnewpassword] = useState<string>("");
 
     const handleCreateUser = () => {
-        const newentity: EntityRegister = {
-            key: Date.now(),
-            entityname:entity,
+        const newuser: User_Password = {
+            key: props.username,
+            username:props.username,
+            newpassword:newpassword
         };
-        props.onCreateUser(newentity);
-        setEntity("");
+        props.onCreateUser(newuser);
+        setnewpassword("");
     };
 
     return (
-        <Modal  title="创建业务实体" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} >
+        <Modal  title="重置员工密码" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} >
             <div>
-                <label>业务实体名称:</label>
-                <Input type="text" value={entity} onChange={(e) => setEntity(e.target.value)} />
+                <label>将员工{props.username}的密码重置为:</label>
+                <Input type="text" value={newpassword} onChange={(e) => setnewpassword(e.target.value)} />
             </div>
         </Modal>
     );
 };
-export default resetpassword;
+export default Resetpassword;

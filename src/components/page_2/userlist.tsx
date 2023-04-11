@@ -9,10 +9,11 @@ import CreateUser from "./CreateUser";
 import {useEffect} from "react";
 import { request } from "../../utils/network";
 import Manageapp from "./Manageapp";
-import resetpassword from "./resetpassword"
+import Resetpassword from "./resetpassword"
 import { Md5 } from "ts-md5";
 import Column from "antd/es/table/Column";
 import CreateUser2 from "./CreateUser2"
+import CreateDE from "./CreateDE"
 interface User_to_show{
     key:React.Key;
     username:string;
@@ -22,6 +23,11 @@ interface User_to_show{
     whetherlocked:boolean;
     lockedapp:string;
 }
+interface User_DEpartment{
+    key: React.Key;
+    username:string;
+    Department:string;
+  }
 interface User_to_store{
     key:React.Key;
     username:string;
@@ -41,6 +47,11 @@ interface department_to_show{
     value:string;
     label:string;
 }
+interface User_Password{
+    key: React.Key;
+    username:string;
+    newpassword:string;
+  }
 
 const userlists:User_to_show[]=[{key:1,username:"11",departmentname:"111",entityname:"1111",character:3,whetherlocked:true,lockedapp:"111111111111"},{key:2,username:"12",departmentname:"112",entityname:"1111",character:4,whetherlocked:false,lockedapp:"1111111111"},{key:3,username:"112",departmentname:"111111",entityname:"1111111",character:4,whetherlocked:false,lockedapp:"11111221111111"}];
 
@@ -51,8 +62,13 @@ const Userlist =( () => {
     const [userlist,setuserlist]=useState<User_to_show[]>([]);
     const [isassignopen,setIsassignOpen]=useState(false);
     const [assignentity,setAssignentity]=useState<string>("");
+    const [isrest,setisreset]=useState<boolean>(false);
     const [departmentlsit,setdepartmentlist]=useState<department_to_show[]>([]);
     const [entity,setentityname]=useState<string>("");
+    const [resetname,setresetname]=useState<string>("");
+    const [isDEOpen,setisDEOpen]=useState<boolean>(false);
+    const [apdDEname,setapdEDname]=useState<string>("");
+    const [olddepartment,setdepartment]=useState<string>("");
     useEffect((()=>{
         request(`api/user/es/checkall`,"GET")
         .then((res)=>{
@@ -103,15 +119,28 @@ const Userlist =( () => {
         //         alert(err);
         //     });
     });
+    const reset=((newuser:User_Password)=>{
+            request(`api/user/es/reset`,"POST",{name:newuser.username,newpassword:Md5.hashStr(newuser.newpassword)})
+            .then((res)=>{
+                
+            })
+            .catch((err)=>{
+
+            })
+    });
     const rowSelection = {
         selectedRowKeys,
         onChange: (keys: React.Key[]) => setSelectedRowKeys(keys),
     };
     const hasSelected = selectedRowKeys.length > 0;
-    const assign=((assign_entity:string)=>{
-        setAssignentity(assign_entity);
-        setIsassignOpen(true);
-        
+    const assign=((user:User_DEpartment)=>{
+        setapdEDname(user.username);
+        setdepartment(user.Department);
+    });
+    const handleapdDE =((newde:User_DEpartment)=>{
+        request(`api/user/es/alter`,"POST",{name:newde.username,department:newde.Department})
+        .then()
+        .catch()
     });
     const delete_users=(()=>{
          if (window.confirm("确认删除所选人员？")){
@@ -155,10 +184,13 @@ const Userlist =( () => {
                  });
          }
     });
+
     return (
         <div >
             <CreateUser isOpen={isDialogOpen1} onClose={()=>setIsDialogOpen1(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser>
             <CreateUser2 isOpen={isDialogOpen2} onClose={()=>setIsDialogOpen2(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser2>
+            <Resetpassword isOpen={isrest} onClose={()=>{setisreset(false);}} username={resetname} onCreateUser={reset} ></Resetpassword>
+            <CreateDE isOpen={isDEOpen} onClose={()=>{setisDEOpen(false);}} username={apdDEname} departmentlist={departmentlsit} onCreateUser={handleapdDE}  olddepartment={olddepartment}></CreateDE>
             <ProList<User_to_show>
                 search={{}}
                 toolBarRender={() => {
@@ -204,7 +236,7 @@ const Userlist =( () => {
                             <div style={{display:"flex",flexDirection:"column"}}>
                                 <Button onClick={()=>{}} style={(row.whetherlocked)?{display:"block"}:{display:"none"}}> 解锁用户</Button>
                                 <Button onClick={()=>{}} style={(row.whetherlocked)?{display:"none"}:{display:"block"}}> 锁定用户</Button>
-                                <Button onClick={()=>{}}> 重置密码</Button>
+                                <Button onClick={()=>{setresetname(row.username)}}> 重置密码</Button>
                             </div>
                             );
                         },
@@ -213,7 +245,7 @@ const Userlist =( () => {
                         render: (_,row) => {
                             return (
                                 <div style={{display:"flex" ,flexDirection:"column"}}>
-                                    <Button onClick={()=>{assign(row.entityname);}} >调整部门</Button>
+                                    <Button onClick={()=>{assign({key:row.username,username: row.username , Department:row.departmentname});}} >调整部门</Button>
                                     <Button onClick={()=>{}}> 管理应用 </Button>
                                 </div>
                             );
