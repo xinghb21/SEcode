@@ -55,6 +55,7 @@ const CreateAsset = (props: DialogProps) =>{
                         category : values.category,
                         price: values.price,
                         number: values.number,
+                        description: values.description,
                         status: 0,
                     }
                     request("/api/asset/post", "POST",
@@ -63,6 +64,7 @@ const CreateAsset = (props: DialogProps) =>{
                             category : asset.category,
                             price: asset.price,
                             number: asset.number,
+                            description: values.description,
                         })
                         .then((res) => {
                             props.onCreateAsset(asset);
@@ -88,6 +90,7 @@ const CreateAsset = (props: DialogProps) =>{
                         width="md" 
                         name="description" 
                         label="资产描述" 
+                        initialValue={""}
                         placeholder="请输入描述" 
                     />
                 </ProForm.Group>

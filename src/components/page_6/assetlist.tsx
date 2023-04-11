@@ -64,7 +64,7 @@ const Assetlist = ( () => {
     const hasSelected = selectedRowKeys.length > 0;
 
     const add_asset = ((asset: Asset) => {
-        let short : short_asset = {key: asset.key, assetname: asset.name, description: asset.description, category : asset.category};
+        let short : short_asset = {key: asset.key, assetname: asset.name, description: asset.description, category : asset.category, status: 0, number_idle: asset.number};
         setAssets([...assets, short]); 
     });
 

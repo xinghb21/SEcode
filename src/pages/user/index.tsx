@@ -42,7 +42,7 @@ function getItem(
 
 
 const AppList: any[] = [
-    "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产操作", "资产统计", "资产申请",
+    "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产查看", "资产修改", "资产标签" , "资产申请",
 ];
 
 //xhb_begin
@@ -64,7 +64,7 @@ const User: React.FC = () => {
 
     const [collapsed, setCollapsed] = useState(false);
     const [load, setLoad] = useState(true);
-    const [page, setPage] = useState(9);
+    const [page, setPage] = useState(8);
 
     useEffect(() => {
         if (!router.isReady) {
