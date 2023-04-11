@@ -1,13 +1,4 @@
 import React from "react";
-
-const Page_home = () => {
-    return (
-        <div>
-            page: home
-        </div>
-    );
-};
-import React from "react";
 import { Typography } from 'antd';
 
 const { Title } = Typography;
