@@ -100,7 +100,7 @@ const User: React.FC = () => {
                     const child: MenuItem[] = [];
                     for (let index = 0; index < 2; index++) {
                         const element = funclist[index];
-                        if (element) {
+                        if (element ) {
                             child.push(getItem(AppList[index], index));
                         }
                     }
@@ -110,7 +110,7 @@ const User: React.FC = () => {
                     const child: MenuItem[] = [];
                     for (let index = 2; index < 5; index++) {
                         const element = funclist[index];
-                        if (element) {
+                        if (element ) {
                             child.push(getItem(AppList[index], index));
                         }
                     }
@@ -120,14 +120,14 @@ const User: React.FC = () => {
                     const child: MenuItem[] = [];
                     for (let index = 5; index < 8; index++) {
                         const element = funclist[index];
-                        if (element) {
+                        if (element === "1" ) {
                             child.push(getItem(AppList[index], index));
                         }
                     }
                     items.push(getItem("资产管理", "asset", <PieChartOutlined />, child));
                 }
                 else {
-                    if (funclist[8]) {
+                    if (funclist[8] === "1") {
                         items.push(getItem("员工操作", "oper", <PieChartOutlined />, [
                             getItem("资产申请", "user"),
                         ]));

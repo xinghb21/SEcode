@@ -213,6 +213,7 @@ const Page_4 = () => {
                 })
                 .catch((err) => {
                     alert(err.message);
+                    fetchJson();
                 });
             setIsDialogOpenCT(false);
         };
@@ -231,8 +232,9 @@ const Page_4 = () => {
                 })
                 .catch((err) => {
                     alert(err.message);
+                    fetchJson();
                 });
-            setIsDialogOpenCT(false);
+            setIsDialogOpenCE(false);
         };
         //选中节点后传给table显示相应部门下的用户
         const handleCheck = (checkedKeys) => {

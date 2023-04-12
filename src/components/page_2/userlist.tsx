@@ -1,6 +1,6 @@
 import { Avatar, List, Space, Button, Tag, message } from "antd";
 import React from "react";
-import { ProList, hrHRIntl } from "@ant-design/pro-components";
+import { ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProList, QueryFilter, hrHRIntl } from "@ant-design/pro-components";
 import { Progress } from "antd";
 import type { ReactText } from "react";
 import { useState } from "react";
@@ -220,6 +220,49 @@ const Userlist =( () => {
     });
     return (
         <div >
+            <QueryFilter labelWidth="auto" onFinish={async (values) => {
+                    request(`api/user/es/searchuser`,"POST",{username:values.username,department:values.department,identity:values.identity})
+                    .then((res)=>{
+                        let initiallist:User_to_show[]=[];
+                        let size1:number=(res.data).length;
+                        let i=0;
+                        console.log(size1);
+                        for (i;i<size1;i++){
+                            initiallist.push({key:res.data[i].name,username:res.data[i].name,departmentname:res.data[i].department,entityname:res.data[i].entity,character:res.data[i].identity as number,whetherlocked:res.data[i].locked,lockedapp:res.data[i].lockedapp});
+                        }
+                        setuserlist(initiallist);
+                        message.success('查询成功');
+                    })
+                    .catch((err)=>{
+                        alert(err);
+                    });
+                    }}
+                >
+                    <ProForm.Group>
+                        <ProFormText
+                            width="md"
+                            name="username"
+                            label="员工姓名"
+                            tooltip="最长为 128 位"
+                            placeholder="请输入名称"
+                        />
+                        <ProFormSelect
+                            options={departmentlsit}
+                            width="xs"
+                            name="department"
+                            label="员工部门"
+                        />
+                        <ProFormSelect
+                            options={[
+                                {value:3,label:"资产管理员"},
+                                {value:4,label:"企业员工"}
+                            ]}
+                            width="xs"
+                            name="identity"
+                            label="员工类型"
+                        />
+                    </ProForm.Group>
+                </QueryFilter>
             <CreateUser isOpen={isDialogOpen1} onClose={()=>setIsDialogOpen1(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser>
             <CreateUser2 isOpen={isDialogOpen2} onClose={()=>setIsDialogOpen2(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser2>
             <Resetpassword isOpen={isrest} onClose={()=>{setisreset(false);}} username={resetname} onCreateUser={reset} ></Resetpassword>

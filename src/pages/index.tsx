@@ -34,7 +34,7 @@ const LoginForm = (props: LoginFormProps) => {
             .catch((err) => {
                 console.log("failed");
                 setPassword(false);
-                setError(err.detail);
+                alert(err);
                 setLoading(false);
             });
     };
