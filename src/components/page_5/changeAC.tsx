@@ -5,16 +5,16 @@ import React from "react";
 interface DialogProps{
     isOpen: boolean;
     onClose: () => void;
-    onCreateDt: (department:string) => void;
+    onCreateDt: (assetClassName:string) => void;
     title: string;
     subtitle: string;
   }
 
-const CreateAC=(props: DialogProps) =>{
-    const [department, setDt] = useState("");
+const ChangeAC=(props: DialogProps) =>{
+    const [assetClassName, setDt] = useState("");
 
     const handleCreateDt = () => {
-        props.onCreateDt(department);
+        props.onCreateDt(assetClassName);
         setDt("");
     };
 
@@ -22,9 +22,9 @@ const CreateAC=(props: DialogProps) =>{
         <Modal  title={props.title} open={props.isOpen} onOk={handleCreateDt} onCancel={props.onClose} >
             <div>
                 <label>{props.subtitle}</label>
-                <Input type="Department" value={department} onChange={(e) => setDt(e.target.value)} />
+                <Input type="Department" value={assetClassName} onChange={(e) => setDt(e.target.value)} />
             </div>
         </Modal>
     );
 };
-export default CreateAC;
+export default ChangeAC;

@@ -44,7 +44,7 @@ function getItem(
 
 
 const AppList: any[] = [
-    "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产查看", "资产修改", "资产标签" , "资产申请",
+    "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产查看", "资产修改", "资产标签", "资产申请",
 ];
 
 //xhb_begin
@@ -82,25 +82,29 @@ const User: React.FC = () => {
     //通过后端获取的funlist以及用户对应的identity实现侧边栏应用
     //具体的key还需要完善
     const fetchList = () => {
-        
+
         request(`/api/user/home/${localStorage.getItem("username")}`, "GET")
             .then((res) => {
                 items.splice(0);
                 let funclist = res.funclist.toString();
-                if (res.entity != "0") {
+                if (res.entity != "") {
                     localStorage.setItem("entity", res.entity);
+                }
+                if(res.department!=""){
+                    localStorage.setItem("department",res.department);
                 }
                 identity = res.identity;
                 items.push(getItem("业务首页", 9, <HomeOutlined />));
-                if(identity===1){
-                }else{
-                    localStorage.setItem("entityname",res.entity);
+                if (identity === 1) {
+                }
+                else {
+                    localStorage.setItem("entityname", res.entity);
                 }
                 if (identity === 1) {
                     const child: MenuItem[] = [];
                     for (let index = 0; index < 2; index++) {
                         const element = funclist[index];
-                        if (element ) {
+                        if (element) {
                             child.push(getItem(AppList[index], index));
                         }
                     }
@@ -110,7 +114,7 @@ const User: React.FC = () => {
                     const child: MenuItem[] = [];
                     for (let index = 2; index < 5; index++) {
                         const element = funclist[index];
-                        if (element ) {
+                        if (element) {
                             child.push(getItem(AppList[index], index));
                         }
                     }
@@ -120,7 +124,7 @@ const User: React.FC = () => {
                     const child: MenuItem[] = [];
                     for (let index = 5; index < 8; index++) {
                         const element = funclist[index];
-                        if (element === "1" ) {
+                        if (element === "1") {
                             child.push(getItem(AppList[index], index));
                         }
                     }
@@ -202,7 +206,7 @@ const User: React.FC = () => {
                                 </text>
                             </Space>
                         </Space>
-                        <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer, borderRadius:10}}>
+                        <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer, borderRadius: 10 }}>
                             {PageList[page]}
                         </div>
                     </Content>
