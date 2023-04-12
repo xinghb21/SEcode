@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { Form, Input, Button, Divider, Space, Modal } from "antd";
+import { Form, Input, Button, Divider, Space, Modal, message } from 'antd';
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { request } from "../utils/network";
@@ -33,8 +33,8 @@ const LoginForm = (props: LoginFormProps) => {
         })
             .catch((err) => {
                 console.log("failed");
-                setPassword(false);
-                alert(err);
+                message.warning(err.message);
+                router.push("/");
                 setLoading(false);
             });
     };

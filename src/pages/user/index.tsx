@@ -5,7 +5,7 @@ import {
     PieChartOutlined,
     UserOutlined,
 } from "@ant-design/icons";
-import { Button, MenuProps, Skeleton, Space, Avatar } from "antd";
+import { Button, MenuProps, Skeleton, Space, Avatar, message } from 'antd';
 import { useRouter } from "next/router";
 import { Layout, Menu, theme } from "antd";
 import { request } from "../../utils/network";
@@ -141,7 +141,7 @@ const User: React.FC = () => {
                 ]));
             })
             .catch((err) => {
-                alert(err);
+                message.warning(err.message);
                 router.push("/");
             });
     };

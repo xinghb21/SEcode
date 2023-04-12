@@ -218,6 +218,18 @@ const Userlist =( () => {
                 alert(err);
             });
     });
+    const changepos=((changeuser:User_to_show)=>{
+        request(`api/user/es/changeidentity`,"POST",{name:changeuser.username,new:((changeuser.character===3)?4:3),department:changeuser.departmentname,entity:changeuser.entityname})
+        .then((res)=>{
+            let i=castnum+1;
+            setcastnum(i);
+            let messages:string="成功将"+changeuser.username+"改为"+((changeuser.character===4)?"资产管理员":"普通员工");
+            message.success(messages);
+        })
+        .catch((err)=>{
+            message.warning(err.message);
+        });
+    });
     return (
         <div >
             <QueryFilter labelWidth="auto" onFinish={async (values) => {
@@ -313,6 +325,8 @@ const Userlist =( () => {
                                     <Button onClick={()=>{unlock(row.username);}} style={(row.whetherlocked)?{display:"block"}:{display:"none"}}> 解锁用户</Button>
                                     <Button onClick={()=>{lock(row.username);}} style={(row.whetherlocked)?{display:"none"}:{display:"block"}}> 锁定用户</Button>
                                     <Button onClick={()=>{setresetname(row.username);setisreset(true);}}> 重置密码</Button>
+                                    <Button onClick={()=>{changepos(row)}} style={(row.character===3)?{display:"block"}:{display:"none"}}> 降职 </Button>
+                                    <Button onClick={()=>{changepos(row)}}  style={(row.character===4)?{display:"block"}:{display:"none"}}> 升职</Button>
                                 </div>
                             );
                         },
