@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Modal, Input, Button, message, Form } from "antd";
 import React from "react";
 import { ModalForm, ProForm, ProFormDateRangePicker, ProFormDigit, ProFormMoney, ProFormSelect, ProFormText } from "@ant-design/pro-components";
-import { PlusOutlined } from "@ant-design/icons"
-import { request } from '../../utils/network';
+import { PlusOutlined } from "@ant-design/icons";
+import { request } from "../../utils/network";
 
 interface Asset{
 
@@ -33,7 +33,7 @@ const CreateAsset = (props: DialogProps) =>{
     return (
         <div
             style={{
-            margin: 24,
+                margin: 24,
             }}
         >
             <ModalForm
@@ -57,7 +57,7 @@ const CreateAsset = (props: DialogProps) =>{
                         number: values.number,
                         description: values.description,
                         status: 0,
-                    }
+                    };
                     request("/api/asset/post", "POST",
                         {
                             name: asset.name,
@@ -73,10 +73,10 @@ const CreateAsset = (props: DialogProps) =>{
                         .catch((err) => {
                             alert(err);
                             message.warning(err);
-                        })
+                        });
                     return true;
                 }}
-                >
+            >
                 <ProForm.Group>
                     <ProFormText
                         width="md"

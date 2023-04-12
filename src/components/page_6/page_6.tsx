@@ -3,8 +3,8 @@ import Assetlist from "./assetlist";
 
 function App() {
     return (
-      <Assetlist/>
+        <Assetlist/>
     );
-  }
+}
   
 export default App;

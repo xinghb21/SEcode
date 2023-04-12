@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Modal, Input, Button, message, Form } from "antd";
 import React from "react";
 import { ModalForm, ProForm, ProFormDateRangePicker, ProFormDigit, ProFormMoney, ProFormSelect, ProFormText } from "@ant-design/pro-components";
-import { PlusOutlined } from "@ant-design/icons"
-import { request } from '../../utils/network';
+import { PlusOutlined } from "@ant-design/icons";
+import { request } from "../../utils/network";
 
 interface Label{
 
@@ -21,7 +21,7 @@ const CreateLabel = () =>{
     return (
         <div
             style={{
-            margin: 24,
+                margin: 24,
             }}
         >
             <ModalForm
@@ -42,7 +42,7 @@ const CreateLabel = () =>{
                         labelname: values.labelname,
                         type: values.type,
                         parent: values.parent,
-                    }
+                    };
                     request("/api/asset/assetclass", "POST",
                         {
                             key : label.labelname,
@@ -54,11 +54,11 @@ const CreateLabel = () =>{
                             message.success("创建成功");
                         })
                         .catch((err) => {
-                           message.warning(err);
-                        })
+                            message.warning(err);
+                        });
                     return true;
                 }}
-                >
+            >
                 <ProForm.Group>
                     <ProFormText
                         width="md"
@@ -84,7 +84,7 @@ const CreateLabel = () =>{
                         required
                         label="资产属性"
                     />
-                     <ProFormText
+                    <ProFormText
                         name="parent"
                         width="md"
                         label="上级类别名称"
