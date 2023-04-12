@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Spin } from "antd";
 import { request } from "../../utils/network";
-import CtCeDT from "./ctceDT";
+import CtCeDT from "../page_4/ctceDT";
 import { Modal, Tree, Tooltip, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import {
@@ -49,7 +49,7 @@ type Depuser = {
     identity: string;
 }
 //定义page_4的核心组件：一个树组件和相应的table
-const Dtree = () => {
+const ACtree = () => {
     // const [data, setData] = useState<TreeData[]>([]);
     const [json, setJson] = useState({});
     const [isSpinning, setSpnning] = useState(false);
@@ -184,12 +184,6 @@ const Dtree = () => {
                 })
                     .then(() => {
                         fetchJson();
-                        fetchDepart();
-                        if (isSpinning == true) {
-                            setTimeout(() => {
-                                setSpnning(false);
-                            }, 500);
-                        }
                     })
                     .catch((err) => {
                         alert(err.message);
@@ -221,12 +215,6 @@ const Dtree = () => {
         })
             .then(() => {
                 fetchJson();
-                fetchDepart();
-                if (isSpinning == true) {
-                    setTimeout(() => {
-                        setSpnning(false);
-                    }, 500);
-                }
             })
             .catch((err) => {
                 alert(err.message);
@@ -248,12 +236,6 @@ const Dtree = () => {
         })
             .then(() => {
                 fetchJson();
-                fetchDepart();
-                if (isSpinning == true) {
-                    setTimeout(() => {
-                        setSpnning(false);
-                    }, 500);
-                }
             })
             .catch((err) => {
                 alert(err.message);
@@ -266,35 +248,33 @@ const Dtree = () => {
         setDepart(checkedKeys.checked);
         // console.log(checkedKeys.checked);
     };
-     //将获得json利用递归转为相应的树组件data
-     const fetchDepart = () => {
-        request("/api/user/es/checkall", "GET")
-        .then((res) => {
-            let oriUser: Depuser[] = res.data.map((val) => ({
-                key: val.name,
-                username: val.name,
-                department: val.department,
-                identity: (val.identity == 3) ? "资产管理员" : "员工",
-            }));
-            let newUser: Depuser[] = [];
-            let len = res.data.length;
-            for (let index = 0; index < len; index++) {
-                //利用includes函数筛选出相应的部门的用户
-                if (Departs.includes(oriUser[index].department)) {
-                    newUser.push(oriUser[index]);
-                }
-            }
-            setUser(newUser);
-            // console.log("newUser"+Depusers);
-        })
-        .catch((err) => {
-            alert(err);
-        });
-    };
 
     //获取该企业实体下的所有用户用来在table里显示
     useEffect((() => {
-        fetchDepart();
+        request("/api/user/es/checkall", "GET")
+            .then((res) => {
+                let oriUser: Depuser[] = res.data.map((val) => ({
+                    key: val.name,
+                    username: val.name,
+                    department: val.department,
+                    identity: (val.identity == 3) ? "资产管理员" : "员工",
+                }));
+                let newUser: Depuser[] = [];
+                let len = res.data.length;
+                // console.log("oriUser" + oriUser);
+                // console.log("departs" + Departs);
+                for (let index = 0; index < len; index++) {
+                    //利用includes函数筛选出相应的部门的用户
+                    if (Departs.includes(oriUser[index].department)) {
+                        newUser.push(oriUser[index]);
+                    }
+                }
+                setUser(newUser);
+                // console.log("newUser"+Depusers);
+            })
+            .catch((err) => {
+                alert(err);
+            });
     }), [Departs]);
     return (
         <div style={{ display: "flex", flex: "flex-start", flexDirection: "row", height: "100%", width: "100%" }}>
@@ -315,4 +295,4 @@ const Dtree = () => {
         </div>
     );
 };
-export default Dtree;
+export default ACtree;
