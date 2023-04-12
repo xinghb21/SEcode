@@ -1,6 +1,6 @@
-import { ModalForm, ProForm, ProFormDigit, ProFormMoney, ProFormText, ProList } from "@ant-design/pro-components";
+import { ModalForm, ProForm, ProFormDigit, ProFormMoney, ProFormSelect, ProFormText, ProList } from "@ant-design/pro-components";
 import { Button, Table, message } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { request } from "../../utils/network";
 import type { ColumnsType } from 'antd/es/table';
@@ -16,8 +16,19 @@ interface Asset{
     number?: Number;
     price: Number;
     belonging?: string;
-    addtional?: string;
+    addtional?: Object;
     type?: boolean;
+
+}
+
+interface Props {
+    strList: string[];
+}
+
+interface Addition {
+
+    key: string;
+    value: string;
 
 }
 
@@ -35,24 +46,62 @@ const columns: ColumnsType<Asset> = [
 const AddAsset = () => {
 
     const [assets, setAsset] = useState<Asset[]>([]);
-   
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
+    let labels: string[] = [];
+    let addition: string[] = ["1", "2", "3"];
+    let additions: Addition[] = [];
+
+    useEffect(() => {
+        request("/api/asset/assetclass", "GET")
+            .then((res) => {
+               labels = res.data;
+            })
+            .catch((err) => {
+                alert(err);
+            })
+        request("/api/asset/attributes", "GET")
+            .then((res) => {
+                addition = res.info;
+            })
+            .catch((err) => {
+                alert(err);
+            })
+    }, []);
 
     const rowSelection = {
         selectedRowKeys,
         onChange: (keys: React.Key[]) => setSelectedRowKeys(keys),
+    };
+      
+    const StrListToProFormText: React.FC<Props> = ({ strList }) => {
+        return (
+            <>
+                {strList.map((str, index) => (
+                    <ProFormText key={index} name={str} label={str} />
+                ))}
+            </>
+        );
     };
 
     const hasSelected = selectedRowKeys.length > 0
 
     const onSubmit = (() => {
         //与后端交互，实现批量添加
-        request("/api/asset/post", "POST", assets)
+
+        const newAssets = assets.filter(item => !selectedRowKeys.includes(item.key));
+        const selectedAssert = selectedRowKeys.map(key => {
+            const item = assets.find(data => data.key === key);
+            return item;
+        });
+
+        request("/api/asset/post", "POST", selectedAssert)
             .then((res) => {
-                message.success("提交成功")
+                setAsset(newAssets);
+                message.success("提交成功");
             })
             .catch((err) => {
-                message.warning(err);
+               alert(err);
             })
     });
 
@@ -70,6 +119,10 @@ const AddAsset = () => {
                     </Button>
                 }
                 onFinish={async (values: any) => {
+                    additions.splice(0);
+                    for(let i = 0; i < addition.length; i++) {
+                        additions.push({key: addition[i], value: values[addition[i]]});
+                    }
                     const asset : Asset = {
 
                         key : values.assetname,
@@ -81,7 +134,7 @@ const AddAsset = () => {
                         price: values.price,
                         number: values.number,
                         belonging: values.belonging,
-                        addtional: "",
+                        addtional: additions,
                         
                     }
                     setAsset([...assets, asset]);
@@ -107,12 +160,12 @@ const AddAsset = () => {
                     />
                 </ProForm.Group>
                 <ProForm.Group>
-                    <ProFormText
+                    <ProFormSelect
+                        options={labels}
+                        width="xs"
                         name="category"
-                        width="md"
                         label="资产类别"
-                        placeholder="请输入类别"
-                        rules={[{ required: true, message: "请输入类别！" }]}
+                        rules={[{ required: true, message: "请选择类别！" }]}
                     />
                     <ProFormText
                         name="parent"
@@ -132,7 +185,6 @@ const AddAsset = () => {
                         label="资产数量(条目型默认为1 输入无效)"
                         name="number"
                         rules={[{ required: true, message: "请输入数量！" }]}
-                        initialValue={1}
                         min={0}
                     />
                 </ProForm.Group>
@@ -145,14 +197,15 @@ const AddAsset = () => {
                         min={0}
                         rules={[{ required: true, message: "请输入资产价值！" }]}
                     />
-                </ProForm.Group>
-                <ProForm.Group>
                     <ProFormText
                         width="md" 
                         name="belonging" 
                         label="挂账人" 
                         initialValue={""}
                     />
+                </ProForm.Group>
+                <ProForm.Group>
+                    <StrListToProFormText strList={addition}/>
                 </ProForm.Group>
             </ModalForm>
             <div style={{marginTop: 24}}>

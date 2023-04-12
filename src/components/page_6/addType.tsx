@@ -23,13 +23,19 @@ const AddType = () => {
 
     //从后端获取部门对应的所有自定义属性
     useEffect(() => {
-        // request("", "GET")
-        //     .then((res) => {
-        //         setType(res.data);
-        //     })
-        //     .catch((err) => {
-        //         alert(err);
-        //     })
+        request("/api/asset/attributes", "GET")
+            .then((res) => {
+                for(let i = 0; i < res.info.length; i++) {
+                    let tmp_type: Type = {
+                        key: res.info[i],
+                        info: res.info[i],
+                    }
+                    setType([...types, tmp_type]);
+                }
+            })
+            .catch((err) => {
+                alert(err);
+            })
     }, []);
 
     return (
@@ -51,12 +57,15 @@ const AddType = () => {
                         key: values.info,
                         info: values.info,
                     }
-                    setType([...types, label]);
-
                     //与后端实现添加属性
-                    // request("", "POST")
-
-                    message.success("添加成功")
+                    request("/api/asset/createattributes", "POST", values.info)
+                        .then((res) => {
+                            setType([...types, label]);
+                            message.success("创建成功");
+                        })
+                        .catch((err) => {
+                            alert(err)
+                        });
                     return true;
                 }}
                 >

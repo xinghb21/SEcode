@@ -4,7 +4,6 @@ import { ProFormDateRangePicker, ProFormDigitRange, ProList} from '@ant-design/p
 import { useState } from 'react';
 import {useEffect} from "react";
 import { request } from '../../utils/network';
-import moment from 'moment';
 import {
     ProForm,
     ProFormSelect,
@@ -23,7 +22,7 @@ interface Asset{
     category: string;
     description?: string;
     number?: Number;
-    addtion?: string;
+    addtion?: Object;
     status?: Number;
     type?: boolean;
 
@@ -41,7 +40,7 @@ const DelAsset = ( () => {
                 setAssets(res.data);
             })
             .catch((err) => {
-                message.warning(err);
+                alert(err);
             })
     }, []);
 
@@ -54,23 +53,27 @@ const DelAsset = ( () => {
 
     //给后端发请求删除对应的asset
     const delete_asset = (() => {
+
         const newAssets = assets.filter(item => !selectedRowKeys.includes(item.key));
         setAssets(newAssets);
+
         const selectedNames = selectedRowKeys.map(key => {
             const item = assets.find(data => data.key === key);
             return item ? item.name : "";
         });
+        
         request("/api/asset/delete", "DELETE", selectedNames)
             .then(() => {
                 message.success("删除成功");
             })
             .catch((err) => {
-                message.warning(err);
+                alert(err);
             });
     });
 
     return (
         <div> 
+            
             <div
                 style={{
                 margin: 20,
@@ -79,6 +82,7 @@ const DelAsset = ( () => {
                 <QueryFilter 
                     labelWidth="auto" 
                     onFinish={async (values) => {
+                        
                         request("/api/asset/get", "GET", 
                         {
                             parent: values.parent,
@@ -93,11 +97,11 @@ const DelAsset = ( () => {
                             priceto: values.price[1],
                         })
                             .then((res) => {
-                                
+                                setAssets(res.data);
+                                message.success("查询成功");
                             }).catch((err) => {
                                 message.warning(err);
                             })
-                        message.success("查询成功");
                     }}
                 >
                     <ProForm.Group>
@@ -176,7 +180,7 @@ const DelAsset = ( () => {
 
                 pagination = {{pageSize: 10}}
                 metas = {{
-                    title: {dataIndex:"assetname"},
+                    title: {dataIndex:"name"},
                     description: {
                         render: (_,row) => {
                             return (
@@ -189,13 +193,13 @@ const DelAsset = ( () => {
                     avatar: {},
                     extra: {},
                     actions: {
-                        render: (_,row) => {
-                            return (
-                                <Button type="link" onClick={() => {setIsDetailOpen(true)}}>
-                                    查看详情
-                                </Button>
-                            );
-                        },
+                        // render: (_,row) => {
+                        //     return (
+                        //         <Button type="link" onClick={() => {setIsDetailOpen(true)}}>
+                        //             查看详情
+                        //         </Button>
+                        //     );
+                        // },
                     },
                 }}
                 rowKey="key"
