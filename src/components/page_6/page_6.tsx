@@ -4,7 +4,6 @@ import { Menu } from "antd";
 import AddAsset from "./addAsset";
 import DelAsset from "./delAsset";
 import AddType from "./addType";
-import Page_2 from "../../components/page_2/page_2";
 
 
 const items: MenuProps["items"] = [

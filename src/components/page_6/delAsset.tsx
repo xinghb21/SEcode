@@ -1,15 +1,16 @@
 import { Button, message } from 'antd';
 import React from 'react';
-import {ProFormDatePicker, ProList} from '@ant-design/pro-components';
+import { ProFormDateRangePicker, ProFormDigitRange, ProList} from '@ant-design/pro-components';
 import { useState } from 'react';
 import {useEffect} from "react";
 import { request } from '../../utils/network';
-  import {
+import moment from 'moment';
+import {
     ProForm,
     ProFormSelect,
     ProFormText,
     QueryFilter,
-  } from '@ant-design/pro-components';
+} from '@ant-design/pro-components';
 
 interface Asset{
 
@@ -40,7 +41,7 @@ const DelAsset = ( () => {
                 setAssets(res.data);
             })
             .catch((err) => {
-                message.error(err);
+                message.warning(err);
             })
     }, []);
 
@@ -59,7 +60,13 @@ const DelAsset = ( () => {
             const item = assets.find(data => data.key === key);
             return item ? item.name : "";
         });
-        
+        request("/api/asset/delete", "DELETE", selectedNames)
+            .then(() => {
+                message.success("删除成功");
+            })
+            .catch((err) => {
+                message.warning(err);
+            });
     });
 
     return (
@@ -72,7 +79,25 @@ const DelAsset = ( () => {
                 <QueryFilter 
                     labelWidth="auto" 
                     onFinish={async (values) => {
-                        message.success('查询成功');
+                        request("/api/asset/get", "GET", 
+                        {
+                            parent: values.parent,
+                            category: values.category,
+                            name: values.name,
+                            belonging: values.belonging,
+                            from: values.date[0],
+                            to: values.date[1],
+                            user: values.user,
+                            status: values.status,
+                            pricefrom: values.price[0],
+                            priceto: values.price[1],
+                        })
+                            .then((res) => {
+                                
+                            }).catch((err) => {
+                                message.warning(err);
+                            })
+                        message.success("查询成功");
                     }}
                 >
                     <ProForm.Group>
@@ -80,25 +105,25 @@ const DelAsset = ( () => {
                             width="md"
                             name="name"
                             label="资产名称"
-                            tooltip="最长为 128 位"
+                            initialValue={""}
                             placeholder="请输入名称"
                         />
                         <ProFormSelect
                             options={[
                                 {
-                                    value: 'free',
+                                    value: 0,
                                     label: '闲置',
                                 },
                                 {
-                                    value: 'occupied',
+                                    value: 1,
                                     label: '使用中',
                                 },
                                 {
-                                    value: 'fixing',
+                                    value: 2,
                                     label: '维保',
                                 },
                                 {
-                                    value: 'disabled',
+                                    value: 3,
                                     label: '清退',
                                 },
                                 
@@ -107,35 +132,44 @@ const DelAsset = ( () => {
                             name="status"
                             label="资产状态"
                         />
-                        <ProFormDatePicker
+                        <ProFormDateRangePicker
                             width="md"
-                            name={['asset', 'createTime']}
-                            label="资产入库时间"
+                            name="date"
+                            label="资产创建时间"
+                        
                         />
                     </ProForm.Group>
                     <ProForm.Group>
-                        <ProFormText width="sm" name="id" label="所属部门" />
-                        <ProFormSelect
-                            width="xs"
-                            options={[
-                                {
-                                value: 'time',
-                                label: '履行完终止',
-                                },
-                            ]}
-                            name="unusedMode"
-                            label="合同约定失效效方式"
+                        <ProFormText 
+                            width="md" 
+                            name="parent" 
+                            label="上级资产名称" 
+                            initialValue={""}
+                        />
+                        <ProFormText 
+                            width="md" 
+                            name="category" 
+                            label="资产类别" 
+                        />
+
+                    </ProForm.Group>
+                    <ProForm.Group>
+                        <ProFormText 
+                            width="md" 
+                            name="belonging" 
+                            label="资产挂账人" 
+                        />
+                        <ProFormText 
+                            width="md" 
+                            name="user" 
+                            label="当前使用者" 
                         />
                     </ProForm.Group>
-                    <ProFormText width="sm" name="id" label="主合同编号" />
-                    <ProFormText
-                        name="project"
-                        width="md"
-                        disabled
-                        label="项目名称"
-                        initialValue="xxxx项目"
+                    <ProFormDigitRange
+                        width="xs"
+                        name="price"
+                        label="资产价值区间"
                     />
-                    <ProFormText width="xs" name="mangerName" disabled label="商务经理" initialValue="启途" />
                 </QueryFilter>
             </div>
             <ProList<Asset>

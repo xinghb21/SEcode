@@ -52,7 +52,7 @@ const AddAsset = () => {
                 message.success("提交成功")
             })
             .catch((err) => {
-                message.error(err);
+                message.warning(err);
             })
     });
 
@@ -119,6 +119,7 @@ const AddAsset = () => {
                         width="md"
                         label="上级资产名称"
                         placeholder="请输入名称"
+                        initialValue={""}
                     />
                     <ProFormDigit
                         label="资产使用年限"
@@ -150,6 +151,7 @@ const AddAsset = () => {
                         width="md" 
                         name="belonging" 
                         label="挂账人" 
+                        initialValue={""}
                     />
                 </ProForm.Group>
             </ModalForm>
