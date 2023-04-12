@@ -4,7 +4,6 @@ import {ProFormDatePicker, ProList} from '@ant-design/pro-components';
 import { useState } from 'react';
 import {useEffect} from "react";
 import { request } from '../../utils/network';
-import SetLabel from "./setlabel";
 import { ModalForm, ProForm, ProFormDateRangePicker, ProFormDigit, ProFormMoney, ProFormSelect, ProFormText } from "@ant-design/pro-components";
 import { PlusOutlined } from "@ant-design/icons"
 import type { CheckboxValueType } from 'antd/es/checkbox/Group';
