@@ -5,7 +5,7 @@ import {
     PieChartOutlined,
     UserOutlined,
 } from "@ant-design/icons";
-import { Button, MenuProps, Skeleton, Space, Avatar, message } from 'antd';
+import { Button, MenuProps, Skeleton, Space, Avatar, message } from "antd";
 import { useRouter } from "next/router";
 import { Layout, Menu, theme } from "antd";
 import { request } from "../../utils/network";

@@ -219,21 +219,21 @@ const Userlist =( () => {
             });
     });
     const changepos=((changeuser:User_to_show)=>{
-        request(`api/user/es/changeidentity`,"POST",{name:changeuser.username,new:((changeuser.character===3)?4:3),department:changeuser.departmentname,entity:changeuser.entityname})
-        .then((res)=>{
-            let i=castnum+1;
-            setcastnum(i);
-            let messages:string="成功将"+changeuser.username+"改为"+((changeuser.character===4)?"资产管理员":"普通员工");
-            message.success(messages);
-        })
-        .catch((err)=>{
-            message.warning(err.message);
-        });
+        request("api/user/es/changeidentity","POST",{name:changeuser.username,new:((changeuser.character===3)?4:3),department:changeuser.departmentname,entity:changeuser.entityname})
+            .then((res)=>{
+                let i=castnum+1;
+                setcastnum(i);
+                let messages:string="成功将"+changeuser.username+"改为"+((changeuser.character===4)?"资产管理员":"普通员工");
+                message.success(messages);
+            })
+            .catch((err)=>{
+                message.warning(err.message);
+            });
     });
     return (
         <div >
             <QueryFilter labelWidth="auto" onFinish={async (values) => {
-                    request(`api/user/es/searchuser`,"POST",{username:values.username,department:values.department,identity:values.identity})
+                request("api/user/es/searchuser","POST",{username:values.username,department:values.department,identity:values.identity})
                     .then((res)=>{
                         let initiallist:User_to_show[]=[];
                         let size1:number=(res.data).length;
@@ -243,38 +243,38 @@ const Userlist =( () => {
                             initiallist.push({key:res.data[i].name,username:res.data[i].name,departmentname:res.data[i].department,entityname:res.data[i].entity,character:res.data[i].identity as number,whetherlocked:res.data[i].locked,lockedapp:res.data[i].lockedapp});
                         }
                         setuserlist(initiallist);
-                        message.success('查询成功');
+                        message.success("查询成功");
                     })
                     .catch((err)=>{
                         alert(err);
                     });
-                    }}
-                >
-                    <ProForm.Group>
-                        <ProFormText
-                            width="md"
-                            name="username"
-                            label="员工姓名"
-                            tooltip="最长为 128 位"
-                            placeholder="请输入名称"
-                        />
-                        <ProFormSelect
-                            options={departmentlsit}
-                            width="xs"
-                            name="department"
-                            label="员工部门"
-                        />
-                        <ProFormSelect
-                            options={[
-                                {value:3,label:"资产管理员"},
-                                {value:4,label:"企业员工"}
-                            ]}
-                            width="xs"
-                            name="identity"
-                            label="员工类型"
-                        />
-                    </ProForm.Group>
-                </QueryFilter>
+            }}
+            >
+                <ProForm.Group>
+                    <ProFormText
+                        width="md"
+                        name="username"
+                        label="员工姓名"
+                        tooltip="最长为 128 位"
+                        placeholder="请输入名称"
+                    />
+                    <ProFormSelect
+                        options={departmentlsit}
+                        width="xs"
+                        name="department"
+                        label="员工部门"
+                    />
+                    <ProFormSelect
+                        options={[
+                            {value:3,label:"资产管理员"},
+                            {value:4,label:"企业员工"}
+                        ]}
+                        width="xs"
+                        name="identity"
+                        label="员工类型"
+                    />
+                </ProForm.Group>
+            </QueryFilter>
             <CreateUser isOpen={isDialogOpen1} onClose={()=>setIsDialogOpen1(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser>
             <CreateUser2 isOpen={isDialogOpen2} onClose={()=>setIsDialogOpen2(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser2>
             <Resetpassword isOpen={isrest} onClose={()=>{setisreset(false);}} username={resetname} onCreateUser={reset} ></Resetpassword>
@@ -325,8 +325,8 @@ const Userlist =( () => {
                                     <Button onClick={()=>{unlock(row.username);}} style={(row.whetherlocked)?{display:"block"}:{display:"none"}}> 解锁用户</Button>
                                     <Button onClick={()=>{lock(row.username);}} style={(row.whetherlocked)?{display:"none"}:{display:"block"}}> 锁定用户</Button>
                                     <Button onClick={()=>{setresetname(row.username);setisreset(true);}}> 重置密码</Button>
-                                    <Button onClick={()=>{changepos(row)}} style={(row.character===3)?{display:"block"}:{display:"none"}}> 降职 </Button>
-                                    <Button onClick={()=>{changepos(row)}}  style={(row.character===4)?{display:"block"}:{display:"none"}}> 升职</Button>
+                                    <Button onClick={()=>{changepos(row);}} style={(row.character===3)?{display:"block"}:{display:"none"}}> 降职 </Button>
+                                    <Button onClick={()=>{changepos(row);}}  style={(row.character===4)?{display:"block"}:{display:"none"}}> 升职</Button>
                                 </div>
                             );
                         },
