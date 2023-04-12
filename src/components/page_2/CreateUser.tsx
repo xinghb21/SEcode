@@ -38,7 +38,6 @@ const CreateUser=(props: DialogProps) =>{
             department:newuserdepaertment
         }     
         props.onCreateUser(newuser);
-        setdepartment("");
         setpassword("");
         setusername("");
     };
@@ -63,6 +62,7 @@ const CreateUser=(props: DialogProps) =>{
                 <label>部门:</label>
                 <Select
                     labelInValue
+                    defaultValue={{value:"",label:""}}
                     style={{ width: 120 }}
                     onChange={handleChange}
                     options={props.departmentlist}

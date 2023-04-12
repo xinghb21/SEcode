@@ -8,18 +8,18 @@ import { BUILD_ID_FILE } from "next/dist/shared/lib/constants";
 import CreateUser from "./CreateUser";
 import {useEffect} from "react";
 import { request } from "../../utils/network";
-import Manageapp from "./Manageapp";
 import Resetpassword from "./resetpassword"
 import { Md5 } from "ts-md5";
 import Column from "antd/es/table/Column";
 import CreateUser2 from "./CreateUser2"
 import CreateDE from "./CreateDE"
+import Manageapp from "./Manageapp";
 interface User_to_show{
     key:React.Key;
     username:string;
     departmentname:string;
     entityname:string;
-    character:Number;
+    character:number;
     whetherlocked:boolean;
     lockedapp:string;
 }
@@ -52,6 +52,11 @@ interface User_Password{
     username:string;
     newpassword:string;
   }
+interface User_app{
+    username:string;
+    oldapplist:string;
+    identity:number;
+}
 
 const userlists:User_to_show[]=[{key:1,username:"11",departmentname:"111",entityname:"1111",character:3,whetherlocked:true,lockedapp:"111111111111"},{key:2,username:"12",departmentname:"112",entityname:"1111",character:4,whetherlocked:false,lockedapp:"1111111111"},{key:3,username:"112",departmentname:"111111",entityname:"1111111",character:4,whetherlocked:false,lockedapp:"11111221111111"}];
 
@@ -61,8 +66,6 @@ const Userlist =( () => {
     const [isDialogOpen1, setIsDialogOpen1] = useState(false);
     const [isDialogOpen2,setIsDialogOpen2]=useState(false);
     const [userlist,setuserlist]=useState<User_to_show[]>([]);
-    const [isassignopen,setIsassignOpen]=useState(false);
-    const [assignentity,setAssignentity]=useState<string>("");
     const [isrest,setisreset]=useState<boolean>(false);
     const [departmentlsit,setdepartmentlist]=useState<department_to_show[]>([]);
     const [entity,setentityname]=useState<string>("");
@@ -70,54 +73,39 @@ const Userlist =( () => {
     const [isDEOpen,setisDEOpen]=useState<boolean>(false);
     const [apdDEname,setapdEDname]=useState<string>("");
     const [olddepartment,setdepartment]=useState<string>("");
-
-    const traverse=(( node:string ,depart:department_to_show[])=>{
-        let jsonobj=JSON.parse(node);
-        let keys=Object.keys(jsonobj);
-        let i=0;
-        let size=keys.length;
-        for(i;i<size;i++){
-            if(typeof (jsonobj[keys[i]]) === "string"){
-                depart.push({value:jsonobj[keys[i]],label:jsonobj[keys[i]]});
-            }else{
-                traverse(jsonobj[keys[i]] as string , depart);
-            }
-        }
-    });
+    const [appapduser,setappapduser]=useState<User_app>({username:"",identity:-1,oldapplist:""});
+    const [isappOpen,setappopen]=useState<boolean>(false);
     useEffect((()=>{
         request(`api/user/es/checkall`,"GET")
         .then((res)=>{
             let initiallist:User_to_show[]=[];
-            let size:number=res.length;
+            let size1:number=(res.data).length;
             let i=0;
-            let departments:department_to_show[]=[];
-            for (i;i<size;i++){
-                initiallist.push({key:res.data[i].name,username:res.data[i].name,departmentname:res.data[i].department,entityname:res.data[i].entity,character:res.data[i].indentity,whetherlocked:res.data[i].locked,lockedapp:res.data[i].lockedapp});
-                if(departments.find((obj)=>{return obj.value===res.data[i].department})!=null){
-
-                }else{
-                    departments.push({value:res.data[i].department,label:res.data[i].department});
-                }
+            console.log(size1);
+            for (i;i<size1;i++){
+                initiallist.push({key:res.data[i].name,username:res.data[i].name,departmentname:res.data[i].department,entityname:res.data[i].entity,character:res.data[i].identity as number,whetherlocked:res.data[i].locked,lockedapp:res.data[i].lockedapp});
             }
-            setdepartmentlist(departments);
             setuserlist(initiallist);
+            console.log(initiallist);
             let entitynames =localStorage.getItem("entityname")?localStorage.getItem("entityname"):"";
             setentityname( entitynames?entitynames:"" );
+            if(castnum===1){
+                request('api/entity/getalldep',"GET").then((res)=>{
+                    let departs:department_to_show[]=[];
+                    let size=res.data.length;
+                    for(let i=0;i<size;i++){
+                        departs.push({value:res.data[i] ,label:res.data[i]});
+                    }
+                    setdepartmentlist(departs);
+                }).catch((err)=>{
+                    alert(err);
+                })
+            }
         })
         .catch((err)=>{
             alert(err);
         });
-        
-        if(castnum===1){
-            request('api/user/es/departs',"GET").then((res)=>{
-                let departs:department_to_show[]=[];
-                let origin:string= res.info.entity;
-                traverse(origin ,departs);
-                setdepartmentlist(departs);
-            }).catch((err)=>{
-                alert(err);
-            })
-        }
+
     }),[castnum]);
 
     
@@ -127,6 +115,8 @@ const Userlist =( () => {
         request('api/user/createuser',"POST",{name:user.username,password:user.password,entity:user.entityname,department:user.department,identity:user.identity})
         .then((res)=>{
             setuserlist([...userlist,{key:user.username,username:user.username,departmentname:user.department,entityname:user.entityname,character:user.identity,whetherlocked:false,lockedapp:(user.identity===3?"000001110":"000000001")}]);
+            setIsDialogOpen1(false);
+            setIsDialogOpen2(false);
         })
         .catch((err)=>{
             alert(err);
@@ -138,6 +128,7 @@ const Userlist =( () => {
             request(`api/user/es/reset`,"POST",{name:newuser.username,newpassword:Md5.hashStr(newuser.newpassword)})
             .then((res)=>{
                 message.success("成功重置该员工密码");
+                setisreset(false);
             })
             .catch((err)=>{
                 alert(err);
@@ -151,6 +142,7 @@ const Userlist =( () => {
     const assign=((user:User_DEpartment)=>{
         setapdEDname(user.username);
         setdepartment(user.Department);
+        setisDEOpen(true);
     });
     const handleapdDE =((newde:User_DEpartment)=>{
         request(`api/user/es/alter`,"POST",{name:newde.username,department:newde.Department})
@@ -167,6 +159,7 @@ const Userlist =( () => {
                 }   
             }
             setuserlist(newuserlist);
+            setisDEOpen(false);
         })
         .catch((err)=>{
             alert(err);
@@ -192,25 +185,11 @@ const Userlist =( () => {
                      }
                  }
              }
-             request("/api/user/es/batchdelete","DELETE",{name:deletedusername})
+             request("/api/user/es/batchdelete","DELETE",{names:deletedusername})
                  .then((res)=>{
-                    // console.log(deletedusername.length);
-                    // console.log(deleteentities);
-                    //  let remained_user:User_to_show[]=[];
-                    //  let j=0;
-                    //  let length_before=userlist.length;
-                    //  for (j;j<length_before;j++){
-                    //      let fuck=(deleteuser).find((obj)=>{return obj.username===userlist[j].username;});
-                    //      console.log(fuck);
-                    //      if( fuck != null){   
-                    //      }else{
-                    //          remained_user.push(userlist[j]);
-                    //      }
-                    //  }
-                    //  //console.log(remained_Entities);
-                    //  setuserlist(remained_user);
                     let i=castnum+1;
                     setcastnum(i);
+                    setSelectedRowKeys([]);
                  })
                  .catch((err)=>{
                      alert(err);
@@ -220,6 +199,8 @@ const Userlist =( () => {
     const lock=((name:string)=>{
         request(`api/user/es/lock`,"POST",{name:name})
         .then((res)=>{
+            let i=castnum+1;
+            setcastnum(i);
             message.success("成功锁定该用户")
         })
         .catch((err)=>{
@@ -229,7 +210,9 @@ const Userlist =( () => {
     const unlock=((name:string)=>{
         request(`api/user/es/unlock`,"POST",{name:name})
         .then((res)=>{
-            message.success("成功解锁该用户")
+            let i=castnum+1;
+            setcastnum(i);
+            message.success("成功解锁该用户");
         })
         .catch((err)=>{
             alert(err);
@@ -241,8 +224,8 @@ const Userlist =( () => {
             <CreateUser2 isOpen={isDialogOpen2} onClose={()=>setIsDialogOpen2(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser2>
             <Resetpassword isOpen={isrest} onClose={()=>{setisreset(false);}} username={resetname} onCreateUser={reset} ></Resetpassword>
             <CreateDE isOpen={isDEOpen} onClose={()=>{setisDEOpen(false);}} username={apdDEname} departmentlist={departmentlsit} onCreateUser={handleapdDE}  olddepartment={olddepartment}></CreateDE>
+            <Manageapp isOpen={isappOpen} onClose={()=>{setappopen(false)}} username={appapduser?.username} applist={appapduser?.oldapplist} identity={appapduser.identity} Onok={()=>{setappopen(false);let i=castnum+1;setcastnum(i);}}></Manageapp>
             <ProList<User_to_show>
-                search={{}}
                 toolBarRender={() => {
                     return [
                         <Button key="1" type="primary" onClick={()=>{setIsDialogOpen1(true);}}>
@@ -286,7 +269,7 @@ const Userlist =( () => {
                             <div style={{display:"flex",flexDirection:"column"}}>
                                 <Button onClick={()=>{unlock(row.username);}} style={(row.whetherlocked)?{display:"block"}:{display:"none"}}> 解锁用户</Button>
                                 <Button onClick={()=>{lock(row.username);}} style={(row.whetherlocked)?{display:"none"}:{display:"block"}}> 锁定用户</Button>
-                                <Button onClick={()=>{setresetname(row.username)}}> 重置密码</Button>
+                                <Button onClick={()=>{setresetname(row.username);setisreset(true);}}> 重置密码</Button>
                             </div>
                             );
                         },
@@ -296,7 +279,7 @@ const Userlist =( () => {
                             return (
                                 <div style={{display:"flex" ,flexDirection:"column"}}>
                                     <Button onClick={()=>{assign({key:row.username,username: row.username , Department:row.departmentname});}} >调整部门</Button>
-                                    <Button onClick={()=>{}}> 管理应用 </Button>
+                                    <Button onClick={()=>{ setappapduser({username:row.username,identity:row.character,oldapplist:row.lockedapp});setappopen(true);}}> 管理应用 </Button>
                                 </div>
                             );
                         },
