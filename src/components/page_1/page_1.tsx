@@ -74,6 +74,7 @@ const EStable=()=> {
                         }
                     }
                     setUsers(remained_user);
+                    setSelectedRowKeys([]);
                     setLoading(false);
                 })
                 .catch((err)=>{

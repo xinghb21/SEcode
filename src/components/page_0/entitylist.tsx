@@ -127,6 +127,7 @@ const Entitylist = (() => {
                     }
                     console.log(remained_Entities);
                     setEntitylist(remained_Entities);
+                    setSelectedRowKeys([]);
                 })
                 .catch((err) => {
                     alert(err);
