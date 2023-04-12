@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Spin } from "antd";
+import { Spin, Tag } from "antd";
 import { request } from "../../utils/network";
-import CtCeDT from "../page_4/ctceDT";
 import { Modal, Tree, Tooltip, Table } from "antd";
-import type { ColumnsType } from "antd/es/table";
+// import type { ColumnsType } from "antd/es/table";
 import {
     FormOutlined,
     PlusSquareOutlined,
     MinusSquareOutlined,
     ExclamationCircleFilled,
+    CaretDownOutlined,
 } from "@ant-design/icons";
+import CreateAC from "./createAC";
+import ChangeAC from "./changeAC";
 
 //树组件的item
 type TreeData = {
@@ -19,42 +21,40 @@ type TreeData = {
     children?: TreeData[];
 };
 
-type Props = {
-    data: Record<string, any>;
-};
 const { confirm } = Modal;
 
 //定义table的column
-const columns: ColumnsType<Depuser> = [
-    {
-        title: "用户名",
-        dataIndex: "username",
-    },
-    {
-        title: "部门",
-        dataIndex: "department",
-    },
-    {
-        title: "职位",
-        dataIndex: "identity",
-    }
+// const columns: ColumnsType<Depuser> = [
+//     {
+//         title: "用户名",
+//         dataIndex: "username",
+//     },
+//     {
+//         title: "部门",
+//         dataIndex: "department",
+//     },
+//     {
+//         title: "职位",
+//         dataIndex: "identity",
+//     }
 
-];
+// ];
 
 //定义table里的每个item
-type Depuser = {
-    key: React.Key;
-    username: string;
-    department: string;
-    identity: string;
-}
-//定义page_4的核心组件：一个树组件和相应的table
+// type Depuser = {
+//     key: React.Key;
+//     username: string;
+//     department: string;
+//     identity: string;
+// }
+
+//定义page_5的核心组件：一个树组件
 const ACtree = () => {
     // const [data, setData] = useState<TreeData[]>([]);
     const [json, setJson] = useState({});
     const [isSpinning, setSpnning] = useState(false);
-    const [Depusers, setUser] = useState<Depuser[]>([]);
-    const [Departs, setDepart] = useState<String[]>([]);
+    // const [Depusers, setUser] = useState<Depuser[]>([]);
+    // const [Departs, setDepart] = useState<String[]>([]);
     const [isDialogOpenCT, setIsDialogOpenCT] = useState(false);
     const [isDialogOpenCE, setIsDialogOpenCE] = useState(false);
     const [parent, setParent] = useState("");
@@ -70,27 +70,29 @@ const ACtree = () => {
 
     const parseTreeData = (data: Record<string, any>): TreeData[] => {
         return Object.entries(data).map(([key, keyvalue]) => {
-            if (key == localStorage.getItem("entity")) {
+            if (key == localStorage.getItem("department")) {
                 //为叶子结点
                 if (keyvalue === "$") {
                     return {
                         disableCheckbox: true,
                         title: (<div>
-                            <span>{key}</span>
+                            <span style={{ marginLeft: 6 }}>{key}</span>
                             <span>
-                                <Tooltip placement="bottom" title={<span>添加部门</span>}>
+                                <Tooltip placement="bottom" title={<span>添加资产类型</span>}>
                                     <PlusSquareOutlined style={{ marginLeft: 10 }} onClick={() => onAdd(key)} />
                                 </Tooltip>
                             </span>
-                        </div>), value: key, key
+                        </div>),
+                        value: key,
+                        key,
                     };
                 }
                 return {
                     disableCheckbox: true,
                     title: (<div>
-                        <span>{key}</span>
+                        <span style={{ marginLeft: 6 }}>{key}</span>
                         <span>
-                            <Tooltip placement="bottom" title={<span>添加部门</span>}>
+                            <Tooltip placement="bottom" title={<span>添加资产类型</span>}>
                                 <PlusSquareOutlined style={{ marginLeft: 10 }} onClick={() => onAdd(key)} />
                             </Tooltip>
                         </span>
@@ -102,40 +104,46 @@ const ACtree = () => {
             }
             //为叶子结点
             if (keyvalue === "$") {
+                let tmpkey = key.split(",");
                 return {
                     title: (<div>
-                        <span>{key}</span>
+                        <span style={{ marginRight: 8 }}>{tmpkey[0]}</span>
+                        <Tag color={tmpkey[1] == "0" ? "blue" : "green"}>{tmpkey[1] == "0" ? "条目型" : "数量型"}</Tag>
                         <span>
-                            <Tooltip placement="bottomLeft" title={<span>修改部门名称</span>}>
+                            <Tooltip placement="bottomLeft" title={<span>修改资产类型名称</span>}>
                                 <FormOutlined style={{ marginLeft: 10 }} onClick={() => onEdit(key)} />
                             </Tooltip>
-                            <Tooltip placement="bottom" title={<span>添加部门</span>}>
+                            <Tooltip placement="bottom" title={<span>添加资产类型</span>}>
                                 <PlusSquareOutlined style={{ marginLeft: 10 }} onClick={() => onAdd(key)} />
                             </Tooltip>
-                            <Tooltip placement="bottomRight" title={<span>删除部门</span>}>
+                            <Tooltip placement="bottomRight" title={<span>删除资产类型</span>}>
                                 < MinusSquareOutlined style={{ marginLeft: 10 }} onClick={() => onDelete(key)} />
                             </Tooltip>
                         </span>
-                    </div>), value: key, key
+                    </div>),
+                    value: tmpkey[0],
+                    key: tmpkey[0],
                 };
             }
+            let tmpkey = key.split(",");
             return {
                 title: (<div>
-                    <span>{key}</span>
+                    <span style={{ marginRight: 8 }}>{tmpkey[0]} </span>
+                    <Tag color={tmpkey[1] == "0" ? "blue" : "green"}>{tmpkey[1] == "0" ? "条目型" : "数量型"}</Tag>
                     <span>
-                        <Tooltip placement="bottomLeft" title={<span>修改部门名称</span>}>
+                        <Tooltip placement="bottomLeft" title={<span>修改资产类型名称</span>}>
                             <FormOutlined style={{ marginLeft: 10 }} onClick={() => onEdit(key)} />
                         </Tooltip>
-                        <Tooltip placement="bottom" title={<span>添加部门</span>}>
+                        <Tooltip placement="bottom" title={<span>添加资产类型</span>}>
                             <PlusSquareOutlined style={{ marginLeft: 10 }} onClick={() => onAdd(key)} />
                         </Tooltip>
-                        <Tooltip placement="bottomRight" title={<span>删除部门</span>}>
+                        <Tooltip placement="bottomRight" title={<span>删除资产类型</span>}>
                             < MinusSquareOutlined style={{ marginLeft: 10 }} onClick={() => onDelete(key)} />
                         </Tooltip>
                     </span>
                 </div>),
-                value: key,
-                key,
+                value: tmpkey[0],
+                key: tmpkey[0],
                 children: parseTreeData(keyvalue),
             };
         });
@@ -143,10 +151,9 @@ const ACtree = () => {
 
     //将获得json利用递归转为相应的树组件data
     const fetchJson = () => {
-        request("/api/user/es/departs", "GET")
+        request("/api/asset/assetclasstree", "GET")
             .then((res) => {
                 setJson(res.info);
-                // setData(parseTreeData(json));
                 //延时执行取消加载组件的动画功能
                 setTimeout(() => {
                     setSpnning(false);
@@ -161,26 +168,26 @@ const ACtree = () => {
     //编辑按钮
     const onEdit = (key) => {
         setIsDialogOpenCE(true);
-        setOldName(key);
+        setOldName(key.split(",")[0]);
     };
     //添加按钮
     const onAdd = (key) => {
         setIsDialogOpenCT(true);
-        setParent(key);
+        setParent(key.split(",")[0]);
     };
     //删除按钮
     const onDelete = (key) => {
         confirm({
-            title: "你确定要删除该部门?",
+            title: "你确定要删除该资产类型?",
             icon: <ExclamationCircleFilled />,
-            content: "删除后该部门下属部门、资产、人员全部清空",
+            content: "删除后该资产类型下具体资产全部清空",
             okText: "Yes",
             okType: "danger",
             cancelText: "No",
             onOk() {
                 setSpnning(true);
-                request("/api/user/es/deletedepart", "DELETE", {
-                    name: key
+                request("/api/asset/assetclass", "DELETE", {
+                    name: key.split(",")[0]
                 })
                     .then(() => {
                         fetchJson();
@@ -195,44 +202,71 @@ const ACtree = () => {
                     });
             },
             onCancel() {
-                console.log("CancelDelteDepartment");
+                console.log("CancelDelteAssetClass");
             },
         });
 
     };
-    //创建新的部门
-    const handleCreateDt = (department: string) => {
+    //创建新的资产类型
+    const handleCreateAC = (assetClassName: string, assetClass: string) => {
         //不允许空输入
-        if (department.match("\\s+") || department.length == 0) {
-            alert("请输入部门名称");
+        if (assetClassName.match("\\s+") || assetClassName.length == 0) {
+            alert("请输入资产类型名称");
+            return;
+        }
+        //不允许不选
+        if (assetClass.length == 0) {
+            alert("请选择资产类别为条目型或数量型");
             return;
         }
         setSpnning(true);
-        request("/api/user/es/createdepart", "POST", {
-            entity: localStorage.getItem("entity"),
-            depname: department,
-            parent: (parent == localStorage.getItem("entity")) ? "" : parent
-        })
-            .then(() => {
-                fetchJson();
-            })
-            .catch((err) => {
-                alert(err.message);
-                setSpnning(false);
-            });
+        console.log(assetClassName + assetClass);
+        //如果父亲是部门，则不用向后端发送
+        if (parent == localStorage.getItem("department")) {
+            request("/api/asset/assetclass", "POST", {
+                name: assetClassName,
+                type: parseInt(assetClass),
+            }
+            )
+                .then(() => {
+                    fetchJson();
+                })
+                .catch((err) => {
+                    alert(err.message);
+                    setSpnning(false);
+                });
+        }
+        //父亲不是部门的时候要向后端发送上层类别
+        else {
+            request("/api/asset/assetclass", "POST", {
+                parent: parent,
+                name: assetClassName,
+                type: parseInt(assetClass),
+            }
+            )
+                .then(() => {
+                    fetchJson();
+                })
+                .catch((err) => {
+                    alert(err.message);
+                    setSpnning(false);
+                });
+        }
+
+        setSpnning(false);
         setIsDialogOpenCT(false);
     };
     //更改部门的名称
-    const handleChangeDt = (department: string) => {
+    const handleChangeAC = (assetClassName: string) => {
         //不允许空输入
-        if (department.match("\\s+") || department.length == 0) {
-            alert("请输入部门名称");
+        if (assetClassName.match("\\s+") || assetClassName.length == 0) {
+            alert("请输入资产类型名称");
             return;
         }
         setSpnning(true);
-        request("/api/user/es/renamedepart", "POST", {
+        request("/api/asset/assetclass", "PUT", {
             oldname: OldName,
-            newname: department
+            newname: assetClassName
         })
             .then(() => {
                 fetchJson();
@@ -244,54 +278,57 @@ const ACtree = () => {
         setIsDialogOpenCE(false);
     };
     //选中节点后传给table显示相应部门下的用户
-    const handleCheck = (checkedKeys) => {
-        setDepart(checkedKeys.checked);
-        // console.log(checkedKeys.checked);
-    };
+    // const handleCheck = (checkedKeys) => {
+    //     setDepart(checkedKeys.checked);
+    // console.log(checkedKeys.checked);
+    // };
 
     //获取该企业实体下的所有用户用来在table里显示
-    useEffect((() => {
-        request("/api/user/es/checkall", "GET")
-            .then((res) => {
-                let oriUser: Depuser[] = res.data.map((val) => ({
-                    key: val.name,
-                    username: val.name,
-                    department: val.department,
-                    identity: (val.identity == 3) ? "资产管理员" : "员工",
-                }));
-                let newUser: Depuser[] = [];
-                let len = res.data.length;
-                // console.log("oriUser" + oriUser);
-                // console.log("departs" + Departs);
-                for (let index = 0; index < len; index++) {
-                    //利用includes函数筛选出相应的部门的用户
-                    if (Departs.includes(oriUser[index].department)) {
-                        newUser.push(oriUser[index]);
-                    }
-                }
-                setUser(newUser);
-                // console.log("newUser"+Depusers);
-            })
-            .catch((err) => {
-                alert(err);
-            });
-    }), [Departs]);
+    // useEffect((() => {
+    //     request("/api/user/es/checkall", "GET")
+    //         .then((res) => {
+    //             let oriUser: Depuser[] = res.data.map((val) => ({
+    //                 key: val.name,
+    //                 username: val.name,
+    //                 department: val.department,
+    //                 identity: (val.identity == 3) ? "资产管理员" : "员工",
+    //             }));
+    //             let newUser: Depuser[] = [];
+    //             let len = res.data.length;
+    //             // console.log("oriUser" + oriUser);
+    //             // console.log("departs" + Departs);
+    //             for (let index = 0; index < len; index++) {
+    //                 //利用includes函数筛选出相应的部门的用户
+    //                 if (Departs.includes(oriUser[index].department)) {
+    //                     newUser.push(oriUser[index]);
+    //                 }
+    //             }
+    //             setUser(newUser);
+    //             // console.log("newUser"+Depusers);
+    //         })
+    //         .catch((err) => {
+    //             alert(err);
+    //         });
+    // }), [Departs]);
     return (
-        <div style={{ display: "flex", flex: "flex-start", flexDirection: "row", height: "100%", width: "100%" }}>
-            <div style={{ backgroundColor: "#F5F5F5", marginRight: 20, padding: 10, borderRadius: 10, width: "30%", height: "100%" }}>
+        <div>
+            <div style={{ backgroundColor: "#ADD8E6", marginRight: 20, padding: 10, borderRadius: 10, minWidth: "30%", maxWidth: "60%", height: "100%" }}>
                 <Spin spinning={isSpinning}>
                     <Tree
-                        checkStrictly={true}
-                        style={{ backgroundColor: "#F5F5F5" }}
-                        checkable
+                        showLine
+                        switcherIcon={<CaretDownOutlined />}
+                        // checkStrictly={true}
+                        style={{ backgroundColor: "#fdfdfd", padding: 10, borderRadius: 20 }}
+                        // checkable
                         treeData={parseTreeData(json)}
-                        onCheck={handleCheck}
+                    // onCheck={handleCheck}
                     />
                 </Spin>
+                {/* <Table columns={columns} dataSource={Depusers} style={{ height: "100%", width: "70%" }} /> */}
+                <CreateAC title={"创建下属资产类型"} subtitle={"资产类别名称："} isOpen={isDialogOpenCT} onClose={() => setIsDialogOpenCT(false)} onCreateDt={handleCreateAC} />
+                <ChangeAC title={"修改资产类型名称"} subtitle={"新名称："} isOpen={isDialogOpenCE} onClose={() => setIsDialogOpenCE(false)} onCreateDt={handleChangeAC} />
             </div>
-            <Table columns={columns} dataSource={Depusers} style={{ height: "100%", width: "70%" }} />
-            <CtCeDT title={"创建下属部门"} subtitle={"部门名称："} isOpen={isDialogOpenCT} onClose={() => setIsDialogOpenCT(false)} onCreateDt={handleCreateDt} />
-            <CtCeDT title={"修改部门名称"} subtitle={"新名称："} isOpen={isDialogOpenCE} onClose={() => setIsDialogOpenCE(false)} onCreateDt={handleChangeDt} />
+            <div style={{ width: "40%" }}></div>
         </div>
     );
 };

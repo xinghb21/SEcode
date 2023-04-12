@@ -10,6 +10,7 @@ import {
     PlusSquareOutlined,
     MinusSquareOutlined,
     ExclamationCircleFilled,
+    CaretDownOutlined,
 } from "@ant-design/icons";
 
 //树组件的item
@@ -19,9 +20,6 @@ type TreeData = {
     children?: TreeData[];
 };
 
-type Props = {
-    data: Record<string, any>;
-};
 const { confirm } = Modal;
 
 //定义table的column
@@ -279,13 +277,13 @@ const Dtree = () => {
                 let newUser: Depuser[] = [];
                 let len = res.data.length;
                 for (let index = 0; index < len; index++) {
-                //利用includes函数筛选出相应的部门的用户
+                    //利用includes函数筛选出相应的部门的用户
                     if (Departs.includes(oriUser[index].department)) {
                         newUser.push(oriUser[index]);
                     }
                 }
                 setUser(newUser);
-            // console.log("newUser"+Depusers);
+                // console.log("newUser"+Depusers);
             })
             .catch((err) => {
                 alert(err);
@@ -298,11 +296,13 @@ const Dtree = () => {
     }), [Departs]);
     return (
         <div style={{ display: "flex", flex: "flex-start", flexDirection: "row", height: "100%", width: "100%" }}>
-            <div style={{ backgroundColor: "#F5F5F5", marginRight: 20, padding: 10, borderRadius: 10, width: "30%", height: "100%" }}>
+            <div style={{ backgroundColor: "#ADD8E6", marginRight: 20, padding: 10, borderRadius: 10, width: "30%", height: "100%" }}>
                 <Spin spinning={isSpinning}>
                     <Tree
+                        showLine
+                        switcherIcon={<CaretDownOutlined />}
                         checkStrictly={true}
-                        style={{ backgroundColor: "#F5F5F5" }}
+                        style={{ backgroundColor: "#fdfdfd", padding: 10, borderRadius: 20 }}
                         checkable
                         treeData={parseTreeData(json)}
                         onCheck={handleCheck}
