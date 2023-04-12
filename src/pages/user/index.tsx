@@ -202,7 +202,7 @@ const User: React.FC = () => {
                                 </text>
                             </Space>
                         </Space>
-                        <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer }}>
+                        <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer, borderRadius:10}}>
                             {PageList[page]}
                         </div>
                     </Content>
