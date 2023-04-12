@@ -5,6 +5,7 @@ stages:
   - test
   - deploy
   - newdeploy
+  - newdeploy
 
 build:
   stage: build
@@ -31,6 +32,18 @@ style-test:
     - yarn lint
     - ret=$?
     - exit $ret
+
+unit-test:
+  extends: .test
+  allow_failure: true
+  script:
+    - yarn test
+    - ret=$?
+  after_script:
+    - SUFFIX=$RANDOM
+    - curl "http://api.secoder.net/static/sonar-scanner.tar.gz" -s -o "/tmp/sonar-$SUFFIX.tar.gz"
+    - tar -xf "/tmp/sonar-$SUFFIX.tar.gz" -C /opt
+    - /opt/sonar-scanner/bin/sonar-scanner
 
 unit-test:
   extends: .test
