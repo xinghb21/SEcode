@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Modal, Input, List, Skeleton, Avatar, message } from "antd";
 import React from "react";
 import {useEffect} from "react";
-import { request } from '../../utils/network';
+import { request } from "../../utils/network";
 
 interface DialogProps{
     identity:number;
@@ -21,23 +21,23 @@ const Manageapp=(props: DialogProps) =>{
         let userappe:string[]=[];
         if(props.identity===3){
 
-            if(props.applist.at(5)==='1'){
+            if(props.applist.at(5)==="1"){
                 userappr.push("资产查看");
             }else{
                 userappe.push("资产查看");
             }
-            if(props.applist.at(6)==='1'){
+            if(props.applist.at(6)==="1"){
                 userappr.push("资产修改");
             }else{
                 userappe.push("资产修改");
             }   
-            if(props.applist.at(7)==='1'){
+            if(props.applist.at(7)==="1"){
                 userappr.push("资产标签");
             }else{
                 userappe.push("资产标签");
             }
             setremained(userappr);
-            setexclude(userappe)
+            setexclude(userappe);
         }else{
             if(props.applist.at(8)==="1"){
                 userappr.push("资产使用");
@@ -61,15 +61,15 @@ const Manageapp=(props: DialogProps) =>{
             for (i=0;i<newapp.length;i++){
                 newapplist=newapplist+newapp[i];
             }
-            request(`api/user/es/apps`,"POST",{name:props.username,newapp:newapplist})
-            .then((res)=>{
-                message.success("修改成功");
-                props.Onok();
-            })
-            .catch((err)=>{
-                alert(err);
-                props.Onok();
-            });
+            request("api/user/es/apps","POST",{name:props.username,newapp:newapplist})
+                .then((res)=>{
+                    message.success("修改成功");
+                    props.Onok();
+                })
+                .catch((err)=>{
+                    alert(err);
+                    props.Onok();
+                });
         }else{
             let dic={"资产使用":8};
             let i=0;
@@ -81,26 +81,26 @@ const Manageapp=(props: DialogProps) =>{
             for (i=0;i<newapp.length;i++){
                 newapplist=newapplist+newapp[i];
             }
-            request(`api/user/es/apps`,"POST",{name:props.username,newapp:newapplist})
-            .then((res)=>{
-                message.success("修改成功");
-                props.Onok();
-            })
-            .catch((err)=>{
-                alert(err);
-                props.Onok();
-            });
+            request("api/user/es/apps","POST",{name:props.username,newapp:newapplist})
+                .then((res)=>{
+                    message.success("修改成功");
+                    props.Onok();
+                })
+                .catch((err)=>{
+                    alert(err);
+                    props.Onok();
+                });
         }
 
     };
     const addapp=(name:string)=>{
         setremained([...remained,name]);
-        setexclude(exclude.filter((obj)=>{return obj !== name}));
-    }
+        setexclude(exclude.filter((obj)=>{return obj !== name;}));
+    };
     const deleteappp=(name:string)=>{
         setexclude([...exclude,name]);
-        setremained(remained.filter((obj)=>{return obj!== name}));
-    }
+        setremained(remained.filter((obj)=>{return obj!== name;}));
+    };
     return (
         <Modal  title="管理员工应用" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} >
             <div>
@@ -110,9 +110,9 @@ const Manageapp=(props: DialogProps) =>{
                     dataSource={remained}
                     renderItem={(item) => (
                         <List.Item
-                        actions={[<a key="delete" onClick={()=>{deleteappp(item)}}>删除</a>]}
+                            actions={[<a key="delete" onClick={()=>{deleteappp(item);}}>删除</a>]}
                         >
-                        <div>{item}</div>
+                            <div>{item}</div>
                         </List.Item>)}/>
             </div>
             <div>
@@ -122,9 +122,9 @@ const Manageapp=(props: DialogProps) =>{
                     dataSource={exclude}
                     renderItem={(item) => (
                         <List.Item
-                        actions={[<a key="add" onClick={()=>{addapp(item)}}>添加</a>]}
+                            actions={[<a key="add" onClick={()=>{addapp(item);}}>添加</a>]}
                         >
-                        <div>{item}</div>
+                            <div>{item}</div>
                         </List.Item>)}/>                
             </div>
         </Modal>

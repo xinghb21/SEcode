@@ -1,15 +1,15 @@
-import { Button, message } from 'antd';
-import React from 'react';
-import {ProFormDatePicker, ProList} from '@ant-design/pro-components';
-import { useState } from 'react';
+import { Button, message } from "antd";
+import React from "react";
+import {ProFormDatePicker, ProList} from "@ant-design/pro-components";
+import { useState } from "react";
 import {useEffect} from "react";
-import { request } from '../../utils/network';
-  import {
+import { request } from "../../utils/network";
+import {
     ProForm,
     ProFormSelect,
     ProFormText,
     QueryFilter,
-  } from '@ant-design/pro-components';
+} from "@ant-design/pro-components";
 
 interface Asset{
 
@@ -41,7 +41,7 @@ const DelAsset = ( () => {
             })
             .catch((err) => {
                 message.error(err);
-            })
+            });
     }, []);
 
     const rowSelection = {
@@ -66,13 +66,13 @@ const DelAsset = ( () => {
         <div> 
             <div
                 style={{
-                margin: 20,
+                    margin: 20,
                 }}
             >
                 <QueryFilter 
                     labelWidth="auto" 
                     onFinish={async (values) => {
-                        message.success('查询成功');
+                        message.success("查询成功");
                     }}
                 >
                     <ProForm.Group>
@@ -86,20 +86,20 @@ const DelAsset = ( () => {
                         <ProFormSelect
                             options={[
                                 {
-                                    value: 'free',
-                                    label: '闲置',
+                                    value: "free",
+                                    label: "闲置",
                                 },
                                 {
-                                    value: 'occupied',
-                                    label: '使用中',
+                                    value: "occupied",
+                                    label: "使用中",
                                 },
                                 {
-                                    value: 'fixing',
-                                    label: '维保',
+                                    value: "fixing",
+                                    label: "维保",
                                 },
                                 {
-                                    value: 'disabled',
-                                    label: '清退',
+                                    value: "disabled",
+                                    label: "清退",
                                 },
                                 
                             ]}
@@ -109,7 +109,7 @@ const DelAsset = ( () => {
                         />
                         <ProFormDatePicker
                             width="md"
-                            name={['asset', 'createTime']}
+                            name={["asset", "createTime"]}
                             label="资产入库时间"
                         />
                     </ProForm.Group>
@@ -119,8 +119,8 @@ const DelAsset = ( () => {
                             width="xs"
                             options={[
                                 {
-                                value: 'time',
-                                label: '履行完终止',
+                                    value: "time",
+                                    label: "履行完终止",
                                 },
                             ]}
                             name="unusedMode"
@@ -146,10 +146,10 @@ const DelAsset = ( () => {
                     description: {
                         render: (_,row) => {
                             return (
-                              <div>
-                                {row.description == "" ? "暂无描述" : row.description}
-                              </div>
-                          );
+                                <div>
+                                    {row.description == "" ? "暂无描述" : row.description}
+                                </div>
+                            );
                         }
                     },
                     avatar: {},
@@ -157,7 +157,7 @@ const DelAsset = ( () => {
                     actions: {
                         render: (_,row) => {
                             return (
-                                <Button type="link" onClick={() => {setIsDetailOpen(true)}}>
+                                <Button type="link" onClick={() => {setIsDetailOpen(true);}}>
                                     查看详情
                                 </Button>
                             );
@@ -179,7 +179,7 @@ const DelAsset = ( () => {
             />
         </div>
     );
-    }
+}
 );
 
 export default DelAsset;

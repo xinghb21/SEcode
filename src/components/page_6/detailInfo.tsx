@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { request } from '../../utils/network';
+import { request } from "../../utils/network";
 
 interface Asset{
 
@@ -30,8 +30,8 @@ const DetailInfo = (props: DetailProps) => {
         request("/api/asset/getdetail", "GET", props.name)
             .then((res) => {
 
-            })
-    }, [])
+            });
+    }, []);
 
     
-}
+};

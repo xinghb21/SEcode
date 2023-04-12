@@ -8,11 +8,11 @@ import { BUILD_ID_FILE } from "next/dist/shared/lib/constants";
 import CreateUser from "./CreateUser";
 import {useEffect} from "react";
 import { request } from "../../utils/network";
-import Resetpassword from "./resetpassword"
+import Resetpassword from "./resetpassword";
 import { Md5 } from "ts-md5";
 import Column from "antd/es/table/Column";
-import CreateUser2 from "./CreateUser2"
-import CreateDE from "./CreateDE"
+import CreateUser2 from "./CreateUser2";
+import CreateDE from "./CreateDE";
 import Manageapp from "./Manageapp";
 interface User_to_show{
     key:React.Key;
@@ -76,35 +76,35 @@ const Userlist =( () => {
     const [appapduser,setappapduser]=useState<User_app>({username:"",identity:-1,oldapplist:""});
     const [isappOpen,setappopen]=useState<boolean>(false);
     useEffect((()=>{
-        request(`api/user/es/checkall`,"GET")
-        .then((res)=>{
-            let initiallist:User_to_show[]=[];
-            let size1:number=(res.data).length;
-            let i=0;
-            console.log(size1);
-            for (i;i<size1;i++){
-                initiallist.push({key:res.data[i].name,username:res.data[i].name,departmentname:res.data[i].department,entityname:res.data[i].entity,character:res.data[i].identity as number,whetherlocked:res.data[i].locked,lockedapp:res.data[i].lockedapp});
-            }
-            setuserlist(initiallist);
-            console.log(initiallist);
-            let entitynames =localStorage.getItem("entityname")?localStorage.getItem("entityname"):"";
-            setentityname( entitynames?entitynames:"" );
-            if(castnum===1){
-                request('api/entity/getalldep',"GET").then((res)=>{
-                    let departs:department_to_show[]=[];
-                    let size=res.data.length;
-                    for(let i=0;i<size;i++){
-                        departs.push({value:res.data[i] ,label:res.data[i]});
-                    }
-                    setdepartmentlist(departs);
-                }).catch((err)=>{
-                    alert(err);
-                })
-            }
-        })
-        .catch((err)=>{
-            alert(err);
-        });
+        request("api/user/es/checkall","GET")
+            .then((res)=>{
+                let initiallist:User_to_show[]=[];
+                let size1:number=(res.data).length;
+                let i=0;
+                console.log(size1);
+                for (i;i<size1;i++){
+                    initiallist.push({key:res.data[i].name,username:res.data[i].name,departmentname:res.data[i].department,entityname:res.data[i].entity,character:res.data[i].identity as number,whetherlocked:res.data[i].locked,lockedapp:res.data[i].lockedapp});
+                }
+                setuserlist(initiallist);
+                console.log(initiallist);
+                let entitynames =localStorage.getItem("entityname")?localStorage.getItem("entityname"):"";
+                setentityname( entitynames?entitynames:"" );
+                if(castnum===1){
+                    request("api/entity/getalldep","GET").then((res)=>{
+                        let departs:department_to_show[]=[];
+                        let size=res.data.length;
+                        for(let i=0;i<size;i++){
+                            departs.push({value:res.data[i] ,label:res.data[i]});
+                        }
+                        setdepartmentlist(departs);
+                    }).catch((err)=>{
+                        alert(err);
+                    });
+                }
+            })
+            .catch((err)=>{
+                alert(err);
+            });
 
     }),[castnum]);
 
@@ -112,27 +112,27 @@ const Userlist =( () => {
 
     const handleCreateUser = (user: UserRegister) => {
         
-        request('api/user/createuser',"POST",{name:user.username,password:user.password,entity:user.entityname,department:user.department,identity:user.identity})
-        .then((res)=>{
-            setuserlist([...userlist,{key:user.username,username:user.username,departmentname:user.department,entityname:user.entityname,character:user.identity,whetherlocked:false,lockedapp:(user.identity===3?"000001110":"000000001")}]);
-            setIsDialogOpen1(false);
-            setIsDialogOpen2(false);
-        })
-        .catch((err)=>{
-            alert(err);
-        })
+        request("api/user/createuser","POST",{name:user.username,password:user.password,entity:user.entityname,department:user.department,identity:user.identity})
+            .then((res)=>{
+                setuserlist([...userlist,{key:user.username,username:user.username,departmentname:user.department,entityname:user.entityname,character:user.identity,whetherlocked:false,lockedapp:(user.identity===3?"000001110":"000000001")}]);
+                setIsDialogOpen1(false);
+                setIsDialogOpen2(false);
+            })
+            .catch((err)=>{
+                alert(err);
+            });
     };
 
 
     const reset=((newuser:User_Password)=>{
-            request(`api/user/es/reset`,"POST",{name:newuser.username,newpassword:Md5.hashStr(newuser.newpassword)})
+        request("api/user/es/reset","POST",{name:newuser.username,newpassword:Md5.hashStr(newuser.newpassword)})
             .then((res)=>{
                 message.success("成功重置该员工密码");
                 setisreset(false);
             })
             .catch((err)=>{
                 alert(err);
-            })
+            });
     });
     const rowSelection = {
         selectedRowKeys,
@@ -145,78 +145,78 @@ const Userlist =( () => {
         setisDEOpen(true);
     });
     const handleapdDE =((newde:User_DEpartment)=>{
-        request(`api/user/es/alter`,"POST",{name:newde.username,department:newde.Department})
-        .then((res)=>{
-            let i=0;
-            let size=userlist.length;
-            let newuserlist:User_to_show[]=[];
-            for(i;i<size;i++){
-                if(userlist[i].username===newde.username){
-                    newuserlist.push( userlist[i]);
-                    newuserlist[i].departmentname=newde.Department;
-                }else{
-                    newuserlist.push(userlist[i]);
-                }   
-            }
-            setuserlist(newuserlist);
-            setisDEOpen(false);
-        })
-        .catch((err)=>{
-            alert(err);
-        })
+        request("api/user/es/alter","POST",{name:newde.username,department:newde.Department})
+            .then((res)=>{
+                let i=0;
+                let size=userlist.length;
+                let newuserlist:User_to_show[]=[];
+                for(i;i<size;i++){
+                    if(userlist[i].username===newde.username){
+                        newuserlist.push( userlist[i]);
+                        newuserlist[i].departmentname=newde.Department;
+                    }else{
+                        newuserlist.push(userlist[i]);
+                    }   
+                }
+                setuserlist(newuserlist);
+                setisDEOpen(false);
+            })
+            .catch((err)=>{
+                alert(err);
+            });
 
     });
     const delete_users=(()=>{
-         if (window.confirm("确认删除所选人员？")){
-             //在这里添加后端通信，删除业务实体，并更改前端
-             let i=0;
-             const size= selectedRowKeys.length;
-             let deleteuser:User_to_show[]=[];
-             let deletedusername:string[]=[];
-             //删除列表
-             for (i ;i<size;i++){
-                 let tobedeleteuser=(userlist).find((obj)=>{return obj.key===selectedRowKeys.at(i);});
-                 if(tobedeleteuser != null ){
-                     if(tobedeleteuser != null ){
-                         //console.log("suscess");
-                         deleteuser.push(tobedeleteuser);
-                         deletedusername.push(tobedeleteuser.username);
-                         //console.log(tobedeleteentity);
-                     }
-                 }
-             }
-             request("/api/user/es/batchdelete","DELETE",{names:deletedusername})
-                 .then((res)=>{
+        if (window.confirm("确认删除所选人员？")){
+            //在这里添加后端通信，删除业务实体，并更改前端
+            let i=0;
+            const size= selectedRowKeys.length;
+            let deleteuser:User_to_show[]=[];
+            let deletedusername:string[]=[];
+            //删除列表
+            for (i ;i<size;i++){
+                let tobedeleteuser=(userlist).find((obj)=>{return obj.key===selectedRowKeys.at(i);});
+                if(tobedeleteuser != null ){
+                    if(tobedeleteuser != null ){
+                        //console.log("suscess");
+                        deleteuser.push(tobedeleteuser);
+                        deletedusername.push(tobedeleteuser.username);
+                        //console.log(tobedeleteentity);
+                    }
+                }
+            }
+            request("/api/user/es/batchdelete","DELETE",{names:deletedusername})
+                .then((res)=>{
                     let i=castnum+1;
                     setcastnum(i);
                     setSelectedRowKeys([]);
-                 })
-                 .catch((err)=>{
-                     alert(err);
-                 });
-         }
+                })
+                .catch((err)=>{
+                    alert(err);
+                });
+        }
     });
     const lock=((name:string)=>{
-        request(`api/user/es/lock`,"POST",{name:name})
-        .then((res)=>{
-            let i=castnum+1;
-            setcastnum(i);
-            message.success("成功锁定该用户")
-        })
-        .catch((err)=>{
-            alert(err);
-        });
+        request("api/user/es/lock","POST",{name:name})
+            .then((res)=>{
+                let i=castnum+1;
+                setcastnum(i);
+                message.success("成功锁定该用户");
+            })
+            .catch((err)=>{
+                alert(err);
+            });
     });
     const unlock=((name:string)=>{
-        request(`api/user/es/unlock`,"POST",{name:name})
-        .then((res)=>{
-            let i=castnum+1;
-            setcastnum(i);
-            message.success("成功解锁该用户");
-        })
-        .catch((err)=>{
-            alert(err);
-        });
+        request("api/user/es/unlock","POST",{name:name})
+            .then((res)=>{
+                let i=castnum+1;
+                setcastnum(i);
+                message.success("成功解锁该用户");
+            })
+            .catch((err)=>{
+                alert(err);
+            });
     });
     return (
         <div >
@@ -224,14 +224,14 @@ const Userlist =( () => {
             <CreateUser2 isOpen={isDialogOpen2} onClose={()=>setIsDialogOpen2(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser2>
             <Resetpassword isOpen={isrest} onClose={()=>{setisreset(false);}} username={resetname} onCreateUser={reset} ></Resetpassword>
             <CreateDE isOpen={isDEOpen} onClose={()=>{setisDEOpen(false);}} username={apdDEname} departmentlist={departmentlsit} onCreateUser={handleapdDE}  olddepartment={olddepartment}></CreateDE>
-            <Manageapp isOpen={isappOpen} onClose={()=>{setappopen(false)}} username={appapduser?.username} applist={appapduser?.oldapplist} identity={appapduser.identity} Onok={()=>{setappopen(false);let i=castnum+1;setcastnum(i);}}></Manageapp>
+            <Manageapp isOpen={isappOpen} onClose={()=>{setappopen(false);}} username={appapduser?.username} applist={appapduser?.oldapplist} identity={appapduser.identity} Onok={()=>{setappopen(false);let i=castnum+1;setcastnum(i);}}></Manageapp>
             <ProList<User_to_show>
                 toolBarRender={() => {
                     return [
                         <Button key="1" type="primary" onClick={()=>{setIsDialogOpen1(true);}}>
                             创建资产管理员
                         </Button>,
-                        <Button key="3" type="primary" onClick={()=>{setIsDialogOpen2(true)}}>
+                        <Button key="3" type="primary" onClick={()=>{setIsDialogOpen2(true);}}>
                             创建企业员工
                         </Button>,
                         <Button key="2" type="default" danger={true} onClick={delete_users} disabled={!hasSelected}> 删除选中人员</Button>,                        
@@ -253,27 +253,27 @@ const Userlist =( () => {
                     },
                     subTitle: {
                         render: (_, row) => {
-                          return (
-                            <Space size={0}>
-                              {(row.character===3)?<Tag color="blue" key={row.username}>{"资产管理员"}</Tag>
-                            :<Tag color="blue" key={row.username}>{"普通员工"}</Tag>  
-                            }
-                            </Space>
-                          );
-                        },
-                        search: false,
-                      },
-                      extra: {
-                        render: (_,row) =>{
-                            return(
-                            <div style={{display:"flex",flexDirection:"column"}}>
-                                <Button onClick={()=>{unlock(row.username);}} style={(row.whetherlocked)?{display:"block"}:{display:"none"}}> 解锁用户</Button>
-                                <Button onClick={()=>{lock(row.username);}} style={(row.whetherlocked)?{display:"none"}:{display:"block"}}> 锁定用户</Button>
-                                <Button onClick={()=>{setresetname(row.username);setisreset(true);}}> 重置密码</Button>
-                            </div>
+                            return (
+                                <Space size={0}>
+                                    {(row.character===3)?<Tag color="blue" key={row.username}>{"资产管理员"}</Tag>
+                                        :<Tag color="blue" key={row.username}>{"普通员工"}</Tag>  
+                                    }
+                                </Space>
                             );
                         },
-                      },
+                        search: false,
+                    },
+                    extra: {
+                        render: (_,row) =>{
+                            return(
+                                <div style={{display:"flex",flexDirection:"column"}}>
+                                    <Button onClick={()=>{unlock(row.username);}} style={(row.whetherlocked)?{display:"block"}:{display:"none"}}> 解锁用户</Button>
+                                    <Button onClick={()=>{lock(row.username);}} style={(row.whetherlocked)?{display:"none"}:{display:"block"}}> 锁定用户</Button>
+                                    <Button onClick={()=>{setresetname(row.username);setisreset(true);}}> 重置密码</Button>
+                                </div>
+                            );
+                        },
+                    },
                     actions: {
                         render: (_,row) => {
                             return (

@@ -35,45 +35,45 @@ const AddType = () => {
     return (
         <>
             <div style={{margin: 24}}>
-            <ModalForm
-                autoFocusFirstInput
-                modalProps={{
-                    destroyOnClose: true,
-                }}
-                trigger={
-                    <Button type="primary">
-                        <PlusOutlined />
+                <ModalForm
+                    autoFocusFirstInput
+                    modalProps={{
+                        destroyOnClose: true,
+                    }}
+                    trigger={
+                        <Button type="primary">
+                            <PlusOutlined />
                         添加资产属性
-                    </Button>
-                }
-                onFinish={async (values: any) => {
-                    const label: Type = {
-                        key: values.info,
-                        info: values.info,
+                        </Button>
                     }
-                    setType([...types, label]);
+                    onFinish={async (values: any) => {
+                        const label: Type = {
+                            key: values.info,
+                            info: values.info,
+                        };
+                        setType([...types, label]);
 
-                    //与后端实现添加属性
-                    // request("", "POST")
+                        //与后端实现添加属性
+                        // request("", "POST")
 
-                    message.success("添加成功")
-                    return true;
-                }}
+                        message.success("添加成功");
+                        return true;
+                    }}
                 >
-                <ProForm.Group>
-                    <ProFormText
-                        width="md"
-                        name="info"
-                        label="属性名称"
-                        placeholder="请输入名称"
-                        required
-                    />
-                </ProForm.Group>
-            </ModalForm>
-            <div style={{marginTop: 24}}>
-                <Table columns={columns} dataSource={types} />
+                    <ProForm.Group>
+                        <ProFormText
+                            width="md"
+                            name="info"
+                            label="属性名称"
+                            placeholder="请输入名称"
+                            required
+                        />
+                    </ProForm.Group>
+                </ModalForm>
+                <div style={{marginTop: 24}}>
+                    <Table columns={columns} dataSource={types} />
+                </div>
             </div>
-        </div>
             
         </>
         

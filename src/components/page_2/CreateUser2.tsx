@@ -36,7 +36,7 @@ const CreateUser2=(props: DialogProps) =>{
             identity:4,
             entityname:props.entityname,
             department:newuserdepaertment
-        }     
+        };     
         props.onCreateUser(newuser);
         setpassword("");
         setusername("");
@@ -44,7 +44,7 @@ const CreateUser2=(props: DialogProps) =>{
     const handleChange = (value: { value: string; label: React.ReactNode }) => {
         setdepartment(value.value);
 
-      };
+    };
 
     return (
         <Modal  title="创建企业员工" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} >

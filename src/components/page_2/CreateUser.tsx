@@ -36,14 +36,14 @@ const CreateUser=(props: DialogProps) =>{
             identity:3,
             entityname:props.entityname,
             department:newuserdepaertment
-        }     
+        };     
         props.onCreateUser(newuser);
         setpassword("");
         setusername("");
     };
     const handleChange = (value: { value: string; label: React.ReactNode }) => {
         setdepartment(value.value);
-      };
+    };
 
     return (
         <Modal  title="创建资产管理员" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} >

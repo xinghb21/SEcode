@@ -3,7 +3,7 @@ import { Button, Table, message } from "antd";
 import React, { useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { request } from "../../utils/network";
-import type { ColumnsType } from 'antd/es/table';
+import type { ColumnsType } from "antd/es/table";
 
 interface Asset{
 
@@ -43,17 +43,17 @@ const AddAsset = () => {
         onChange: (keys: React.Key[]) => setSelectedRowKeys(keys),
     };
 
-    const hasSelected = selectedRowKeys.length > 0
+    const hasSelected = selectedRowKeys.length > 0;
 
     const onSubmit = (() => {
         //与后端交互，实现批量添加
         request("/api/asset/post", "POST", assets)
             .then((res) => {
-                message.success("提交成功")
+                message.success("提交成功");
             })
             .catch((err) => {
                 message.error(err);
-            })
+            });
     });
 
     return (
@@ -83,12 +83,12 @@ const AddAsset = () => {
                         belonging: values.belonging,
                         addtional: "",
                         
-                    }
+                    };
                     setAsset([...assets, asset]);
 
                     return true;
                 }}
-                >
+            >
                 <ProForm.Group>
                     <ProFormText
                         width="md"
