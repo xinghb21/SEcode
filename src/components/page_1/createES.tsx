@@ -38,16 +38,13 @@ const CreateES=(props: DialogProps) =>{
             <div>
                 <label>用户名:</label>
                 <Input type="text" value={newusername} onChange={(e) => setUsername(e.target.value)} />
-                <Input type="text" value={newusername} onChange={(e) => setUsername(e.target.value)} />
             </div>
             <div>
                 <label>密码:</label>
                 <Input type="password" value={newpassword} onChange={(e) => setPassword(e.target.value)} />
-                <Input type="password" value={newpassword} onChange={(e) => setPassword(e.target.value)} />
             </div>
             <div>
                 <label>所属业务实体:</label>
-                <Input type="entity" value={newentity} onChange={(e) => setEntity(e.target.value)} />
                 <Input type="entity" value={newentity} onChange={(e) => setEntity(e.target.value)} />
             </div>
         </Modal>
