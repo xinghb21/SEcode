@@ -54,6 +54,13 @@ const DelAsset = ( () => {
     const delete_asset = (() => {
 
         const newAssets = assets.filter(item => !selectedRowKeys.includes(item.key));
+        for(let key in selectedRowKeys){
+            alert(key);
+        }
+
+        for(let key in newAssets){
+            alert(key);
+        }
 
         const selectedNames = selectedRowKeys.map(key => {
             const item = assets.find(data => data.key === key);
@@ -63,8 +70,8 @@ const DelAsset = ( () => {
         request("/api/asset/delete", "DELETE", selectedNames)
             .then(() => {
                 setAssets(newAssets);
-                setSelectedRowKeys([]);
                 message.success("删除成功");
+                setSelectedRowKeys([]);
             })
             .catch((err) => {
                 alert(err);
@@ -85,25 +92,25 @@ const DelAsset = ( () => {
                     labelWidth="auto" 
                     onFinish={async (values) => {
                         
-                        request("/api/asset/get", "GET", 
-                            {
-                                parent: values.parent,
-                                category: values.category,
-                                name: values.name,
-                                belonging: values.belonging,
-                                from: values.date[0],
-                                to: values.date[1],
-                                user: values.user,
-                                status: values.status,
-                                pricefrom: values.price[0],
-                                priceto: values.price[1],
-                            })
-                            .then((res) => {
-                                setAssets(res.data);
-                                message.success("查询成功");
-                            }).catch((err) => {
-                                message.warning(err);
-                            });
+                        // request("/api/asset/get", "GET", 
+                        //     {
+                        //         parent: values.parent,
+                        //         category: values.category,
+                        //         name: values.name,
+                        //         belonging: values.belonging,
+                        //         from: values.date[0],
+                        //         to: values.date[1],
+                        //         user: values.user,
+                        //         status: values.status,
+                        //         pricefrom: values.price[0],
+                        //         priceto: values.price[1],
+                        //     })
+                        //     .then((res) => {
+                        //         setAssets(res.data);
+                        //         message.success("查询成功");
+                        //     }).catch((err) => {
+                        //         message.warning(err);
+                        //     });
                     }}
                 >
                     <ProForm.Group>
