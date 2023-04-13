@@ -22,7 +22,6 @@ interface EntityRegister {
     key: React.Key;
     entityname: string;
 }
-// let data:Entity[] =[{key:1 ,entityname:"good",admingname:"good"},{key:2,entityname:"fuck",admingname:"se"},{key:5,entityname:"test",admingname:""}];
 
 const Entitylist = (() => {
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -128,6 +127,7 @@ const Entitylist = (() => {
                     }
                     console.log(remained_Entities);
                     setEntitylist(remained_Entities);
+                    setSelectedRowKeys([]);
                 })
                 .catch((err) => {
                     alert(err);
@@ -144,7 +144,7 @@ const Entitylist = (() => {
                         <Button key="1" type="primary" onClick={() => { setIsDialogOpen(true); }}>
                             创建业务实体
                         </Button>,
-                        <Button key="1" type="default" danger={true} onClick={delete_entity} disabled={!hasSelected}> 删除选中业务实体</Button>,
+                        <Button key="2" type="default" danger={true} onClick={delete_entity} disabled={!hasSelected}> 删除选中业务实体</Button>,
                     ];
                 }}
                 pagination={{

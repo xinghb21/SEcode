@@ -3,7 +3,7 @@ import { Button, Table, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { request } from "../../utils/network";
-import type { ColumnsType } from 'antd/es/table';
+import type { ColumnsType } from "antd/es/table";
 
 interface Asset{
 
@@ -60,14 +60,14 @@ const AddAsset = () => {
             })
             .catch((err) => {
                 alert(err);
-            })
+            });
         request("/api/asset/attributes", "GET")
             .then((res) => {
                 setAddition(res.info);
             })
             .catch((err) => {
                 alert(err);
-            })
+            });
     }, []);
 
     const rowSelection = {
@@ -85,7 +85,7 @@ const AddAsset = () => {
         );
     };
 
-    const hasSelected = selectedRowKeys.length > 0
+    const hasSelected = selectedRowKeys.length > 0;
 
     const onSubmit = (() => {
         //与后端交互，实现批量添加
@@ -102,8 +102,8 @@ const AddAsset = () => {
                 message.success("提交成功");
             })
             .catch((err) => {
-               alert(err);
-            })
+                alert(err);
+            });
     });
 
     return (
@@ -137,12 +137,12 @@ const AddAsset = () => {
                         belonging: values.belonging,
                         addtional: additions,
                         
-                    }
+                    };
                     setAsset([...assets, asset]);
 
                     return true;
                 }}
-                >
+            >
                 <ProForm.Group>
                     <ProFormText
                         width="md"

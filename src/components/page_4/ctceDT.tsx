@@ -10,7 +10,7 @@ interface DialogProps{
     subtitle: string;
   }
 
-const CreateDT=(props: DialogProps) =>{
+const CtCeDT=(props: DialogProps) =>{
     const [department, setDt] = useState("");
 
     const handleCreateDt = () => {
@@ -27,4 +27,4 @@ const CreateDT=(props: DialogProps) =>{
         </Modal>
     );
 };
-export default CreateDT;
+export default CtCeDT;

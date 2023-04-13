@@ -1,9 +1,9 @@
 import React from "react";
-
+import Userlist from "./userlist";
 const Page_2 = () => {
     return (
         <div>
-            page: 2
+            <Userlist></Userlist>
         </div>
     );
 };

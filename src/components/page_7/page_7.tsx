@@ -1,11 +1,10 @@
 import React from "react";
+import Label from "./label";
 
-const Page_7 = () => {
+const App = () => {
     return (
-        <div>
-            page: 7
-        </div>
+        <Label/>
     );
 };
 
-export default Page_7;
+export default App;

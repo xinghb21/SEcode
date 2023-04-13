@@ -1,15 +1,15 @@
-import { Button, message } from 'antd';
-import React from 'react';
-import { ProFormDateRangePicker, ProFormDigitRange, ProList} from '@ant-design/pro-components';
-import { useState } from 'react';
+import { Button, message } from "antd";
+import React from "react";
+import { ProFormDateRangePicker, ProFormDigitRange, ProList} from "@ant-design/pro-components";
+import { useState } from "react";
 import {useEffect} from "react";
-import { request } from '../../utils/network';
+import { request } from "../../utils/network";
 import {
     ProForm,
     ProFormSelect,
     ProFormText,
     QueryFilter,
-} from '@ant-design/pro-components';
+} from "@ant-design/pro-components";
 
 interface Asset{
 
@@ -41,7 +41,7 @@ const DelAsset = ( () => {
             })
             .catch((err) => {
                 alert(err);
-            })
+            });
     }, []);
 
     const rowSelection = {
@@ -78,7 +78,7 @@ const DelAsset = ( () => {
             
             <div
                 style={{
-                margin: 20,
+                    margin: 20,
                 }}
             >
                 <QueryFilter 
@@ -86,24 +86,24 @@ const DelAsset = ( () => {
                     onFinish={async (values) => {
                         
                         request("/api/asset/get", "GET", 
-                        {
-                            parent: values.parent,
-                            category: values.category,
-                            name: values.name,
-                            belonging: values.belonging,
-                            from: values.date[0],
-                            to: values.date[1],
-                            user: values.user,
-                            status: values.status,
-                            pricefrom: values.price[0],
-                            priceto: values.price[1],
-                        })
+                            {
+                                parent: values.parent,
+                                category: values.category,
+                                name: values.name,
+                                belonging: values.belonging,
+                                from: values.date[0],
+                                to: values.date[1],
+                                user: values.user,
+                                status: values.status,
+                                pricefrom: values.price[0],
+                                priceto: values.price[1],
+                            })
                             .then((res) => {
                                 setAssets(res.data);
                                 message.success("查询成功");
                             }).catch((err) => {
                                 message.warning(err);
-                            })
+                            });
                     }}
                 >
                     <ProForm.Group>
@@ -118,19 +118,19 @@ const DelAsset = ( () => {
                             options={[
                                 {
                                     value: 0,
-                                    label: '闲置',
+                                    label: "闲置",
                                 },
                                 {
                                     value: 1,
-                                    label: '使用中',
+                                    label: "使用中",
                                 },
                                 {
                                     value: 2,
-                                    label: '维保',
+                                    label: "维保",
                                 },
                                 {
                                     value: 3,
-                                    label: '清退',
+                                    label: "清退",
                                 },
                                 
                             ]}
@@ -186,10 +186,10 @@ const DelAsset = ( () => {
                     description: {
                         render: (_,row) => {
                             return (
-                              <div>
-                                {row.description == "" ? "暂无描述" : row.description}
-                              </div>
-                          );
+                                <div>
+                                    {row.description == "" ? "暂无描述" : row.description}
+                                </div>
+                            );
                         }
                     },
                     avatar: {},
@@ -219,7 +219,7 @@ const DelAsset = ( () => {
             />
         </div>
     );
-    }
+}
 );
 
 export default DelAsset;

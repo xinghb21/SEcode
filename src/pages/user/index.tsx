@@ -5,7 +5,7 @@ import {
     PieChartOutlined,
     UserOutlined,
 } from "@ant-design/icons";
-import { Button, MenuProps, Skeleton, Space, Avatar } from "antd";
+import { Button, MenuProps, Skeleton, Space, Avatar, message } from "antd";
 import { useRouter } from "next/router";
 import { Layout, Menu, theme } from "antd";
 import { request } from "../../utils/network";
@@ -44,7 +44,7 @@ function getItem(
 
 
 const AppList: any[] = [
-    "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产查看", "资产修改", "资产标签" , "资产申请",
+    "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产查看", "资产修改", "资产标签", "资产申请",
 ];
 
 //xhb_begin
@@ -52,7 +52,7 @@ const PageList: any[] = [
     <div key={0}><Page_0 /></div>, <div key={1}><EStable /></div>, <div key={2}><Page_2 /></div>,
     <div key={3}><Page_3 /></div>, <div key={4}><Page_4 /></div>, <div key={5}><Page_5/></div>,
     <div key={6}><App /></div>, <div key={7}><Page_7 /></div>, <div key={8}><Page_8 /></div>, 
-    <div key={9}><Page_home /></div>,<div key={10}><Page_info /></div>, <div key={11}><Page_set /></div>
+    <div key={9}><Page_home /></div>,<div key={10}><Page_set /></div>, <div key={11}><Page_info /></div>
 ];
 //xhb_end
 
@@ -82,17 +82,25 @@ const User: React.FC = () => {
     //通过后端获取的funlist以及用户对应的identity实现侧边栏应用
     //具体的key还需要完善
     const fetchList = () => {
-        
-        request(`/api/user/home/${localStorage.getItem('username')}`, "GET")
+
+        request(`/api/user/home/${localStorage.getItem("username")}`, "GET")
             .then((res) => {
                 items.splice(0);
                 let funclist = res.funclist.toString();
-                if (res.entity != "0") {
+                if (res.entity != "") {
                     localStorage.setItem("entity", res.entity);
+                }
+                if(res.department!=""){
+                    localStorage.setItem("department",res.department);
                 }
                 identity = res.identity;
                 items.push(getItem("业务首页", 9, <HomeOutlined />));
-                if (identity == 1) {
+                if (identity === 1) {
+                }
+                else {
+                    localStorage.setItem("entityname", res.entity);
+                }
+                if (identity === 1) {
                     const child: MenuItem[] = [];
                     for (let index = 0; index < 2; index++) {
                         const element = funclist[index];
@@ -102,7 +110,7 @@ const User: React.FC = () => {
                     }
                     items.push(getItem("实体管理", "entity", <DesktopOutlined />, child));
                 }
-                else if (identity == 2) {
+                else if (identity === 2) {
                     const child: MenuItem[] = [];
                     for (let index = 2; index < 5; index++) {
                         const element = funclist[index];
@@ -112,18 +120,18 @@ const User: React.FC = () => {
                     }
                     items.push(getItem("企业管理", "corp", <HomeOutlined />, child));
                 }
-                else if (identity == 3) {
+                else if (identity === 3) {
                     const child: MenuItem[] = [];
                     for (let index = 5; index < 8; index++) {
                         const element = funclist[index];
-                        if (element) {
+                        if (element === "1") {
                             child.push(getItem(AppList[index], index));
                         }
                     }
                     items.push(getItem("资产管理", "asset", <PieChartOutlined />, child));
                 }
                 else {
-                    if (funclist[8]) {
+                    if (funclist[8] === "1") {
                         items.push(getItem("员工操作", "oper", <PieChartOutlined />, [
                             getItem("资产申请", "user"),
                         ]));
@@ -137,7 +145,7 @@ const User: React.FC = () => {
                 ]));
             })
             .catch((err) => {
-                alert(err);
+                message.warning(err.message);
                 router.push("/");
             });
     };
@@ -198,7 +206,7 @@ const User: React.FC = () => {
                                 </text>
                             </Space>
                         </Space>
-                        <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer }}>
+                        <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer, borderRadius: 10 }}>
                             {PageList[page]}
                         </div>
                     </Content>
