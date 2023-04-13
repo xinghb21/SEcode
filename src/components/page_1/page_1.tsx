@@ -1,5 +1,4 @@
 import CreateES from "./createES";
-import UserTable from "../Table";
 import { Button, Table } from "antd";
 import { request } from "../../utils/network";
 import { Md5 } from "ts-md5";
@@ -71,10 +70,11 @@ const EStable=()=> {
                     let length_before=users.length;
                     for (j;j<length_before;j++){
                         if( deleteduser.find((obj)=>{return obj===users.at(j);}) == null){   
-                            remained_user.push(users[i]);
+                            remained_user.push(users[j]);
                         }
                     }
                     setUsers(remained_user);
+                    setSelectedRowKeys([]);
                     setLoading(false);
                 })
                 .catch((err)=>{
@@ -111,7 +111,6 @@ const EStable=()=> {
     return (
         <>
             <div >
-                <Button onClick={() => setIsDialogOpen(true)} type="primary">创建企业系统管理员</Button>
                 <Button type="default" danger = {true} onClick={start} disabled={!hasSelected} loading={loading} style={{float : "right"}}>解雇选中系统管理员</Button>
             </div>
             <Table rowSelection={rowSelection} columns={columns} dataSource={users} />

@@ -1,9 +1,12 @@
 import React from "react";
+import { Typography } from "antd";
+
+const { Title } = Typography;
 
 const Page_home = () => {
     return (
         <div>
-            page: home
+            <Title level={4}>Welcome Back, {localStorage.getItem("username")} !</Title>
         </div>
     );
 };

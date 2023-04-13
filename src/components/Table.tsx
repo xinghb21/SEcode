@@ -39,6 +39,7 @@ const UserTable=(props: UserTableProps) =>{
     const [loading, setLoading] = useState(false);
     const [users,setusers]=useState<User[]>([]);
     //start hqf 
+    //start hqf 
     const start = () => {
         setLoading(true);
         //在这里加入删除的后端访问
@@ -57,6 +58,15 @@ const UserTable=(props: UserTableProps) =>{
                     .catch((err)=>{
                         alert(tobedeleteuser?.username+"delete failed");
                     });
+                request("/api/user/deleteuser","POST",{name:tobedeleteuser.username})
+                    .then((res)=>{
+                        if(tobedeleteuser instanceof User ){
+                            deleteduser.push(tobedeleteuser);
+                        }
+                    })
+                    .catch((err)=>{
+                        alert(tobedeleteuser?.username+"delete failed");
+                    });
             }         
         }
         let remained_user:User[]=[];
@@ -64,33 +74,35 @@ const UserTable=(props: UserTableProps) =>{
         let length_before=props.users.length;
         for (i;i<length_before;i++){
             if( deleteduser.find((obj)=>{return obj===props.users.at(i);}) == null){   
-                remained_user.push(props.users[i]);
+                if( deleteduser.find((obj)=>{return obj===props.users.at(i);}) == null){   
+                    remained_user.push(props.users[i]);
+                }
             }
-        }
-        props.users=remained_user;
-        setLoading(false);
-    };
-    //end hqf
-    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-        setSelectedRowKeys(newSelectedRowKeys);
-    };
+            props.users=remained_user;
+            setLoading(false);
+        };
+        //end hqf
+        const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+            setSelectedRowKeys(newSelectedRowKeys);
+        };
     
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: onSelectChange,
-    };
-    const hasSelected = selectedRowKeys.length > 0;
+        const rowSelection = {
+            selectedRowKeys,
+            onChange: onSelectChange,
+        };
+        const hasSelected = selectedRowKeys.length > 0;
     
-    return (
-        <div>
-            <div style={{ marginBottom: 20}}>
-                <Button type="default" danger = {true} onClick={start} disabled={!hasSelected} loading={loading} style={{float : "right"}}>
+        return (
+            <div>
+                <div style={{ marginBottom: 20}}>
+                    <Button type="default" danger = {true} onClick={start} disabled={!hasSelected} loading={loading} style={{float : "right"}}>
                     解雇选中系统管理员
-                </Button>
+                    </Button>
+                </div>
+                <Table rowSelection={rowSelection} columns={columns} dataSource={props.users} />
             </div>
-            <Table rowSelection={rowSelection} columns={columns} dataSource={props.users} />
-        </div>
-    );
+        );
+    };
 };
     
 export default UserTable;

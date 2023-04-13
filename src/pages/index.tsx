@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Form, Input, Button, Divider, Space, Modal } from "antd";
+import { Form, Input, Button, Divider, Space, Modal, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { request } from "../utils/network";
@@ -14,7 +14,7 @@ interface LoginFormProps {
 const LoginForm = (props: LoginFormProps) => {
     const [correct, setPassword] = useState(true);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(String);
+    const [error, setError] = useState<string>("");
 
     const router = useRouter();
 
@@ -32,9 +32,8 @@ const LoginForm = (props: LoginFormProps) => {
             router.push("/user");
         })
             .catch((err) => {
-                console.log("failed");
-                setPassword(false);
-                setError(err.message);
+                message.warning(err.message);
+                router.push("/");
                 setLoading(false);
             });
     };
