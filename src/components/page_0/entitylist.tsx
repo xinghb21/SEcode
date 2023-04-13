@@ -87,10 +87,10 @@ const Entitylist = (() => {
                 .catch((err) => {
                     alert(err);
                 });
-            }else{
-                alert("用户名为空");
-                setIsDialogOpen(false);
-            }
+        }else{
+            alert("用户名为空");
+            setIsDialogOpen(false);
+        }
     });
     const rowSelection = {
         selectedRowKeys,
