@@ -120,6 +120,8 @@ const Userlist =( () => {
             })
             .catch((err)=>{
                 alert(err);
+                setIsDialogOpen1(false);
+                setIsDialogOpen2(false);
             });
     };
 
