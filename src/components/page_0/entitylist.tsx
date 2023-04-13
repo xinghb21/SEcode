@@ -48,39 +48,49 @@ const Entitylist = (() => {
     const handleCreateUser = (user: User) => {
         //在这里向后端发送请求
         const userdata = { "name": user.username, "entity": user.entity, "password": Md5.hashStr(user.password) };
-        request("/api/entity/assgin", "POST", userdata)
-            .then((res) => {
-                let newEntitilist: Entity[] = [];
-                let i = 0;
-                let size = Entitylist.length;
-                for (i; i < size; i++) {
-                    if (Entitylist[i].entityname === user.entity) {
-                        Entitylist[i].admingname = user.username;
-                        newEntitilist.push(Entitylist[i]);
-                    } else {
-                        newEntitilist.push(Entitylist[i]);
+        if(user.username!==""){
+            request("/api/entity/assgin", "POST", userdata)
+                .then((res) => {
+                    let newEntitilist: Entity[] = [];
+                    let i = 0;
+                    let size = Entitylist.length;
+                    for (i; i < size; i++) {
+                        if (Entitylist[i].entityname === user.entity) {
+                            Entitylist[i].admingname = user.username;
+                            newEntitilist.push(Entitylist[i]);
+                        } else {
+                            newEntitilist.push(Entitylist[i]);
+                        }
                     }
-                }
-                setEntitylist(newEntitilist);
-                setIsassignOpen(false);
-            })
-            .catch((err) => {
-                alert("创建失败");
-                setIsassignOpen(false);
-            });
+                    setEntitylist(newEntitilist);
+                    setIsassignOpen(false);
+                })
+                .catch((err) => {
+                    alert("创建失败");
+                    setIsassignOpen(false);
+                });
+        }else{
+            alert("用户名为空");
+            setIsassignOpen(false);
+        }
     };
 
     const handleCreateEntity = ((entitys: EntityRegister) => {
         //在这里实现后端通信，添加业务实体，不指派管理员，setEntitylist
-        request("/api/entity/create", "POST", { name: entitys.entityname })
-            .then((res) => {
-                const newentity: Entity = { key: entitys.entityname, entityname: entitys.entityname, admingname: "" };
-                setEntitylist([...Entitylist, newentity]);
+        if(entitys.entityname !== ""){
+            request("/api/entity/create", "POST", { name: entitys.entityname })
+                .then((res) => {
+                    const newentity: Entity = { key: entitys.entityname, entityname: entitys.entityname, admingname: "" };
+                    setEntitylist([...Entitylist, newentity]);
+                    setIsDialogOpen(false);
+                })
+                .catch((err) => {
+                    alert(err);
+                });
+            }else{
+                alert("用户名为空");
                 setIsDialogOpen(false);
-            })
-            .catch((err) => {
-                alert(err);
-            });
+            }
     });
     const rowSelection = {
         selectedRowKeys,

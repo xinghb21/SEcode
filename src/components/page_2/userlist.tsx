@@ -111,18 +111,23 @@ const Userlist =( () => {
     
 
     const handleCreateUser = (user: UserRegister) => {
-        
-        request("api/user/createuser","POST",{name:user.username,password:user.password,entity:user.entityname,department:user.department,identity:user.identity})
-            .then((res)=>{
-                setuserlist([...userlist,{key:user.username,username:user.username,departmentname:user.department,entityname:user.entityname,character:user.identity,whetherlocked:false,lockedapp:(user.identity===3?"000001110":"000000001")}]);
-                setIsDialogOpen1(false);
-                setIsDialogOpen2(false);
-            })
-            .catch((err)=>{
-                alert(err);
-                setIsDialogOpen1(false);
-                setIsDialogOpen2(false);
-            });
+        if( user.username!== "" && user.department !== ""){
+            request("api/user/createuser","POST",{name:user.username,password:user.password,entity:user.entityname,department:user.department,identity:user.identity})
+                .then((res)=>{
+                    setuserlist([...userlist,{key:user.username,username:user.username,departmentname:user.department,entityname:user.entityname,character:user.identity,whetherlocked:false,lockedapp:(user.identity===3?"000001110":"000000001")}]);
+                    setIsDialogOpen1(false);
+                    setIsDialogOpen2(false);
+                })
+                .catch((err)=>{
+                    alert(err);
+                    setIsDialogOpen1(false);
+                    setIsDialogOpen2(false);
+                });
+        }else{
+            alert("用户名或部门为空");
+            setIsDialogOpen1(false);
+            setIsDialogOpen2(false);
+        }
     };
 
 
