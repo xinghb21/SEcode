@@ -76,12 +76,6 @@ const User: React.FC = () => {
     const onClose=()=>{
         setOpen(false);
     };
-    const onApprove=()=>{
-        setOpen(false);
-    };
-    const onReject=()=>{
-        setOpen(false);
-    };
     useEffect(() => {
         if (!router.isReady) {
             return;
@@ -228,7 +222,7 @@ const User: React.FC = () => {
                     <Footer style={{ textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
                 </Layout>
             </Layout>
-            <TbdDrawer isOpen={open} onClose={onClose} onApprove={onApprove} onReject={onReject}/>
+            <TbdDrawer isOpen={open} onClose={onClose}/>
         </Skeleton>
     );
 };

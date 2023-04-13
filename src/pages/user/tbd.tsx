@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import { Drawer, Space, Button, Table } from "antd";
+import { Drawer, Space, Button, Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 
 interface DrawerProps {
     isOpen: boolean;
     onClose: () => void;
-    onApprove: () => void;
-    onReject: () => void;
 }
 interface DataType {
     key: React.Key;
@@ -24,6 +22,22 @@ const columns: ColumnsType<DataType> = [
     {
         title: "请求",
         dataIndex: "oper",
+        render: (text) => {
+            if (text == 0) {
+                return (<Tag color="blue">
+                    资产领用
+                </Tag>
+                );
+            }
+            else {
+                return (
+                    <Tag color="volcano">
+                        资产退库
+                    </Tag>
+                )
+            }
+
+        },
     },
     {
         title: "资产类别",
@@ -37,48 +51,47 @@ const columns: ColumnsType<DataType> = [
         title: "资产总数量",
         dataIndex: "number",
     },
+    {
+        title: "操作",
+        dataIndex: "assetID",
+        render: () => (
+            <Space size="middle">
+                <Button danger={true}>
+                    拒绝
+                </Button>
+                <Button type="primary">
+                    同意
+                </Button>
+            </Space>
+        ),
+    }
 ];
-const data = [];
+const data = [{
+    key: 1,
+    name: "cjt",
+    assetClass: "电脑",
+    assetID: "1,2",
+    number: 2,
+    oper: 0,
+
+},{
+    key: 2,
+    name: "hqf",
+    assetClass: "电脑",
+    assetID: "3",
+    number: 1,
+    oper: 1,
+}];
 
 const TbdDrawer = (props: DrawerProps) => {
-    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-    const [loading, setLoading] = useState(false);
-    const start = () => {
-        setLoading(true);
-        // ajax request after empty completing
-        setTimeout(() => {
-            setSelectedRowKeys([]);
-            setLoading(false);
-        }, 1000);
-    };
-    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-        console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-        setSelectedRowKeys(newSelectedRowKeys);
-    };
-
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: onSelectChange,
-    };
-
     return (
         <Drawer
             title="待办任务列表"
             width={"70%"}
             onClose={props.onClose}
             open={props.isOpen}
-            extra={
-                <Space>
-                    <Button danger={true} onClick={props.onReject} style={{ marginRight: 6 }}>
-                        拒绝
-                    </Button>
-                    <Button type="primary" onClick={props.onApprove}>
-                        同意
-                    </Button>
-                </Space>
-            }
         >
-            <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
+            <Table columns={columns} dataSource={data} />
         </Drawer>
     );
 };
