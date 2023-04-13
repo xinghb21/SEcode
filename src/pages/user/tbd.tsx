@@ -34,9 +34,8 @@ const columns: ColumnsType<DataType> = [
                     <Tag color="volcano">
                         资产退库
                     </Tag>
-                )
+                );
             }
-
         },
     },
     {
@@ -74,7 +73,7 @@ const data = [{
     number: 2,
     oper: 0,
 
-},{
+}, {
     key: 2,
     name: "hqf",
     assetClass: "电脑",
