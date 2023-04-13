@@ -98,12 +98,12 @@ const Userlist =( () => {
                         }
                         setdepartmentlist(departs);
                     }).catch((err)=>{
-                        alert(err);
+                        message.warning(err);
                     });
                 }
             })
             .catch((err)=>{
-                alert(err);
+                message.warning(err);
             });
 
     }),[castnum]);
@@ -119,12 +119,12 @@ const Userlist =( () => {
                     setIsDialogOpen2(false);
                 })
                 .catch((err)=>{
-                    alert(err);
+                    message.warning(err);
                     setIsDialogOpen1(false);
                     setIsDialogOpen2(false);
                 });
         }else{
-            alert("用户名或部门为空");
+            message.warning("用户名或部门为空");
             setIsDialogOpen1(false);
             setIsDialogOpen2(false);
         }
@@ -138,7 +138,7 @@ const Userlist =( () => {
                 setisreset(false);
             })
             .catch((err)=>{
-                alert(err);
+                message.warning(err);
             });
     });
     const rowSelection = {
@@ -169,7 +169,7 @@ const Userlist =( () => {
                 setisDEOpen(false);
             })
             .catch((err)=>{
-                alert(err);
+                message.warning(err);
             });
 
     });
@@ -199,7 +199,7 @@ const Userlist =( () => {
                     setSelectedRowKeys([]);
                 })
                 .catch((err)=>{
-                    alert(err);
+                    message.warning(err);
                 });
         }
     });
@@ -211,7 +211,7 @@ const Userlist =( () => {
                 message.success("成功锁定该用户");
             })
             .catch((err)=>{
-                alert(err);
+                message.warning(err);
             });
     });
     const unlock=((name:string)=>{
@@ -222,7 +222,7 @@ const Userlist =( () => {
                 message.success("成功解锁该用户");
             })
             .catch((err)=>{
-                alert(err);
+                message.warning(err);
             });
     });
     const changepos=((changeuser:User_to_show)=>{
@@ -253,7 +253,7 @@ const Userlist =( () => {
                         message.success("查询成功");
                     })
                     .catch((err)=>{
-                        alert(err);
+                        message.warning(err);
                     });
             }}
             >

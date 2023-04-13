@@ -59,14 +59,14 @@ const AddAsset = () => {
                 setLabel(res.data);
             })
             .catch((err) => {
-                alert(err);
+                message.warning(err);
             });
         request("/api/asset/attributes", "GET")
             .then((res) => {
                 setAddition(res.info);
             })
             .catch((err) => {
-                alert(err);
+                message.warning(err);
             });
     }, []);
 
@@ -102,7 +102,7 @@ const AddAsset = () => {
                 message.success("提交成功");
             })
             .catch((err) => {
-                alert(err);
+                message.warning(err);
             });
     });
 

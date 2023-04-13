@@ -40,7 +40,7 @@ const DelAsset = ( () => {
                 setAssets(res.data);
             })
             .catch((err) => {
-                alert(err);
+                message.warning(err);
             });
     }, []);
 
@@ -67,7 +67,7 @@ const DelAsset = ( () => {
                 message.success("删除成功");
             })
             .catch((err) => {
-                alert(err);
+                message.warning(err);
             });
     });
 

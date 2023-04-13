@@ -177,7 +177,7 @@ const User: React.FC = () => {
                     router.push("/");
                 })
                 .catch((err) => {
-                    alert(err.message);
+                    message.warning(err.message);
                 });
         }
     };

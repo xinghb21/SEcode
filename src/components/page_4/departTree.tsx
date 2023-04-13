@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Spin } from "antd";
+import { Spin, message } from "antd";
 import { request } from "../../utils/network";
 import CtCeDT from "./ctceDT";
 import { Modal, Tree, Tooltip, Table } from "antd";
@@ -152,7 +152,7 @@ const Dtree = () => {
             })
             .catch((err) => {
                 setSpnning(false);
-                alert(err.message);
+                message.warning(err.message);
                 router.push("/");
             });
     };
@@ -190,7 +190,7 @@ const Dtree = () => {
                         }
                     })
                     .catch((err) => {
-                        alert(err.message);
+                        message.warning(err.message);
                         if (isSpinning == true) {
                             setTimeout(() => {
                                 setSpnning(false);
@@ -208,7 +208,7 @@ const Dtree = () => {
     const handleCreateDt = (department: string) => {
         //不允许空输入
         if (department.match("\\s+") || department.length == 0) {
-            alert("请输入部门名称");
+            message.warning("请输入部门名称");
             return;
         }
         setSpnning(true);
@@ -227,7 +227,7 @@ const Dtree = () => {
                 }
             })
             .catch((err) => {
-                alert(err.message);
+                message.warning(err.message);
                 setSpnning(false);
             });
         setIsDialogOpenCT(false);
@@ -236,7 +236,7 @@ const Dtree = () => {
     const handleChangeDt = (department: string) => {
         //不允许空输入
         if (department.match("\\s+") || department.length == 0) {
-            alert("请输入部门名称");
+            message.warning("请输入部门名称");
             return;
         }
         setSpnning(true);
@@ -254,7 +254,7 @@ const Dtree = () => {
                 }
             })
             .catch((err) => {
-                alert(err.message);
+                message.warning(err.message);
                 setSpnning(false);
             });
         setIsDialogOpenCE(false);
@@ -286,7 +286,7 @@ const Dtree = () => {
                 // console.log("newUser"+Depusers);
             })
             .catch((err) => {
-                alert(err);
+                message.warning(err);
             });
     };
 
