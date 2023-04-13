@@ -21,7 +21,7 @@ const CreateAC = (props: DialogProps) => {
     const handleCreateDt = () => {
         props.onCreateDt(department, aclass);
         setDt("");
-        setAClass("");
+        setAClass("0");
     };
 
     return (
