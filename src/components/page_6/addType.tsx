@@ -25,13 +25,15 @@ const AddType = () => {
     useEffect(() => {
         request("/api/asset/attributes", "GET")
             .then((res) => {
+                let typelist: Type[] = [];
                 for(let i = 0; i < res.info.length; i++) {
                     let tmp_type: Type = {
                         key: res.info[i],
                         info: res.info[i],
                     }
-                    setType([...types, tmp_type]);
+                    typelist.push(tmp_type);
                 }
+                setType(typelist);
             })
             .catch((err) => {
                 alert(err);
@@ -58,7 +60,9 @@ const AddType = () => {
                         info: values.info,
                     }
                     //与后端实现添加属性
-                    request("/api/asset/createattributes", "POST", values.info)
+                    request("/api/asset/createattributes", "POST", {
+                        name: values.info
+                    })
                         .then((res) => {
                             setType([...types, label]);
                             message.success("创建成功");

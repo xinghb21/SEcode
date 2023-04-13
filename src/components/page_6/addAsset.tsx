@@ -47,22 +47,23 @@ const AddAsset = () => {
 
     const [assets, setAsset] = useState<Asset[]>([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+    const [labels, setLabel] = useState<string[]>([]);
+    const [addition, setAddition] = useState<string[]>([]);
 
-    let labels: string[] = [];
-    let addition: string[] = ["1", "2", "3"];
+    // let addition: string[] = [];
     let additions: Addition[] = [];
 
     useEffect(() => {
         request("/api/asset/assetclass", "GET")
             .then((res) => {
-               labels = res.data;
+                setLabel(res.data);
             })
             .catch((err) => {
                 alert(err);
             })
         request("/api/asset/attributes", "GET")
             .then((res) => {
-                addition = res.info;
+                setAddition(res.info);
             })
             .catch((err) => {
                 alert(err);
@@ -177,7 +178,6 @@ const AddAsset = () => {
                     <ProFormDigit
                         label="资产使用年限"
                         name="life"
-                        initialValue={0}
                         rules={[{ required: true, message: "请输入使用年限！" }]}
                         min={0}
                     />
@@ -193,7 +193,6 @@ const AddAsset = () => {
                         label="资产价值"
                         name="price"
                         locale="￥"
-                        initialValue={0}
                         min={0}
                         rules={[{ required: true, message: "请输入资产价值！" }]}
                     />

@@ -49,13 +49,11 @@ const DelAsset = ( () => {
         onChange: (keys: React.Key[]) => setSelectedRowKeys(keys),
     };
 
-    const hasSelected = selectedRowKeys.length > 0;
 
     //给后端发请求删除对应的asset
     const delete_asset = (() => {
 
         const newAssets = assets.filter(item => !selectedRowKeys.includes(item.key));
-        setAssets(newAssets);
 
         const selectedNames = selectedRowKeys.map(key => {
             const item = assets.find(data => data.key === key);
@@ -64,12 +62,16 @@ const DelAsset = ( () => {
         
         request("/api/asset/delete", "DELETE", selectedNames)
             .then(() => {
+                setAssets(newAssets);
+                setSelectedRowKeys([]);
                 message.success("删除成功");
             })
             .catch((err) => {
                 alert(err);
             });
     });
+
+    const hasSelected = selectedRowKeys.length > 0;
 
     return (
         <div> 
