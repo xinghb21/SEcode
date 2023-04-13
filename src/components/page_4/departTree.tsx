@@ -104,13 +104,13 @@ const Dtree = () => {
                     title: (<div>
                         <span>{key}</span>
                         <span>
-                            <Tooltip placement="bottomLeft" title={<span>修改部门名称</span>}>
+                            <Tooltip placement="bottomRight"  title={<span>修改部门名称</span>}>
                                 <FormOutlined style={{ marginLeft: 10 }} onClick={() => onEdit(key)} />
                             </Tooltip>
                             <Tooltip placement="bottom" title={<span>添加部门</span>}>
                                 <PlusSquareOutlined style={{ marginLeft: 10 }} onClick={() => onAdd(key)} />
                             </Tooltip>
-                            <Tooltip placement="bottomRight" title={<span>删除部门</span>}>
+                            <Tooltip placement="bottomLeft" title={<span>删除部门</span>}>
                                 < MinusSquareOutlined style={{ marginLeft: 10 }} onClick={() => onDelete(key)} />
                             </Tooltip>
                         </span>
@@ -121,13 +121,13 @@ const Dtree = () => {
                 title: (<div>
                     <span>{key}</span>
                     <span>
-                        <Tooltip placement="bottomLeft" title={<span>修改部门名称</span>}>
+                        <Tooltip placement="bottomRight" title={<span>修改部门名称</span>}>
                             <FormOutlined style={{ marginLeft: 10 }} onClick={() => onEdit(key)} />
                         </Tooltip>
                         <Tooltip placement="bottom" title={<span>添加部门</span>}>
                             <PlusSquareOutlined style={{ marginLeft: 10 }} onClick={() => onAdd(key)} />
                         </Tooltip>
-                        <Tooltip placement="bottomRight" title={<span>删除部门</span>}>
+                        <Tooltip placement="bottomLeft" title={<span>删除部门</span>}>
                             < MinusSquareOutlined style={{ marginLeft: 10 }} onClick={() => onDelete(key)} />
                         </Tooltip>
                     </span>
@@ -296,13 +296,13 @@ const Dtree = () => {
     }), [Departs]);
     return (
         <div style={{ display: "flex", flex: "flex-start", flexDirection: "row", height: "100%", width: "100%" }}>
-            <div style={{ backgroundColor: "#ADD8E6", marginRight: 20, padding: 10, borderRadius: 10, width: "30%", height: "100%" }}>
+            <div style={{ backgroundColor: "#f7f7f7", marginRight: 20, padding: 10, borderRadius: 10, width: "30%", height: "100%" }}>
                 <Spin spinning={isSpinning}>
                     <Tree
                         showLine
                         switcherIcon={<CaretDownOutlined />}
                         checkStrictly={true}
-                        style={{ backgroundColor: "#fdfdfd", padding: 10, borderRadius: 20 }}
+                        style={{ backgroundColor: "#ffffff", padding: 10, borderRadius: 20 }}
                         checkable
                         treeData={parseTreeData(json)}
                         onCheck={handleCheck}

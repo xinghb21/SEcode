@@ -4,10 +4,11 @@ import {
     DesktopOutlined,
     PieChartOutlined,
     UserOutlined,
+    CarryOutTwoTone,
 } from "@ant-design/icons";
-import { Button, MenuProps, Skeleton, Space, Avatar, message } from "antd";
+import { Button, MenuProps, Skeleton, Space, Avatar, message, Badge, Tooltip } from "antd";
 import { useRouter } from "next/router";
-import { Layout, Menu, theme } from "antd";
+import { Layout, Menu, theme} from "antd";
 import { request } from "../../utils/network";
 import Page_0 from "../../components/page_0/page_0";
 import EStable from "../../components/page_1/page_1";
@@ -21,7 +22,7 @@ import Page_8 from "../../components/page_8/page_8";
 import Page_home from "../../components/page_home/page_home";
 import Page_set from "../../components/page_set";
 import Page_info from "../../components/page_info";
-import { ItemType } from "antd/es/breadcrumb/Breadcrumb";
+import TbdDrawer from "./tbd";
 
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -50,15 +51,14 @@ const AppList: any[] = [
 //xhb_begin
 const PageList: any[] = [
     <div key={0}><Page_0 /></div>, <div key={1}><EStable /></div>, <div key={2}><Page_2 /></div>,
-    <div key={3}><Page_3 /></div>, <div key={4}><Page_4 /></div>, <div key={5}><Page_5/></div>,
-    <div key={6}><App /></div>, <div key={7}><Page_7 /></div>, <div key={8}><Page_8 /></div>, 
-    <div key={9}><Page_home /></div>,<div key={10}><Page_set /></div>, <div key={11}><Page_info /></div>
+    <div key={3}><Page_3 /></div>, <div key={4}><Page_4 /></div>, <div key={5}><Page_5 /></div>,
+    <div key={6}><App /></div>, <div key={7}><Page_7 /></div>, <div key={8}><Page_8 /></div>,
+    <div key={9}><Page_home /></div>, <div key={10}><Page_set /></div>, <div key={11}><Page_info /></div>
 ];
 //xhb_end
 
 //这里的item应该从后端获取数据后形成？
 const items: MenuItem[] = [];
-const dropitems: ItemType[] = [];
 
 const User: React.FC = () => {
     const router = useRouter();
@@ -68,6 +68,20 @@ const User: React.FC = () => {
     const [load, setLoad] = useState(true);
     const [page, setPage] = useState(9);
     const [name, setName] = useState("");
+    const [isTBD, setTBD] = useState(true);
+    const [open, setOpen] = useState(false);
+    const showDrawer = () => {
+        setOpen(true);
+    };
+    const onClose=()=>{
+        setOpen(false);
+    };
+    const onApprove=()=>{
+        setOpen(false);
+    };
+    const onReject=()=>{
+        setOpen(false);
+    };
     useEffect(() => {
         if (!router.isReady) {
             return;
@@ -90,8 +104,8 @@ const User: React.FC = () => {
                 if (res.entity != "") {
                     localStorage.setItem("entity", res.entity);
                 }
-                if(res.department!=""){
-                    localStorage.setItem("department",res.department);
+                if (res.department != "") {
+                    localStorage.setItem("department", res.department);
                 }
                 identity = res.identity;
                 items.push(getItem("业务首页", 9, <HomeOutlined />));
@@ -193,9 +207,16 @@ const User: React.FC = () => {
                 <Layout className="site-layout">
                     <Content style={{ margin: "0 16px" }}>
                         <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
-                            <Space>
+                            <Tooltip placement="bottomLeft" title={<span>代办任务</span>}>
+                                <Button type="text" size="large" style={{ margin: 5 }}  onClick={showDrawer}>
+                                    <Badge dot style={{ visibility: (!isTBD) ? "hidden" : "visible" }}>
+                                        <CarryOutTwoTone twoToneColor={(!isTBD) ? "#a8a8a8" : "#f82212"} style={{ fontSize: "25px" }} />
+                                    </Badge>
+                                </Button>
+                            </Tooltip>
+                            <Space >
                                 <Avatar size="small" icon={<UserOutlined />} />
-                                <text fontWeight='bold'>
+                                <text fontWeight='bold' style={{ marginRight: 20 }}>
                                     {name}
                                 </text>
                             </Space>
@@ -207,6 +228,7 @@ const User: React.FC = () => {
                     <Footer style={{ textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
                 </Layout>
             </Layout>
+            <TbdDrawer isOpen={open} onClose={onClose} onApprove={onApprove} onReject={onReject}/>
         </Skeleton>
     );
 };
