@@ -76,7 +76,7 @@ const DelAsset = ( () => {
     return (
         <div> 
             
-            <div
+            {/* <div
                 style={{
                     margin: 20,
                 }}
@@ -177,7 +177,7 @@ const DelAsset = ( () => {
                         label="资产价值区间"
                     />
                 </QueryFilter>
-            </div>
+            </div> */}
             <ProList<Asset>
 
                 pagination = {{pageSize: 10}}
