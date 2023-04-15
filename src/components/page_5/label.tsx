@@ -33,7 +33,7 @@ const Label = ( () => {
             .catch((err) => {
                 alert(err);
                 setRefreshing(false);
-            }),
+            });
         request("/api/asset/attributes", "GET")
             .then((res) => {
                 setAttributes(res.info);

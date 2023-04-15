@@ -193,12 +193,6 @@ const User: React.FC = () => {
                 <Layout className="site-layout">
                     <Content style={{ margin: "0 16px" }}>
                         <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
-                            <Button style={{ margin: 2 }} block={true}>
-                                Backlog
-                            </Button>
-                            <Button style={{ margin: 2 }} block={true}>
-                                Message
-                            </Button>
                             <Space>
                                 <Avatar size="small" icon={<UserOutlined />} />
                                 <text fontWeight='bold'>

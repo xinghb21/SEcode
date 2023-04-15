@@ -32,7 +32,6 @@ const CreateDE=(props: DialogProps) =>{
             Department:newdepartment
         };
         props.onCreateUser(newuser);
-        setdepartment("");
     };
     const handleChange = (value: { value: string; label: React.ReactNode }) => {
         setdepartment(value.value);
