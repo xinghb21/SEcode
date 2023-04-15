@@ -32,6 +32,13 @@ export const request = async (
     method: "GET" | "POST" | "PUT" | "DELETE",
     data?: any,
 ) => {
+    // if(method == "GET" && data != undefined) {
+    //     url += "?";
+    //     for(const key in data) {
+    //         if(data[key] != undefined)
+    //             url = url + key + "=" + data[key] + "&";
+    //     }
+    // }
     const response = await network.request({ method, url, data })
         .catch((err: AxiosError) => {
             // @note: 这里的错误处理显然是极其粗糙的，大作业中你可以根据组内约定的 API 文档细化错误处理

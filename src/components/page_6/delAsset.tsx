@@ -54,14 +54,7 @@ const DelAsset = ( () => {
     const delete_asset = (() => {
 
         const newAssets = assets.filter(item => !selectedRowKeys.includes(item.key));
-        for(let key in selectedRowKeys){
-            alert(key);
-        }
-
-        for(let key in newAssets){
-            alert(key);
-        }
-
+        
         const selectedNames = selectedRowKeys.map(key => {
             const item = assets.find(data => data.key === key);
             return item ? item.name : "";
@@ -83,34 +76,34 @@ const DelAsset = ( () => {
     return (
         <div> 
             
-            <div
+            {/* <div
                 style={{
                     margin: 20,
                 }}
-            >
-                <QueryFilter 
+            > */}
+                {/* <QueryFilter 
                     labelWidth="auto" 
                     onFinish={async (values) => {
                         
-                        // request("/api/asset/get", "GET", 
-                        //     {
-                        //         parent: values.parent,
-                        //         category: values.category,
-                        //         name: values.name,
-                        //         belonging: values.belonging,
-                        //         from: values.date[0],
-                        //         to: values.date[1],
-                        //         user: values.user,
-                        //         status: values.status,
-                        //         pricefrom: values.price[0],
-                        //         priceto: values.price[1],
-                        //     })
-                        //     .then((res) => {
-                        //         setAssets(res.data);
-                        //         message.success("查询成功");
-                        //     }).catch((err) => {
-                        //         message.warning(err);
-                        //     });
+                        request("/api/asset/get", "GET", 
+                            {
+                                parent: values.parent,
+                                category: values.category,
+                                name: values.name,
+                                belonging: values.belonging,
+                                from: values.date[0],
+                                to: values.date[1],
+                                user: values.user,
+                                status: values.status,
+                                pricefrom: values.price[0],
+                                priceto: values.price[1],
+                            })
+                            .then((res) => {
+                                setAssets(res.data);
+                                message.success("查询成功");
+                            }).catch((err) => {
+                                message.warning(err);
+                            });
                     }}
                 >
                     <ProForm.Group>
@@ -184,7 +177,7 @@ const DelAsset = ( () => {
                         label="资产价值区间"
                     />
                 </QueryFilter>
-            </div>
+            </div> */}
             <ProList<Asset>
 
                 pagination = {{pageSize: 10}}
