@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Modal, Input } from "antd";
+import { Modal, Input, message } from 'antd';
 import React from "react";
 
 interface EntityRegister{
@@ -15,13 +15,20 @@ interface DialogProps{
 
 const CreateEn=(props: DialogProps) =>{
     const [entity, setEntity] = useState<string>("");
-
+    const [laoding,setloading] =useState<boolean>(false);
     const handleCreateUser = () => {
+        setloading(true);
         const newentity: EntityRegister = {
-            key: Date.now(),
+            key: entity,
             entityname:entity,
         };
+        if(entity===""){
+            message.warning("企业实体名字不能为空");
+            setloading(false);
+            return ;
+        }
         props.onCreateUser(newentity);
+        setloading(false);
         setEntity("");
     };
 

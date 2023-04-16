@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Modal, Input, Select } from "antd";
+import { Modal, Input, Select, message } from 'antd';
 import React from "react";
 
 interface User_DEpartment{
@@ -24,14 +24,21 @@ interface DialogProps{
 
 const CreateDE=(props: DialogProps) =>{
     const [newdepartment, setdepartment] = useState<string>("");
-
+    const [loading,setloading]=useState<boolean>(false);
     const handleCreateUser = () => {
+        setloading(true);
         const newuser: User_DEpartment = {
             key: props.username,
             username:props.username,
             Department:newdepartment
         };
+        if(newdepartment.length===0){
+            message.warning("部门名字不能为空");
+            setloading(false);
+            return;
+        }
         props.onCreateUser(newuser);
+        setloading(false);
     };
     const handleChange = (value: { value: string; label: React.ReactNode }) => {
         setdepartment(value.value);
