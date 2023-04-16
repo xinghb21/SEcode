@@ -22,6 +22,7 @@ import Page_home from "../../components/page_home/page_home";
 import Page_set from "../../components/page_set";
 import Page_info from "../../components/page_info";
 import { ItemType } from "antd/es/breadcrumb/Breadcrumb";
+import Applists from "../../components/applists/Applist"
 
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -129,6 +130,7 @@ const User: React.FC = () => {
                         }
                     }
                     items.push(getItem("资产管理", "asset", <PieChartOutlined />, child));
+                    items.push(getItem("应用列表","apps",<Applists/>));
                 }
                 else {
                     if (funclist[8] === "1") {
@@ -137,6 +139,7 @@ const User: React.FC = () => {
                         ]));
                     }
                     else items.push(getItem("员工操作", "oper", <PieChartOutlined />));
+                    items.push(getItem("应用列表","app",<Applists/>));
                 }
                 items.push(getItem("用户", "/User", <UserOutlined />, [
                     getItem("信息", 10),
