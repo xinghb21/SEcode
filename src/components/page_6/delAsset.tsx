@@ -54,7 +54,7 @@ const DelAsset = ( () => {
     const delete_asset = (() => {
 
         const newAssets = assets.filter(item => !selectedRowKeys.includes(item.key));
-
+        
         const selectedNames = selectedRowKeys.map(key => {
             const item = assets.find(data => data.key === key);
             return item ? item.name : "";
@@ -63,8 +63,8 @@ const DelAsset = ( () => {
         request("/api/asset/delete", "DELETE", selectedNames)
             .then(() => {
                 setAssets(newAssets);
-                setSelectedRowKeys([]);
                 message.success("删除成功");
+                setSelectedRowKeys([]);
             })
             .catch((err) => {
                 alert(err);
@@ -80,8 +80,8 @@ const DelAsset = ( () => {
                 style={{
                     margin: 20,
                 }}
-            >
-                <QueryFilter 
+            > */}
+                {/* <QueryFilter 
                     labelWidth="auto" 
                     onFinish={async (values) => {
                         
