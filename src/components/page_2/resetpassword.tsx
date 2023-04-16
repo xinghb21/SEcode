@@ -31,7 +31,7 @@ const Resetpassword=(props: DialogProps) =>{
             return;
         }
         const pasr:RegExp=/([A-Z]|[a-z]|[0-9])*/m;
-        let a=pasr.exec(newpassword)
+        let a=pasr.exec(newpassword);
         if(a != null){
             if(a[0] !== newpassword){
                 message.warning("密码只能包括英文字符或数字");

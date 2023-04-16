@@ -23,7 +23,7 @@ const items: MenuProps["items"] = [
 ];
 
 const PageList: any[] = [
-     <div key={0}><ACtree /></div>,<div key={1}><AddType /></div>,<div key={2}> <Label/></div>
+    <div key={0}><ACtree /></div>,<div key={1}><AddType /></div>,<div key={2}> <Label/></div>
 ];
 
 const Page_5 = () => {

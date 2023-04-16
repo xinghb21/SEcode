@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Modal, Input, Select, message } from 'antd';
+import { Modal, Input, Select, message } from "antd";
 import React from "react";
 
 interface User_DEpartment{

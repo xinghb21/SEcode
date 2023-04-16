@@ -22,19 +22,19 @@ const Manageapp=(props: DialogProps) =>{
         if(props.identity===3){
 
             if(props.applist.at(5)==="1"){
-                userappr.push("资产查看");
+                userappr.push("资产定义");
             }else{
-                userappe.push("资产查看");
+                userappe.push("资产定义");
             }
             if(props.applist.at(6)==="1"){
-                userappr.push("资产修改");
+                userappr.push("资产管理");
             }else{
-                userappe.push("资产修改");
+                userappe.push("资产管理");
             }   
             if(props.applist.at(7)==="1"){
-                userappr.push("资产标签");
+                userappr.push("资产统计");
             }else{
-                userappe.push("资产标签");
+                userappe.push("资产统计");
             }
             setremained(userappr);
             setexclude(userappe);
@@ -51,7 +51,7 @@ const Manageapp=(props: DialogProps) =>{
     const handleCreateUser = () => {
         let newapp:string[]=["0","0","0","0","0","0","0","0","0"];
         if(props.identity===3){
-            let dic={"资产查看":5,"资产修改":6,"资产标签":7};
+            let dic={"资产定义":5,"资产管理":6,"资产统计":7};
             let i=0;
             let size=remained.length;
             for (i ;i<size;i++){

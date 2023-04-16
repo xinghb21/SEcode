@@ -14,6 +14,7 @@ import Column from "antd/es/table/Column";
 import CreateUser2 from "./CreateUser2";
 import CreateDE from "./CreateDE";
 import Manageapp from "./Manageapp";
+import Appmanage from "./Appmanage";
 interface User_to_show{
     key:React.Key;
     username:string;
@@ -75,6 +76,8 @@ const Userlist =( () => {
     const [olddepartment,setdepartment]=useState<string>("");
     const [appapduser,setappapduser]=useState<User_app>({username:"",identity:-1,oldapplist:""});
     const [isappOpen,setappopen]=useState<boolean>(false);
+    const [ismanageopen,setmanage]=useState<boolean>(false);
+    const [manageappname,setmanagename]=useState<string>("");
     useEffect((()=>{
         request("api/user/es/checkall","GET")
             .then((res)=>{
@@ -282,6 +285,7 @@ const Userlist =( () => {
                     />
                 </ProForm.Group>
             </QueryFilter>
+            <Appmanage isOpen={ismanageopen} username={manageappname} onClose={()=>{setmanage(false);}}>  </Appmanage>
             <CreateUser isOpen={isDialogOpen1} onClose={()=>setIsDialogOpen1(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser>
             <CreateUser2 isOpen={isDialogOpen2} onClose={()=>setIsDialogOpen2(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser2>
             <Resetpassword isOpen={isrest} onClose={()=>{setisreset(false);}} username={resetname} onCreateUser={reset} ></Resetpassword>
@@ -343,7 +347,8 @@ const Userlist =( () => {
                             return (
                                 <div style={{display:"flex" ,flexDirection:"column"}}>
                                     <Button onClick={()=>{assign({key:row.username,username: row.username , Department:row.departmentname});}} >调整部门</Button>
-                                    <Button onClick={()=>{ setappapduser({username:row.username,identity:row.character,oldapplist:row.lockedapp});setappopen(true);}}> 管理应用 </Button>
+                                    <Button onClick={()=>{ setappapduser({username:row.username,identity:row.character,oldapplist:row.lockedapp});setappopen(true);}}> 管理权限 </Button>
+                                    <Button onClick={()=>{setmanage(true);setmanagename(row.username);}}> 管理应用 </Button>
                                 </div>
                             );
                         },

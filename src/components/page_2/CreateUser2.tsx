@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Modal, Input ,Select, message} from "antd";
 import React from "react";
-import { Md5 } from 'ts-md5';
+import { Md5 } from "ts-md5";
 
 interface UserRegister{
     key: React.Key;
@@ -46,7 +46,7 @@ const CreateUser2=(props: DialogProps) =>{
             return;
         }
         const pasr:RegExp=/([A-Z]|[a-z]|[0-9])*/m;
-        let a=pasr.exec(password)
+        let a=pasr.exec(password);
         if(a != null){
             if(a[0] !== password){
                 message.warning("密码只能包括英文字符或数字");

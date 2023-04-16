@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Modal, Input, message } from 'antd';
+import { Modal, Input, message } from "antd";
 import React from "react";
 
 interface EntityRegister{
