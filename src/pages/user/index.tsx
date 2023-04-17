@@ -191,7 +191,6 @@ const User: React.FC = () => {
         }
     };
     if (identity === 3) {
-        console.log("hah");
         return (
             <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
                 <Layout style={{ minHeight: "100vh" }}>
