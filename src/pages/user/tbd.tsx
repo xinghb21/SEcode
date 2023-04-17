@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Drawer, Space, Button, Table, Tag, message, Modal } from "antd";
+import { Drawer, Space, Button, Table, Tag, message, Modal, Input } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { request } from "../../utils/network";
 
@@ -7,6 +7,15 @@ interface DrawerProps {
     isOpen: boolean;
     onClose: () => void;
 }
+
+interface DialogProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onSendR: (reason: string) => void;
+    title: string;
+    subtitle: string;
+}
+
 type DataType = {
     //table数据的格式
     key: React.Key;//id
@@ -59,6 +68,8 @@ const TbdDrawer = (props: DrawerProps) => {
     const [tbdData, settbdData] = useState<DataType[]>([]);
     const [open, setOpen] = useState(false);
     const [assetdisdata, setassetdisData] = useState<AssetDisplayType[]>([]);
+    const [reason, setR] = useState("");
+    const [isDialogOpenSR, setIsDialogOpenSR] = useState(false);
 
     const showModal = () => {
         setOpen(true);
@@ -69,6 +80,27 @@ const TbdDrawer = (props: DrawerProps) => {
             setOpen(false);
         }, 3000);
     };
+     //创建新的部门
+     const handleSendR = (reason: string) => {
+        //不允许空输入
+        if (reason.match("\\s+") || reason.length == 0) {
+            message.warning("请输入具体原因");
+            return;
+        }
+        request("/api/user/es/createdepart", "POST", {
+            entity: localStorage.getItem("entity"),
+            depname: department,
+            parent: (parent == localStorage.getItem("entity")) ? "" : parent
+        })
+            .then(() => {
+                fetchJson();
+                fetchDepart();
+            })
+            .catch((err) => {
+                message.warning(err.message);
+            });
+        setIsDialogOpenSR(false);
+    };
 
     const handleCancel = () => {
         setOpen(false);
@@ -76,6 +108,23 @@ const TbdDrawer = (props: DrawerProps) => {
     useEffect((() => {
         fetchtbdData();
     }), []);
+
+    const SendR = (props: DialogProps) => {
+        const handleSendR = () => {
+            props.onSendR(reason);
+            setR("");
+        };
+        
+
+        return (
+            <Modal title={props.title} open={props.isOpen} onOk={handleSendR} onCancel={props.onClose} >
+                <div>
+                    <label>{props.subtitle}</label>
+                    <Input type="reason" value={reason} onChange={(e) => setR(e.target.value)} />
+                </div>
+            </Modal>
+        );
+    };
     const fetchtbdData = () => {
         request("/api/user/ep/getallapply", "GET")
             .then((res) => {
@@ -154,7 +203,15 @@ const TbdDrawer = (props: DrawerProps) => {
                         });
                     }}>详细</Button>
                     <Button danger={true} onClick={(record) => {
-
+                        request("/api/user/ep/reapply", "POST", {
+                            id: record.key,
+                            status: 1,
+                            reason: "Success!"
+                        }).then(() => {
+                            fetchtbdData();
+                        }).catch((err) => {
+                            message.warning(err.detail);
+                        });
                     }}>
                         拒绝
                     </Button>
@@ -196,6 +253,7 @@ const TbdDrawer = (props: DrawerProps) => {
             >
                 <Table columns={Assetcolumns} dataSource={assetdisdata} />
             </Modal>
+            <SendR title={"请输入拒绝原因"} subtitle={""} isOpen={isDialogOpenSR} onClose={() => setIsDialogOpenSR(false)} onSendR={handleSendR}/>
         </Drawer>
     );
 };
