@@ -62,13 +62,14 @@ const Assetcolumns: ColumnsType<AssetDisplayType> = [
         title: "资产数量",
         dataIndex: "assetcount",
     }
-]
+];
 
 const TbdDrawer = (props: DrawerProps) => {
     const [tbdData, settbdData] = useState<DataType[]>([]);
     const [open, setOpen] = useState(false);
     const [assetdisdata, setassetdisData] = useState<AssetDisplayType[]>([]);
     const [reason, setR] = useState("");
+    const [chosenkey, setck] = useState<React.Key>();
     const [isDialogOpenSR, setIsDialogOpenSR] = useState(false);
 
     const showModal = () => {
@@ -80,25 +81,22 @@ const TbdDrawer = (props: DrawerProps) => {
             setOpen(false);
         }, 3000);
     };
-     //创建新的部门
-     const handleSendR = (reason: string) => {
+    //创建新的部门
+    const handleSendR = (reason: string) => {
         //不允许空输入
         if (reason.match("\\s+") || reason.length == 0) {
             message.warning("请输入具体原因");
             return;
         }
-        request("/api/user/es/createdepart", "POST", {
-            entity: localStorage.getItem("entity"),
-            depname: department,
-            parent: (parent == localStorage.getItem("entity")) ? "" : parent
-        })
-            .then(() => {
-                fetchJson();
-                fetchDepart();
-            })
-            .catch((err) => {
-                message.warning(err.message);
-            });
+        request("/api/user/ep/reapply", "POST", {
+            id: chosenkey,
+            status: 1,
+            reason: reason
+        }).then(() => {
+            fetchtbdData();
+        }).catch((err) => {
+            message.warning(err.detail);
+        });
         setIsDialogOpenSR(false);
     };
 
@@ -114,8 +112,6 @@ const TbdDrawer = (props: DrawerProps) => {
             props.onSendR(reason);
             setR("");
         };
-        
-
         return (
             <Modal title={props.title} open={props.isOpen} onOk={handleSendR} onCancel={props.onClose} >
                 <div>
@@ -134,7 +130,7 @@ const TbdDrawer = (props: DrawerProps) => {
                         name: name,
                         reason: reason,
                         oper: oper
-                    }
+                    };
                 }));
             })
             .catch((err) => {
@@ -195,7 +191,7 @@ const TbdDrawer = (props: DrawerProps) => {
                                     assetname: assetname,
                                     assetclass: assetclass,
                                     assetcount: assetcount
-                                }
+                                };
                             }));
                             setOpen(true);
                         }).catch((err) => {
@@ -203,15 +199,8 @@ const TbdDrawer = (props: DrawerProps) => {
                         });
                     }}>详细</Button>
                     <Button danger={true} onClick={(record) => {
-                        request("/api/user/ep/reapply", "POST", {
-                            id: record.key,
-                            status: 1,
-                            reason: "Success!"
-                        }).then(() => {
-                            fetchtbdData();
-                        }).catch((err) => {
-                            message.warning(err.detail);
-                        });
+                        setck(record.key);
+                        setIsDialogOpenSR(true);
                     }}>
                         拒绝
                     </Button>
@@ -243,7 +232,7 @@ const TbdDrawer = (props: DrawerProps) => {
             <Table columns={columns} dataSource={tbdData} />
             <Modal
                 open={open}
-                title="所申请资产详细"
+                title="该员工所申请资产详细"
                 onOk={handleOk}
                 footer={[
                     <Button key="back" onClick={handleCancel}>
@@ -253,7 +242,7 @@ const TbdDrawer = (props: DrawerProps) => {
             >
                 <Table columns={Assetcolumns} dataSource={assetdisdata} />
             </Modal>
-            <SendR title={"请输入拒绝原因"} subtitle={""} isOpen={isDialogOpenSR} onClose={() => setIsDialogOpenSR(false)} onSendR={handleSendR}/>
+            <SendR title={"请输入拒绝原因"} subtitle={"具体原因为："} isOpen={isDialogOpenSR} onClose={() => setIsDialogOpenSR(false)} onSendR={handleSendR} />
         </Drawer>
     );
 };
