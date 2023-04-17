@@ -22,6 +22,8 @@ import Page_home from "../../components/page_home/page_home";
 import Page_set from "../../components/page_set";
 import Page_info from "../../components/page_info";
 import { ItemType } from "antd/es/breadcrumb/Breadcrumb";
+import Applists from "../../components/applists/Applist";
+import MenuItem from "antd/es/menu/MenuItem";
 
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -44,7 +46,7 @@ function getItem(
 
 
 const AppList: any[] = [
-    "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产定义", "资产管理", "资产分析", "资产申请",
+    "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产定义", "资产管理", "资产分析", "资产申请","应用列表"
 ];
 
 //xhb_begin
@@ -52,7 +54,7 @@ const PageList: any[] = [
     <div key={0}><Page_0 /></div>, <div key={1}><EStable /></div>, <div key={2}><Page_2 /></div>,
     <div key={3}><Page_3 /></div>, <div key={4}><Page_4 /></div>, <div key={5}><Page_5/></div>,
     <div key={6}><App /></div>, <div key={7}><Page_7 /></div>, <div key={8}><Page_8 /></div>, 
-    <div key={9}><Page_home /></div>,<div key={10}><Page_set /></div>, <div key={11}><Page_info /></div>
+    <div key={9}><Page_home /></div>,<div key={10}><Page_set /></div>, <div key={11}><Page_info /></div>,<div key={12}><Applists/> </div>
 ];
 //xhb_end
 
@@ -129,6 +131,9 @@ const User: React.FC = () => {
                         }
                     }
                     items.push(getItem("资产管理", "asset", <PieChartOutlined />, child));
+                    let appsingle:MenuItem[]=[];
+                    appsingle.push(getItem(AppList[12],12));
+                    items.push(getItem("应用列表","apps",<PieChartOutlined/>,appsingle));
                 }
                 else {
                     if (funclist[8] === "1") {
@@ -137,6 +142,9 @@ const User: React.FC = () => {
                         ]));
                     }
                     else items.push(getItem("员工操作", "oper", <PieChartOutlined />));
+                    let appsingle:MenuItem[]=[];
+                    appsingle.push(getItem(AppList[12],12));
+                    items.push(getItem("应用列表","apps",<PieChartOutlined/>,appsingle));
                 }
                 items.push(getItem("用户", "/User", <UserOutlined />, [
                     getItem("信息", 10),
