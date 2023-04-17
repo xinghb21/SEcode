@@ -8,7 +8,7 @@ import {
 } from "@ant-design/icons";
 import { Button, MenuProps, Skeleton, Space, Avatar, message, Badge, Tooltip } from "antd";
 import { useRouter } from "next/router";
-import { Layout, Menu, theme} from "antd";
+import { Layout, Menu, theme } from "antd";
 import { request } from "../../utils/network";
 import Page_0 from "../../components/page_0/page_0";
 import EStable from "../../components/page_1/page_1";
@@ -23,7 +23,8 @@ import Page_home from "../../components/page_home/page_home";
 import Page_set from "../../components/page_set";
 import Page_info from "../../components/page_info";
 import TbdDrawer from "./tbd";
-
+import { Typography } from "antd";
+const { Text } = Typography;
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -62,7 +63,6 @@ const items: MenuItem[] = [];
 
 const User: React.FC = () => {
     const router = useRouter();
-    let identity: number;
 
     const [collapsed, setCollapsed] = useState(false);
     const [load, setLoad] = useState(true);
@@ -70,10 +70,11 @@ const User: React.FC = () => {
     const [name, setName] = useState("");
     const [isTBD, setTBD] = useState(true);
     const [open, setOpen] = useState(false);
+    const [identity, setID] = useState<number>(4);
     const showDrawer = () => {
         setOpen(true);
     };
-    const onClose=()=>{
+    const onClose = () => {
         setOpen(false);
     };
     useEffect(() => {
@@ -101,7 +102,7 @@ const User: React.FC = () => {
                 if (res.department != "") {
                     localStorage.setItem("department", res.department);
                 }
-                identity = res.identity;
+                setID(res.identity);
                 items.push(getItem("业务首页", 9, <HomeOutlined />));
                 if (identity === 1) {
                 }
@@ -189,42 +190,72 @@ const User: React.FC = () => {
                 });
         }
     };
-
-
-    return (
-        <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
-            <Layout style={{ minHeight: "100vh" }}>
-                <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-                    <Menu theme="dark" mode="inline" items={items}
-                        onClick={handleClick} />
-                </Sider>
-                <Layout className="site-layout">
-                    <Content style={{ margin: "0 16px" }}>
-                        <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
-                            <Tooltip placement="bottomLeft" title={<span>代办任务</span>}>
-                                <Button type="text" size="large" style={{ margin: 5 }}  onClick={showDrawer}>
-                                    <Badge dot style={{ visibility: (!isTBD) ? "hidden" : "visible" }}>
-                                        <CarryOutTwoTone twoToneColor={(!isTBD) ? "#a8a8a8" : "#f82212"} style={{ fontSize: "25px" }} />
-                                    </Badge>
-                                </Button>
-                            </Tooltip>
-                            <Space >
-                                <Avatar size="small" icon={<UserOutlined />} />
-                                <text fontWeight='bold' style={{ marginRight: 20 }}>
-                                    {name}
-                                </text>
+    if (identity === 3) {
+        console.log("hah");
+        return (
+            <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
+                <Layout style={{ minHeight: "100vh" }}>
+                    <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+                        <Menu theme="dark" mode="inline" items={items}
+                            onClick={handleClick} />
+                    </Sider>
+                    <Layout className="site-layout">
+                        <Content style={{ margin: "0 16px" }}>
+                            <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
+                                <Tooltip placement="bottomLeft" title={<span>代办任务</span>}>
+                                    <Button type="text" size="large" style={{ margin: 5 }} onClick={showDrawer}>
+                                        <Badge dot style={{ visibility: (!isTBD) ? "hidden" : "visible" }}>
+                                            <CarryOutTwoTone twoToneColor={(!isTBD) ? "#a8a8a8" : "#f82212"} style={{ fontSize: "25px" }} />
+                                        </Badge>
+                                    </Button>
+                                </Tooltip>
+                                <Space align="center">
+                                    <Avatar icon={<UserOutlined />} />
+                                    <Text strong>
+                                        {name}
+                                    </Text>
+                                </Space>
                             </Space>
-                        </Space>
-                        <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer, borderRadius: 10 }}>
-                            {PageList[page]}
-                        </div>
-                    </Content>
-                    <Footer style={{ textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
+                            <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer, borderRadius: 10 }}>
+                                {PageList[page]}
+                            </div>
+                        </Content>
+                        <Footer style={{ textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
+                    </Layout>
                 </Layout>
-            </Layout>
-            <TbdDrawer isOpen={open} onClose={onClose}/>
-        </Skeleton>
-    );
+                <TbdDrawer isOpen={open} onClose={onClose} />
+            </Skeleton>
+        );
+    }
+    else {
+        return (
+            <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
+                <Layout style={{ minHeight: "100vh" }}>
+                    <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+                        <Menu theme="dark" mode="inline" items={items}
+                            onClick={handleClick} />
+                    </Sider>
+                    <Layout className="site-layout">
+                        <Content style={{ margin: "0 16px" }}>
+                            <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
+                                <Space align="center">
+                                    <Avatar icon={<UserOutlined />} />
+                                    <Text strong>
+                                        {name}
+                                    </Text>
+                                </Space>
+                            </Space>
+                            <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer, borderRadius: 10 }}>
+                                {PageList[page]}
+                            </div>
+                        </Content>
+                        <Footer style={{ textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
+                    </Layout>
+                </Layout>
+            </Skeleton>
+        );
+    }
+
 };
 
 export default User;
