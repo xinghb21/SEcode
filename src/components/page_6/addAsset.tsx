@@ -76,11 +76,10 @@ const AddAsset = () => {
     const [labels, setLabel] = useState<string[]>([]);
     const [addition, setAddition] = useState<string[]>([]);
     const [imagename, setImage] = useState<string>("");
-  
-    // let addition: string[] = [];
+    const [department, setDepart] = useState<string>("");
+    const [entity, setEntity] = useState<string>("");
+
     let additions: Addition[] = [];
-    let department: string = "";
-    let entity: string = "";
 
     useEffect(() => {
         request("/api/asset/assetclass", "GET")
@@ -99,8 +98,8 @@ const AddAsset = () => {
             });
         request("/api/asset/getbelonging", "GET")
             .then((res) => {
-                department = res.department;
-                entity = res.entity;
+                setDepart(res.department);
+                setEntity(res.entity);
             })
     }, []);
 
@@ -253,7 +252,7 @@ const AddAsset = () => {
                                 setImage("");
                         }}
                         data={{
-                            key: "${entity}/${department}/${filename}",
+                            key: entity + "/" + department + "/" + "${filename}",
                             policy: policyBase64,
                             OSSAccessKeyId: accessKeyId,
                             success_action_status: 200,
