@@ -1,10 +1,9 @@
 import { ModalForm, ProForm, ProFormDigit, ProFormMoney, ProFormSelect, ProFormText, ProList } from "@ant-design/pro-components";
-import { Button, Form, Table, Upload, UploadProps, message } from "antd";
+import { Button, Form, Input, Table, Upload, UploadProps, message } from "antd";
 import React, { useEffect, useState } from "react";
-import Icon, { PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { request } from "../../utils/network";
 import type { ColumnsType } from "antd/es/table";
-import moment from "moment";
 import CryptoJS from 'crypto-js';
 import Base64 from 'base-64';
 
@@ -35,7 +34,6 @@ interface Addition {
 
 }
 
-const todayKey = moment().format('YYYYMMDD');
 const host = "/image";
 const accessKeyId = "LTAI5t7ktfdDQPrsaDua9HaG";
 const accessSecret = "z6KJp2mQNXioRZYF0jkIvNKL5w8fIz";
@@ -77,9 +75,12 @@ const AddAsset = () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [labels, setLabel] = useState<string[]>([]);
     const [addition, setAddition] = useState<string[]>([]);
+    const [imagename, setImage] = useState<string>("");
   
     // let addition: string[] = [];
     let additions: Addition[] = [];
+    let department: string = "";
+    let entity: string = "";
 
     useEffect(() => {
         request("/api/asset/assetclass", "GET")
@@ -96,6 +97,11 @@ const AddAsset = () => {
             .catch((err) => {
                 alert(err);
             });
+        request("/api/asset/getbelonging", "GET")
+            .then((res) => {
+                department = res.department;
+                entity = res.entity;
+            })
     }, []);
 
     const rowSelection = {
@@ -125,7 +131,7 @@ const AddAsset = () => {
         });
 
         request("/api/asset/post", "POST", selectedAssert)
-            .then((res) => {
+            .then(() => {
                 setAsset(newAssets);
                 message.success("提交成功");
             })
@@ -239,8 +245,15 @@ const AddAsset = () => {
                         {...props}
                         action={host}
                         accept="image/*"
+                        maxCount={1}
+                        onChange={(info) => {
+                            if(info.file.status == "done")
+                                setImage(info.file.name);
+                            if(info.file.status == "removed")
+                                setImage("");
+                        }}
                         data={{
-                            key: todayKey + "/${filename}",
+                            key: "${entity}/${department}/${filename}",
                             policy: policyBase64,
                             OSSAccessKeyId: accessKeyId,
                             success_action_status: 200,
