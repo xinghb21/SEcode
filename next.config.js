@@ -7,6 +7,10 @@ const nextConfig = {
         return [{
             source: "/api/:path*",
             destination: "http://127.0.0.1:8000/:path*",
+        }, 
+        {
+            source: "/image",
+            destination: "https://aplus-secoder.oss-cn-beijing.aliyuncs.com",
         }];
     }
 };

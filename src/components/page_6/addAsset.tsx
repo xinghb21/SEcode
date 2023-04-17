@@ -1,9 +1,12 @@
 import { ModalForm, ProForm, ProFormDigit, ProFormMoney, ProFormSelect, ProFormText, ProList } from "@ant-design/pro-components";
-import { Button, Table, message } from "antd";
+import { Button, Form, Table, Upload, UploadProps, message } from "antd";
 import React, { useEffect, useState } from "react";
-import { PlusOutlined } from "@ant-design/icons";
+import Icon, { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { request } from "../../utils/network";
 import type { ColumnsType } from "antd/es/table";
+import moment from "moment";
+import CryptoJS from 'crypto-js';
+import Base64 from 'base-64';
 
 interface Asset{
 
@@ -32,6 +35,21 @@ interface Addition {
 
 }
 
+const todayKey = moment().format('YYYYMMDD');
+const host = "/image";
+const accessKeyId = "LTAI5t7ktfdDQPrsaDua9HaG";
+const accessSecret = "z6KJp2mQNXioRZYF0jkIvNKL5w8fIz";
+const policyText = {
+    "expiration": "2028-01-01T12:00:00.000Z", // 设置该Policy的失效时间，
+    "conditions": [
+      ["content-length-range", 0, 1048576000] // 设置上传文件的大小限制
+    ]
+};
+const policyBase64 = Base64.encode(JSON.stringify(policyText))
+const bytes = CryptoJS.HmacSHA1(policyBase64, accessSecret, { asBytes: true });
+const signature = bytes.toString(CryptoJS.enc.Base64); 
+
+
 const columns: ColumnsType<Asset> = [
     {
         title: "待提交资产",
@@ -43,13 +61,23 @@ const columns: ColumnsType<Asset> = [
     },
 ];
 
+const props: UploadProps = {
+    beforeUpload: (file) => {
+        const isImg = (file.type === 'image/png' || file.type === 'image/jpg' || file.type === 'image/jpeg');
+        if (!isImg) {
+            message.error(`${file.name} is not an image`);
+        }
+        return isImg || Upload.LIST_IGNORE;
+    },
+};
+
 const AddAsset = () => {
 
     const [assets, setAsset] = useState<Asset[]>([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [labels, setLabel] = useState<string[]>([]);
     const [addition, setAddition] = useState<string[]>([]);
-
+  
     // let addition: string[] = [];
     let additions: Addition[] = [];
 
@@ -205,6 +233,21 @@ const AddAsset = () => {
                 </ProForm.Group>
                 <ProForm.Group>
                     <StrListToProFormText strList={addition}/>
+                </ProForm.Group>
+                <ProForm.Group>
+                    <Upload 
+                        {...props}
+                        action={host}
+                        accept="image/*"
+                        data={{
+                            key: todayKey + "/${filename}",
+                            policy: policyBase64,
+                            OSSAccessKeyId: accessKeyId,
+                            success_action_status: 200,
+                            signature,
+                        }}>
+                            <Button icon={<UploadOutlined />}>Upload</Button>
+                    </Upload>
                 </ProForm.Group>
             </ModalForm>
             <div style={{marginTop: 24}}>
