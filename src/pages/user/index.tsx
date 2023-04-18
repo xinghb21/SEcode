@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     HomeOutlined,
     DesktopOutlined,
     PieChartOutlined,
     UserOutlined,
+    CarryOutTwoTone,
 } from "@ant-design/icons";
-import { Button, MenuProps, Skeleton, Space, Avatar, message } from "antd";
+import { Button, MenuProps, Skeleton, Space, Avatar, message, Badge, Tooltip } from "antd";
 import { useRouter } from "next/router";
 import { Layout, Menu, theme } from "antd";
 import { request } from "../../utils/network";
@@ -24,7 +25,7 @@ import Page_info from "../../components/page_info";
 import { ItemType } from "antd/es/breadcrumb/Breadcrumb";
 import Applists from "../../components/applists/Applist";
 import MenuItem from "antd/es/menu/MenuItem";
-
+import TbdDrawer from "./tbd"
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -58,18 +59,25 @@ const PageList: any[] = [
 ];
 //xhb_end
 
-//这里的item应该从后端获取数据后形成？
+//这里的item从后端获取数据后形成
 const items: MenuItem[] = [];
-const dropitems: ItemType[] = [];
 
 const User: React.FC = () => {
     const router = useRouter();
-    let identity: number;
 
     const [collapsed, setCollapsed] = useState(false);
     const [load, setLoad] = useState(true);
     const [page, setPage] = useState(9);
     const [name, setName] = useState("");
+    const [isTBD, setTBD] = useState(false);//true即有待办任务，false相反
+    const [open, setOpen] = useState(false);
+    const [identity, setID] = useState<number>(4);
+    const showDrawer = () => {
+        setOpen(true);
+    };
+    const onClose = () => {
+        setOpen(false);
+    };
     useEffect(() => {
         if (!router.isReady) {
             return;
@@ -92,17 +100,17 @@ const User: React.FC = () => {
                 if (res.entity != "") {
                     localStorage.setItem("entity", res.entity);
                 }
-                if(res.department!=""){
-                    localStorage.setItem("department",res.department);
+                if (res.department != "") {
+                    localStorage.setItem("department", res.department);
                 }
-                identity = res.identity;
+                setID(res.identity);
                 items.push(getItem("业务首页", 9, <HomeOutlined />));
-                if (identity === 1) {
+                if (res.identity === 1) {
                 }
                 else {
                     localStorage.setItem("entityname", res.entity);
                 }
-                if (identity === 1) {
+                if (res.identity === 1) {
                     const child: MenuItem[] = [];
                     for (let index = 0; index < 2; index++) {
                         const element = funclist[index];
@@ -112,7 +120,7 @@ const User: React.FC = () => {
                     }
                     items.push(getItem("实体管理", "entity", <DesktopOutlined />, child));
                 }
-                else if (identity === 2) {
+                else if (res.identity === 2) {
                     const child: MenuItem[] = [];
                     for (let index = 2; index < 5; index++) {
                         const element = funclist[index];
@@ -122,7 +130,7 @@ const User: React.FC = () => {
                     }
                     items.push(getItem("企业管理", "corp", <HomeOutlined />, child));
                 }
-                else if (identity === 3) {
+                else if (res.identity === 3) {
                     const child: MenuItem[] = [];
                     for (let index = 5; index < 8; index++) {
                         const element = funclist[index];
@@ -131,6 +139,12 @@ const User: React.FC = () => {
                         }
                     }
                     items.push(getItem("资产管理", "asset", <PieChartOutlined />, child));
+                    //资产管理员界面需要设置tbd的状态
+                    request("/api/user/ep/istbd", "GET").then((subres) => {
+                        setTBD(subres.info);
+                    }).catch((err) => {
+                        message.warning(err.message);
+                    });
                     let appsingle:MenuItem[]=[];
                     appsingle.push(getItem(AppList[9],12));
                     items.push(getItem("应用列表","apps",<PieChartOutlined/>,appsingle));
@@ -185,38 +199,75 @@ const User: React.FC = () => {
                     router.push("/");
                 })
                 .catch((err) => {
-                    alert(err.message);
+                    message.warning(err.message);
                 });
         }
     };
-
-
-    return (
-        <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
-            <Layout style={{ minHeight: "100vh" }}>
-                <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-                    <Menu theme="dark" mode="inline" items={items}
-                        onClick={handleClick} />
-                </Sider>
-                <Layout className="site-layout">
-                    <Content style={{ margin: "0 16px" }}>
-                        <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
-                            <Space>
-                                <Avatar size="small" icon={<UserOutlined />} />
-                                <text fontWeight='bold'>
-                                    {name}
-                                </text>
+    if (identity === 3) {
+        return (
+            <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
+                <Layout style={{ minHeight: "100vh" }}>
+                    <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+                        <Menu theme="dark" mode="inline" items={items}
+                            onClick={handleClick} />
+                    </Sider>
+                    <Layout className="site-layout">
+                        <Content style={{ margin: "0 16px" }}>
+                            <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
+                                <Tooltip placement="bottomLeft" title={<span>代办任务</span>}>
+                                    <Button type="text" size="large" style={{ margin: 5 }} onClick={showDrawer}>
+                                        <Badge dot style={{ visibility: (!isTBD) ? "hidden" : "visible" }}>
+                                            <CarryOutTwoTone twoToneColor={(!isTBD) ? "#a8a8a8" : "#f82212"} style={{ fontSize: "25px" }} />
+                                        </Badge>
+                                    </Button>
+                                </Tooltip>
+                                <Space align="center">
+                                    <Avatar icon={<UserOutlined />} />
+                                    <Text strong>
+                                        {name}
+                                    </Text>
+                                </Space>
                             </Space>
-                        </Space>
-                        <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer, borderRadius: 10 }}>
-                            {PageList[page]}
-                        </div>
-                    </Content>
-                    <Footer style={{ textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
+                            <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer, borderRadius: 10 }}>
+                                {PageList[page]}
+                            </div>
+                        </Content>
+                        <Footer style={{ textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
+                    </Layout>
                 </Layout>
-            </Layout>
-        </Skeleton>
-    );
+                <TbdDrawer isOpen={open} onClose={onClose} />
+            </Skeleton>
+        );
+    }
+    else {
+        return (
+            <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
+                <Layout style={{ minHeight: "100vh" }}>
+                    <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+                        <Menu theme="dark" mode="inline" items={items}
+                            onClick={handleClick} />
+                    </Sider>
+                    <Layout className="site-layout">
+                        <Content style={{ margin: "0 16px" }}>
+                            <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
+                                <Space align="center">
+                                    <Avatar icon={<UserOutlined />} />
+                                    <Text strong>
+                                        {name}
+                                    </Text>
+                                </Space>
+                            </Space>
+                            <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer, borderRadius: 10 }}>
+                                {PageList[page]}
+                            </div>
+                        </Content>
+                        <Footer style={{ textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
+                    </Layout>
+                </Layout>
+            </Skeleton>
+        );
+    }
+
 };
 
 export default User;

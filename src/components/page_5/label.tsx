@@ -31,7 +31,7 @@ const Label = ( () => {
                 setRefreshing(false);
             })
             .catch((err) => {
-                alert(err);
+                message.warning(err);
                 setRefreshing(false);
             });
         request("/api/asset/attributes", "GET")
@@ -39,7 +39,7 @@ const Label = ( () => {
                 setAttributes(res.info);
             })
             .catch((err) => {
-                alert(err);
+                message.warning(err);
             });
     },[]);
 

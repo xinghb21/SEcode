@@ -40,7 +40,7 @@ const DelAsset = ( () => {
                 setAssets(res.data);
             })
             .catch((err) => {
-                alert(err);
+                message.warning(err);
             });
     }, []);
 
@@ -67,7 +67,7 @@ const DelAsset = ( () => {
                 setSelectedRowKeys([]);
             })
             .catch((err) => {
-                alert(err);
+                message.warning(err);
             });
     });
 

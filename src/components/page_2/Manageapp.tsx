@@ -67,7 +67,7 @@ const Manageapp=(props: DialogProps) =>{
                     props.Onok();
                 })
                 .catch((err)=>{
-                    alert(err);
+                    message.warning(err);
                     props.Onok();
                 });
         }else{
@@ -87,7 +87,7 @@ const Manageapp=(props: DialogProps) =>{
                     props.Onok();
                 })
                 .catch((err)=>{
-                    alert(err);
+                    message.warning(err);
                     props.Onok();
                 });
         }
