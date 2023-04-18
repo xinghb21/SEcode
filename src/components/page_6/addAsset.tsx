@@ -104,6 +104,7 @@ const AddAsset = () => {
     const [fileList, setFileList] = useState<RcFile[]>([]);
     const [detail, setDetail] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [imgList, setImgList] = useState<UploadFile[]>([]);
 
     //markdown
     const handleChange = (content: string) => {
@@ -171,6 +172,11 @@ const AddAsset = () => {
     };
 
     const hasSelected = selectedRowKeys.length > 0;
+
+    async function handleUpload(file: UploadFile, name: string) {
+        const result = await client.put(entity + "/" + department + "/" + name, file);
+        return { url: result.url };
+    }
 
     const onSubmit = (() => {
         //与后端交互，实现批量添加
@@ -301,6 +307,18 @@ const AddAsset = () => {
                         };
                         setAsset([...assets, asset]);
 
+                        if(imgList.length > 0) {
+                            let file = imgList[0];
+                            handleUpload(file, values.assetname).then(
+                                () => {
+                                  message.success("上传成功");
+                                },
+                                error => {
+                                  message.error("上传失败");
+                                }
+                            );
+                        }
+
                         return true;
                     }}
                 >
@@ -369,22 +387,28 @@ const AddAsset = () => {
                     </ProForm.Group>
                     <ProForm.Group>
                         <Upload 
-                            action={host}
+                            // action={host}
                             accept="image/*"
                             maxCount={1}
+                            beforeUpload={(file) => {
+                                setImgList([...imgList, file]);
+                                return false;
+                            }}
                             onChange={(info) => {
                                 if(info.file.status == "done")
                                     setImage(info.file.name);
                                 if(info.file.status == "removed")
                                     setImage("");
                             }}
-                            onRemove={async (file: UploadFile) => {
-                                try {
-                                    await client.delete(file.name);
-                                    message.success(`${file.name} 已删除`);
-                                } catch (error) {
-                                    alert(error);
-                                }
+                            onRemove={(file: UploadFile) => {
+                                setImgList([]);
+                                message.success(`${file.name} 已删除`);
+                                // try {
+                                //     await client.delete(file.name);
+                                //     message.success(`${file.name} 已删除`);
+                                // } catch (error) {
+                                //     alert(error);
+                                // }
                             }}
                             data={{
                                 key: entity + "/" + department + "/" + "${filename}",
