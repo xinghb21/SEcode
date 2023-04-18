@@ -1,11 +1,21 @@
 import { ModalForm, ProForm, ProFormDigit, ProFormMoney, ProFormSelect, ProFormText, ProList } from "@ant-design/pro-components";
-import { Button, Form, Input, Table, Upload, UploadProps, message } from "antd";
+import { Button, Form, Input, Table, Upload, UploadFile, UploadProps, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { request } from "../../utils/network";
 import type { ColumnsType } from "antd/es/table";
 import CryptoJS from 'crypto-js';
 import Base64 from 'base-64';
+import OSS from 'ali-oss';
+import 'react-quill/dist/quill.snow.css';
+import QuillMarkdown from 'quilljs-markdown';
+import MarkdownIt from 'markdown-it';
+const ReactQuill = typeof window === 'object' ? require('react-quill') : () => false;
+const Quill = typeof window === 'object' ? require('quill') : () => false;
+import MarkdownShortcuts from 'quill-markdown-shortcuts';
+
+
+const md = new MarkdownIt();
 
 interface Asset{
 
@@ -59,15 +69,12 @@ const columns: ColumnsType<Asset> = [
     },
 ];
 
-const props: UploadProps = {
-    beforeUpload: (file) => {
-        const isImg = (file.type === 'image/png' || file.type === 'image/jpg' || file.type === 'image/jpeg');
-        if (!isImg) {
-            message.error(`${file.name} is not an image`);
-        }
-        return isImg || Upload.LIST_IGNORE;
-    },
-};
+const client = new OSS({
+    region: "oss-cn-beijing",
+    accessKeyId: accessKeyId,
+    accessKeySecret: accessSecret,
+    bucket: "aplus-secoder",
+});
 
 const AddAsset = () => {
 
@@ -78,6 +85,32 @@ const AddAsset = () => {
     const [imagename, setImage] = useState<string>("");
     const [department, setDepart] = useState<string>("");
     const [entity, setEntity] = useState<string>("");
+    const [value, setValue] = useState('');
+
+    //markdown
+    const handleChange = (content: string) => {
+        setValue(content);
+    };
+
+    const modules = {
+        toolbar: [
+          [{ header: [1, 2, 3, 4, false] }],
+          ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+        ],
+        markdownShortcuts: {},
+    };
+
+    // const formats = [
+    //     'header',
+    //     'bold',
+    //     'italic',
+    //     'underline',
+    //     'strike',
+    //     'blockquote',
+    //     'list',
+    //     'bullet',
+    // ];
 
     let additions: Addition[] = [];
 
@@ -241,7 +274,6 @@ const AddAsset = () => {
                 </ProForm.Group>
                 <ProForm.Group>
                     <Upload 
-                        {...props}
                         action={host}
                         accept="image/*"
                         maxCount={1}
@@ -251,6 +283,14 @@ const AddAsset = () => {
                             if(info.file.status == "removed")
                                 setImage("");
                         }}
+                        onRemove={async (file: UploadFile) => {
+                            try {
+                              await client.delete(file.name);
+                              message.success(`${file.name} 已删除`);
+                            } catch (error) {
+                              alert(error);
+                            }
+                          }}
                         data={{
                             key: entity + "/" + department + "/" + "${filename}",
                             policy: policyBase64,
@@ -260,6 +300,16 @@ const AddAsset = () => {
                         }}>
                             <Button icon={<UploadOutlined />}>Upload</Button>
                     </Upload>
+                </ProForm.Group>
+                <ProForm.Group>
+                    {/* <ReactQuill
+                        value={value}
+                        onChange={handleChange}
+                        modules={modules}
+                        // formats={formats}
+                        theme="snow"
+                        placeholder="Write something..."
+                        /> */}
                 </ProForm.Group>
             </ModalForm>
             <div style={{marginTop: 24}}>

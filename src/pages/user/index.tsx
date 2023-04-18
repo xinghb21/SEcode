@@ -64,6 +64,7 @@ const dropitems: ItemType[] = [];
 
 const User: React.FC = () => {
     const router = useRouter();
+    const query = router.query;
     let identity: number;
 
     const [collapsed, setCollapsed] = useState(false);
@@ -74,12 +75,25 @@ const User: React.FC = () => {
         if (!router.isReady) {
             return;
         }
+        // if(query.code != undefined) {
+        //     request("/api/feishu/isbound", "GET", query.code)
+        //         .then((res) => {
+        //             if(res.isbound) {
+
+        //             } else {
+
+        //             }
+        //         })
+        //         .catch((err) => {
+        //             alert(err);
+        //         });
+        // }
         fetchList();
         request("/api/user/username", "GET")
             .then((res) => {
                 setName(res.name);
             });
-    }, [router]);
+    }, [router, query]);
 
     //通过后端获取的funlist以及用户对应的identity实现侧边栏应用
     //具体的key还需要完善
