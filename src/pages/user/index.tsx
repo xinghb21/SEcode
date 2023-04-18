@@ -82,6 +82,7 @@ const User: React.FC = () => {
     };
     useEffect(() => {
         if (!router.isReady) {
+            console.log("router isn't ready ")
             return;
         }
         fetchList();
