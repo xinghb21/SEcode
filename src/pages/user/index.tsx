@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     HomeOutlined,
     DesktopOutlined,
@@ -104,12 +104,12 @@ const User: React.FC = () => {
                 }
                 setID(res.identity);
                 items.push(getItem("业务首页", 9, <HomeOutlined />));
-                if (identity === 1) {
+                if (res.identity === 1) {
                 }
                 else {
                     localStorage.setItem("entityname", res.entity);
                 }
-                if (identity === 1) {
+                if (res.identity === 1) {
                     const child: MenuItem[] = [];
                     for (let index = 0; index < 2; index++) {
                         const element = funclist[index];
@@ -119,7 +119,7 @@ const User: React.FC = () => {
                     }
                     items.push(getItem("实体管理", "entity", <DesktopOutlined />, child));
                 }
-                else if (identity === 2) {
+                else if (res.identity === 2) {
                     const child: MenuItem[] = [];
                     for (let index = 2; index < 5; index++) {
                         const element = funclist[index];
@@ -129,7 +129,7 @@ const User: React.FC = () => {
                     }
                     items.push(getItem("企业管理", "corp", <HomeOutlined />, child));
                 }
-                else if (identity === 3) {
+                else if (res.identity === 3) {
                     const child: MenuItem[] = [];
                     for (let index = 5; index < 8; index++) {
                         const element = funclist[index];
