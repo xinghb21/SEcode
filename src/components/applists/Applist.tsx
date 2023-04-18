@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Form, Input, Button, Divider, Space, Modal, message, Card } from "antd";
+import { Form, Input, Button, Divider, Space, Modal, message, Card, Row } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { request } from "../../utils/network";
@@ -41,13 +41,15 @@ const Applists=()=>{
                 (<p>暂无可用应用</p>)
                 :
                 (<Card>
-                    {applists.map((val)=>{
-                        return (
-                            <a key={val.urlvalue} href={val.urlvalue}>
-                                <Card.Grid key={val.key} style={gridStyle}  >{val.name}</Card.Grid>;
-                            </a>
-                        );
-                    })}
+                    <Row>
+                        {applists.map((val)=>{
+                            return (
+                                <a key={val.urlvalue} href={val.urlvalue}>
+                                    <Card.Grid key={val.key} style={gridStyle}  >{val.name}</Card.Grid>
+                                </a>
+                            );
+                        })}
+                    </Row>
                 </Card>)        
             }
         </div>
