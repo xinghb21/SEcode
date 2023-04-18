@@ -6,7 +6,7 @@ const nextConfig = {
     async rewrites() {
         return [{
             source: "/api/:path*",
-            destination: "http://127.0.0.1:8000/:path*",
+            destination: process.env.NODE_ENV === "development" ? "http://127.0.0.1:8000/:path*" : "https://Aplus-backend-Aplus.app.secoder.net/:path*",
         }, 
         {
             source: "/image",
