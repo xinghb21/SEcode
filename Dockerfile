@@ -1,5 +1,3 @@
-# TODO Start: [Student] Complete Dockerfile
-# Stage 0: build
 FROM node:18 AS build
 
 ENV FRONTEND=/opt/frontend
@@ -14,9 +12,6 @@ RUN yarn install
 
 RUN yarn build
 
-RUN yarn export
-
-# Stage 1
 FROM node:18-alpine
 
 ENV HOME=/opt/app
@@ -33,6 +28,3 @@ COPY --from=build /opt/frontend/package.json ./package.json
 CMD ["yarn", "start", "-p", "80"]
 
 EXPOSE 80
-
-EXPOSE 80
-# TODO End
