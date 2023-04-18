@@ -1,5 +1,5 @@
 import { ModalForm, ProForm, ProFormDigit, ProFormMoney, ProFormSelect, ProFormText, ProList } from "@ant-design/pro-components";
-import { Button, Form, Input, Space, Table, Upload, UploadFile, UploadProps, message } from "antd";
+import { Button, Form, Input, Modal, Space, Table, Upload, UploadFile, UploadProps, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { request } from "../../utils/network";
@@ -41,10 +41,10 @@ interface Excel{
     资产种类: string;
     资产价值: Number;
     资产使用年限: Number;
-    资产描述: string;
-    资产数量: Number;
-    上级资产名称: string;
-    挂账人: string;
+    资产描述?: string;
+    资产数量?: Number;
+    上级资产名称?: string;
+    挂账人?: string;
 
 }
 
@@ -102,10 +102,13 @@ const AddAsset = () => {
     const [entity, setEntity] = useState<string>("");
     const [value, setValue] = useState("");
     const [fileList, setFileList] = useState<RcFile[]>([]);
+    const [detail, setDetail] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     //markdown
     const handleChange = (content: string) => {
         setValue(content);
+        alert(123);
     };
 
     const modules = {
@@ -172,6 +175,7 @@ const AddAsset = () => {
     const onSubmit = (() => {
         //与后端交互，实现批量添加
 
+        setLoading(true);
         const newAssets = assets.filter(item => !selectedRowKeys.includes(item.key));
         const selectedAssert = selectedRowKeys.map(key => {
             const item = assets.find(data => data.key === key);
@@ -182,18 +186,22 @@ const AddAsset = () => {
             .then(() => {
                 setAsset(newAssets);
                 message.success("提交成功");
+                setLoading(false);
             })
             .catch((err) => {
                 alert(err);
+                setLoading(false);
             });
     });
 
+
+    //excel
     const onImportExcel = (file: RcFile) => {
         if(fileList.some(f => f.name === file.name)) {
             message.error("文件已上传");
             return false;
         }
-		let resData : Asset[] = [];// 存储获取到的数据
+		let resData : Excel[] = [];// 存储获取到的数据
 		// 通过FileReader对象读取文件
 		const fileReader = new FileReader();
 		fileReader.readAsBinaryString(file);  //二进制
@@ -211,29 +219,42 @@ const AddAsset = () => {
 					}
 				}
                 let check: Boolean = true;
+                let fileAsset: Asset[] = [];
 				for(let i = 0; i < resData.length; i++) {
-                    if(!("key" in resData[i])) 
-                        resData[i].key = resData[i].name;
-                    if(!("name" in resData[i])) {
+                    if(!("资产名称" in resData[i])) {
                         message.error("文件中缺少资产名称，请参照模板规范");
                         check = false;
                         break;
-                    } else if(!("category" in resData[i])) {
+                    } else if(!("资产种类" in resData[i])) {
                         message.error("文件中缺少资产种类，请参照模板规范");
                         check = false;
                         break;
-                    } else if(!("life" in resData[i])) {
+                    } else if(!("资产使用年限" in resData[i])) {
                         message.error("文件中缺少资产使用年限，请参照模板规范");
                         check = false;
                         break;
-                    } else if(!("price" in resData[i])) {
+                    } else if(!("资产价值" in resData[i])) {
                         message.error("文件中缺少资产价值，请参照模板规范");
                         check = false;
                         break;
                     }
+                    let resAsset: Asset = {
+
+                        key: resData[i].资产名称,
+                        name: resData[i].资产名称,
+                        category: resData[i].资产种类,
+                        life: resData[i].资产使用年限,
+                        price: resData[i].资产价值,
+                        description: resData[i].资产描述,
+                        parent: resData[i].上级资产名称,
+                        belonging: resData[i].挂账人,
+                        number: resData[i].资产数量? resData[i].资产数量: 1,
+                        
+                    };
+                    fileAsset.push(resAsset);
                 }
                 if(check) {
-                    setAsset(assets => assets.concat(resData));
+                    setAsset(assets => assets.concat(fileAsset));
                     message.success("导入成功");
                     setFileList([...fileList, file]);
                     return true;
@@ -247,7 +268,7 @@ const AddAsset = () => {
 
     return (
         <div style={{margin: 24}}>
-            <Space>
+            <Space size="middle">
                 <ModalForm
                     autoFocusFirstInput
                     modalProps={{
@@ -359,10 +380,10 @@ const AddAsset = () => {
                             }}
                             onRemove={async (file: UploadFile) => {
                                 try {
-                                await client.delete(file.name);
-                                message.success(`${file.name} 已删除`);
+                                    await client.delete(file.name);
+                                    message.success(`${file.name} 已删除`);
                                 } catch (error) {
-                                alert(error);
+                                    alert(error);
                                 }
                             }}
                             data={{
@@ -377,6 +398,7 @@ const AddAsset = () => {
                     </ProForm.Group>
                     <ProForm.Group>
                         <ReactQuill
+                            title="资产描述"
                             value={value}
                             onChange={handleChange}
                             modules={modules}
@@ -392,10 +414,24 @@ const AddAsset = () => {
                     accept=".xlsx">
                     <Button icon={<UploadOutlined />}>从文件中导入</Button>
                 </Upload>
+                <a href="https://cloud.tsinghua.edu.cn/f/3472ab7dc87a4c03aa5c/?dl=1">下载模板文件</a>
+                <Button type="link" onClick={() => setDetail(true)}>
+                    模板说明
+                </Button>
+                <Modal
+                    title="模板说明"
+                    open={detail}
+                    onOk={() => setDetail(false)}
+                    onCancel={() => setDetail(false)}
+                >
+                    <p>模板中含有资产的必要属性与非必要属性，对于必要属性表格中的每一项资产都必须填写，非必要属性则可以有选择地填写</p>
+                    <p>必要属性：资产名称、资产种类、资产价值、资产使用年限</p>
+                    <p>非必要属性：资产描述、资产数量、上级资产名称、挂账人</p>
+                </Modal>
             </Space>
             <div style={{marginTop: 24}}>
                 <Table rowSelection={rowSelection} columns={columns} dataSource={assets} />
-                <Button type="primary" onClick={onSubmit} disabled={!hasSelected}>
+                <Button type="primary" onClick={onSubmit} disabled={!hasSelected} loading={loading}>
                     提交
                 </Button>
             </div>
