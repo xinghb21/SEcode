@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Drawer, Space, Button, Table, Tag, message, Modal, Input } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { request } from "../../utils/network";
+import {
+    CarryOutTwoTone,
+} from "@ant-design/icons";
 
-interface DrawerProps {
-    isOpen: boolean;
-    onClose: () => void;
-}
+import { Badge, Tooltip } from "antd";
 
 interface DialogProps {
     isOpen: boolean;
@@ -32,18 +32,18 @@ type AssetDisplayType = {
     assetcount: number;//申请原因
 }
 
-const data = [{
-    key: 1,
-    name: "cjt",
-    reason: "电脑",
-    oper: 1,
+// const data = [{
+//     key: 1,
+//     name: "cjt",
+//     reason: "电脑",
+//     oper: 1,
 
-}, {
-    key: 2,
-    name: "hqf",
-    reason: "电脑",
-    oper: 4,
-}];
+// }, {
+//     key: 2,
+//     name: "hqf",
+//     reason: "电脑",
+//     oper: 4,
+// }];
 
 const Assetcolumns: ColumnsType<AssetDisplayType> = [
     {
@@ -64,24 +64,44 @@ const Assetcolumns: ColumnsType<AssetDisplayType> = [
     }
 ];
 
-const TbdDrawer = (props: DrawerProps) => {
+const TbdDrawer = () => {
     const [tbdData, settbdData] = useState<DataType[]>([]);
     const [open, setOpen] = useState(false);
     const [assetdisdata, setassetdisData] = useState<AssetDisplayType[]>([]);
     const [reason, setR] = useState("");
     const [chosenkey, setck] = useState<React.Key>();
     const [isDialogOpenSR, setIsDialogOpenSR] = useState(false);
+    const [isTBD, setTBD] = useState(false);//true即有待办任务，false相反
+    const [dopen, setDOpen] = useState(false);
+    const showDrawer = () => {
+        setDOpen(true);
+    };
+    const onClose = () => {
+        setDOpen(false);
+    };
+    useEffect((() => {
+        fetchtbdData();
+        fetchtbd();
+    }), []);
 
     const showModal = () => {
         setOpen(true);
     };
 
+    const fetchtbd=()=>{
+        //资产管理员界面需要设置tbd的状态
+        request("/api/user/ep/istbd", "GET").then((res) => {
+            setTBD(res.info);
+        }).catch((err) => {
+            message.warning(err.message);
+        });
+    };
     const handleOk = () => {
         setTimeout(() => {
             setOpen(false);
         }, 3000);
     };
-    //创建新的部门
+    //拒绝申请输入原因
     const handleSendR = (reason: string) => {
         //不允许空输入
         if (reason.match("\\s+") || reason.length == 0) {
@@ -94,6 +114,7 @@ const TbdDrawer = (props: DrawerProps) => {
             reason: reason
         }).then(() => {
             fetchtbdData();
+            fetchtbd();
         }).catch((err) => {
             message.warning(err.detail);
         });
@@ -103,9 +124,8 @@ const TbdDrawer = (props: DrawerProps) => {
     const handleCancel = () => {
         setOpen(false);
     };
-    useEffect((() => {
-        fetchtbdData();
-    }), []);
+
+    
 
     const SendR = (props: DialogProps) => {
         const handleSendR = () => {
@@ -124,12 +144,12 @@ const TbdDrawer = (props: DrawerProps) => {
     const fetchtbdData = () => {
         request("/api/user/ep/getallapply", "GET")
             .then((res) => {
-                settbdData(res.info.map(([id, name, reason, oper]) => {
+                settbdData(res.info.map((item) => {
                     return {
-                        key: id,
-                        name: name,
-                        reason: reason,
-                        oper: oper
+                        key: item.id,
+                        name: item.name,
+                        reason: item.reason,
+                        oper: item.oper
                     };
                 }));
             })
@@ -179,38 +199,39 @@ const TbdDrawer = (props: DrawerProps) => {
         },
         {
             title: "操作",
-            render: () => (
+            render: (record) => (
                 <Space size="middle">
-                    <Button type="link" onClick={(record) => {
+                    <Button type="link" onClick={() => {
                         request("/api/user/ep/assetsinapply", "GET", {
-                            id: record.id
+                            id: record.key
                         }).then((res) => {
-                            setassetdisData(res.info.map(([id, assetname, assetclass, assetcount]) => {
+                            setassetdisData(res.info.map((item) => {
                                 return {
-                                    key: id,
-                                    assetname: assetname,
-                                    assetclass: assetclass,
-                                    assetcount: assetcount
+                                    key: item.id,
+                                    assetname: item.assetname,
+                                    assetclass: item.assetclass,
+                                    assetcount: item.assetcount
                                 };
                             }));
-                            setOpen(true);
+                            showModal();
                         }).catch((err) => {
                             message.warning(err.detail);
                         });
                     }}>详细</Button>
-                    <Button danger={true} onClick={(record) => {
+                    <Button danger={true} onClick={() => {
                         setck(record.key);
                         setIsDialogOpenSR(true);
                     }}>
                         拒绝
                     </Button>
-                    <Button type="primary" onClick={(record) => {
+                    <Button type="primary" onClick={() => {
                         request("/api/user/ep/reapply", "POST", {
                             id: record.key,
                             status: 0,
                             reason: "Success!"
                         }).then(() => {
                             fetchtbdData();
+                            fetchtbd();
                         }).catch((err) => {
                             message.warning(err.detail);
                         });
@@ -223,27 +244,36 @@ const TbdDrawer = (props: DrawerProps) => {
     ];
 
     return (
-        <Drawer
-            title="待办任务列表"
-            width={"70%"}
-            onClose={props.onClose}
-            open={props.isOpen}
-        >
-            <Table columns={columns} dataSource={tbdData} />
-            <Modal
-                open={open}
-                title="该员工所申请资产详细"
-                onOk={handleOk}
-                footer={[
-                    <Button key="back" onClick={handleCancel}>
-                        Return
-                    </Button>,
-                ]}
+        <>
+            <Tooltip placement="bottomLeft" title={<span>代办任务</span>}>
+                <Button type="text" size="large" style={{ margin: 5 }} onClick={showDrawer}>
+                    <Badge dot style={{ visibility: (!isTBD) ? "hidden" : "visible" }}>
+                        <CarryOutTwoTone twoToneColor={(!isTBD) ? "#a8a8a8" : "#f82212"} style={{ fontSize: "25px" }} />
+                    </Badge>
+                </Button>
+            </Tooltip>
+            <Drawer
+                title="待办任务列表"
+                width={"70%"}
+                onClose={onClose}
+                open={dopen}
             >
-                <Table columns={Assetcolumns} dataSource={assetdisdata} />
-            </Modal>
-            <SendR title={"请输入拒绝原因"} subtitle={"具体原因为："} isOpen={isDialogOpenSR} onClose={() => setIsDialogOpenSR(false)} onSendR={handleSendR} />
-        </Drawer>
+                <Table columns={columns} dataSource={tbdData} />
+                <Modal
+                    open={open}
+                    title="该员工所申请资产详细"
+                    onOk={handleOk}
+                    footer={[
+                        <Button key="back" onClick={handleCancel}>
+                        Return
+                        </Button>,
+                    ]}
+                >
+                    <Table columns={Assetcolumns} dataSource={assetdisdata} />
+                </Modal>
+                <SendR title={"请输入拒绝原因"} subtitle={"具体原因为："} isOpen={isDialogOpenSR} onClose={() => setIsDialogOpenSR(false)} onSendR={handleSendR} />
+            </Drawer>
+        </>
     );
 };
 export default TbdDrawer;

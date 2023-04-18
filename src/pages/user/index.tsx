@@ -4,9 +4,8 @@ import {
     DesktopOutlined,
     PieChartOutlined,
     UserOutlined,
-    CarryOutTwoTone,
 } from "@ant-design/icons";
-import { Button, MenuProps, Skeleton, Space, Avatar, message, Badge, Tooltip } from "antd";
+import { MenuProps, Skeleton, Space, Avatar, message } from "antd";
 import { useRouter } from "next/router";
 import { Layout, Menu, theme } from "antd";
 import { request } from "../../utils/network";
@@ -49,15 +48,15 @@ function getItem(
 
 
 const AppList: any[] = [
-    "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产定义", "资产管理", "资产分析", "资产申请","应用列表"
+    "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产定义", "资产管理", "资产分析", "资产申请", "应用列表"
 ];
 
 //xhb_begin
 const PageList: any[] = [
     <div key={0}><Page_0 /></div>, <div key={1}><EStable /></div>, <div key={2}><Page_2 /></div>,
-    <div key={3}><Page_3 /></div>, <div key={4}><Page_4 /></div>, <div key={5}><Page_5/></div>,
-    <div key={6}><App /></div>, <div key={7}><Page_7 /></div>, <div key={8}><Page_8 /></div>, 
-    <div key={9}><Page_home /></div>,<div key={10}><Page_set /></div>, <div key={11}><Page_info /></div>,<div key={12}><Applists/> </div>
+    <div key={3}><Page_3 /></div>, <div key={4}><Page_4 /></div>, <div key={5}><Page_5 /></div>,
+    <div key={6}><App /></div>, <div key={7}><Page_7 /></div>, <div key={8}><Page_8 /></div>,
+    <div key={9}><Page_home /></div>, <div key={10}><Page_set /></div>, <div key={11}><Page_info /></div>, <div key={12}><Applists /> </div>
 ];
 //xhb_end
 
@@ -71,18 +70,14 @@ const User: React.FC = () => {
     const [load, setLoad] = useState(true);
     const [page, setPage] = useState(9);
     const [name, setName] = useState("");
-    const [isTBD, setTBD] = useState(false);//true即有待办任务，false相反
-    const [open, setOpen] = useState(false);
+
+
     const [identity, setID] = useState<number>(4);
-    const showDrawer = () => {
-        setOpen(true);
-    };
-    const onClose = () => {
-        setOpen(false);
-    };
+
+
     useEffect(() => {
         if (!router.isReady) {
-            console.log("router isn't ready ")
+            console.log("router isn't ready");
             return;
         }
         fetchList();
@@ -142,15 +137,9 @@ const User: React.FC = () => {
                         }
                     }
                     items.push(getItem("资产管理", "asset", <PieChartOutlined />, child));
-                    //资产管理员界面需要设置tbd的状态
-                    request("/api/user/ep/istbd", "GET").then((subres) => {
-                        setTBD(subres.info);
-                    }).catch((err) => {
-                        message.warning(err.message);
-                    });
-                    let appsingle:MenuItem[]=[];
-                    appsingle.push(getItem(AppList[9],12));
-                    items.push(getItem("应用列表","apps",<PieChartOutlined/>,appsingle));
+                    let appsingle: MenuItem[] = [];
+                    appsingle.push(getItem(AppList[9], 12));
+                    items.push(getItem("应用列表", "apps", <PieChartOutlined />, appsingle));
                 }
                 else {
                     if (funclist[8] === "1") {
@@ -159,9 +148,9 @@ const User: React.FC = () => {
                         ]));
                     }
                     else items.push(getItem("员工操作", "oper", <PieChartOutlined />));
-                    let appsingle:MenuItem[]=[];
-                    appsingle.push(getItem(AppList[9],12));
-                    items.push(getItem("应用列表","apps",<PieChartOutlined/>,appsingle));
+                    let appsingle: MenuItem[] = [];
+                    appsingle.push(getItem(AppList[9], 12));
+                    items.push(getItem("应用列表", "apps", <PieChartOutlined />, appsingle));
                 }
                 items.push(getItem("用户", "/User", <UserOutlined />, [
                     getItem("信息", 10),
@@ -217,13 +206,7 @@ const User: React.FC = () => {
                     <Layout className="site-layout">
                         <Content style={{ margin: "0 16px" }}>
                             <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
-                                <Tooltip placement="bottomLeft" title={<span>代办任务</span>}>
-                                    <Button type="text" size="large" style={{ margin: 5 }} onClick={showDrawer}>
-                                        <Badge dot style={{ visibility: (!isTBD) ? "hidden" : "visible" }}>
-                                            <CarryOutTwoTone twoToneColor={(!isTBD) ? "#a8a8a8" : "#f82212"} style={{ fontSize: "25px" }} />
-                                        </Badge>
-                                    </Button>
-                                </Tooltip>
+                                <TbdDrawer />
                                 <Space align="center">
                                     <Avatar icon={<UserOutlined />} />
                                     <Text strong>
@@ -238,7 +221,6 @@ const User: React.FC = () => {
                         <Footer style={{ textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
                     </Layout>
                 </Layout>
-                <TbdDrawer isOpen={open} onClose={onClose} />
             </Skeleton>
         );
     }
