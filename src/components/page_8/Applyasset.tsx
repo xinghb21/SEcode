@@ -209,7 +209,7 @@ const Applyasset=()=>{
                             return (
                                 <div>
                                     <Button onClick={()=>{setdetailid(row.id);setdetailmessage(row.message);setdetailreason(row.reason);setisdetailopen(true);}}>查看详情</Button>
-                                    <Button onClick={()=>{handledelete(row.id);}}disabled={(row.state !== 0)} > 删除 </Button>
+                                    <Button onClick={()=>{handledelete(row.id);}}disabled={(row.state === 0)} > 删除 </Button>
                                 </div>
                             );
                         },

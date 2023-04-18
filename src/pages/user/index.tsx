@@ -214,13 +214,13 @@ const User: React.FC = () => {
             }else{
                 if((typeof menuItem.key) === "string"){
                     if((menuItem.key as string).startsWith("url")){
-                            const w = window.open('_black'); //这里是打开新窗口
-                            let url = (menuItem.key as string).substring(3,(menuItem.key as string).length);
-                            if(w){
-                                w.location.href=url;
-                            }else{
-                                message.warning("url有误");
-                            }
+                        const w = window.open("_black"); //这里是打开新窗口
+                        let url = (menuItem.key as string).substring(3,(menuItem.key as string).length);
+                        if(w){
+                            w.location.href=url;
+                        }else{
+                            message.warning("url有误");
+                        }
                     }else{
                         setPage(Number(menuItem.key));
                     }
@@ -228,7 +228,7 @@ const User: React.FC = () => {
                     setPage(Number(menuItem.key));
                 }
             }
-            }
+        }
         else {
             //实现登出
             request(
