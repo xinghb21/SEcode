@@ -33,7 +33,7 @@ const Applyasset=()=>{
     const [isdetalopen,setisdetailopen]=useState<boolean>(false);
     const [detailreason,setdetailreason] =useState<string>("");
     const [datailmessage,setdetailmessage] = useState<string>("");
-    const [datailid,setdetailid] =useState<number>(0);
+    const [datailid,setdetailid] =useState<number>(-1);
     useEffect((()=>{
         fetchlist();
         fetchapply();

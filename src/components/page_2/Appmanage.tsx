@@ -71,7 +71,7 @@ const Appmagage=(props:DialogProps)=>{
         }
     };
     return (
-        <Modal  title="创建企业系统管理员" onOk={()=>{setapplist([]);props.onClose();}} onCancel={()=>{setapplist([]);props.onClose();}} open={props.isOpen}  >
+        <Modal  title="应用列表管理" onOk={()=>{props.onClose();}} onCancel={()=>{props.onClose();}} open={props.isOpen}  >
             <Addapp isOpen={dialogopen1} username={props.username} onClose={()=>{ setIsDialogOpen1(false);fetchlist(); }}></Addapp>
             <ProList<app>
                 toolBarRender={() => {

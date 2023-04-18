@@ -34,7 +34,7 @@ const Addapp=(props:DialogProps)=>{
         }
     };
     return (
-        <Modal title={"添加应用"} open={props.isOpen} onOk={add_app} onCancel={()=>{props.onClose();}} >
+        <Modal title={"添加应用"} open={props.isOpen} onOk={()=>{add_app();props.onClose();}} onCancel={()=>{props.onClose();}} >
             <label>应用名称:</label>
             <Input type="text" value={appname} onChange={(e) => setappname(e.target.value)} />
             <label>应用URL:</label>
