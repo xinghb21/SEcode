@@ -119,7 +119,7 @@ const Applyasset=()=>{
             <ProList<asset>
                 toolBarRender={() => {
                     return [
-                        <Button key="1" type="primary" disabled={hasSelected} onClick={()=>{setIsDialogOpen1(true);setassetselected(useable_assetslist.filter((obj)=>{return selectedRowKeys.find((key)=>{return key==obj.key;}) != null; }));}}>
+                        <Button key="1" type="primary" disabled={!hasSelected} onClick={()=>{setIsDialogOpen1(true);setassetselected(useable_assetslist.filter((obj)=>{return selectedRowKeys.find((key)=>{return key==obj.key;}) != null; }));}}>
                                 申请资产领用
                         </Button>,                      
                     ];
@@ -163,7 +163,7 @@ const Applyasset=()=>{
                                         onChange={(e)=>{handleChange(e,row.name);}}
                                         placeholder="Input a number"
                                         maxLength={16}
-                                        disabled = { !(selectedRowKeys.find((obj)=>{obj===row.key;})!= null) }
+                                        disabled = { (selectedRowKeys.find((obj)=>{obj===row.key;})!= null) }
                                     />
                                 </div>
                             );
@@ -196,8 +196,8 @@ const Applyasset=()=>{
                         render: (_, row) => {
                             return (
                                 <Space size={0}>
-                                    {(row.state===0)?<Tag color="red" key={row.id}>{"拒绝"}</Tag>
-                                        :((row.state===1)?<Tag color="blue" key={row.id} >{"处理中"}</Tag>:<Tag color="green" key={row.id}>{"通过"}</Tag>)  
+                                    {(row.state===2)?<Tag color="red" key={row.id}>{"拒绝"}</Tag>
+                                        :((row.state===0)?<Tag color="blue" key={row.id} >{"处理中"}</Tag>:<Tag color="green" key={row.id}>{"通过"}</Tag>)  
                                     }
                                 </Space>
                             );
