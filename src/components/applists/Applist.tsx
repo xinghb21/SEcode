@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Form, Input, Button, Divider, Space, Modal, message, Card, Row, Col } from 'antd';
+import { Form, Input, Button, Divider, Space, Modal, message, Card, Row, Col } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { request } from "../../utils/network";
@@ -53,7 +53,8 @@ const Applists=()=>{
     }),[]);
     const gridStyle: React.CSSProperties = {
         textAlign: "center",
-        width:"25%"
+        width:"100",
+        height:"80"
     };
     return (
         <div>
@@ -61,21 +62,21 @@ const Applists=()=>{
                 (<p>暂无可用应用</p>)
                 :
                 (<Col span={4} >
-                        {applistlist.map((val,index)=>{
-                            return (
-                                <Row gutter={16} >
-                                    {
+                    {applistlist.map((val,index)=>{
+                        return (
+                            <Row gutter={16} key={index}>
+                                {
                                     val.map((value)=>{
                                         return(
                                             <a href={value.urlvalue} key={value.name}>
                                                 <Card style={gridStyle} key={value.name}>{value.name}</Card>
                                             </a>
-                                        )   
-                                        })
-                                    }
-                                </Row>
-                            );
-                        })}
+                                        );   
+                                    })
+                                }
+                            </Row>
+                        );
+                    })}
                 </Col>)        
             }
         </div>

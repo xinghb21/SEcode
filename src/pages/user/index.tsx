@@ -25,7 +25,9 @@ import Page_info from "../../components/page_info";
 import { ItemType } from "antd/es/breadcrumb/Breadcrumb";
 import Applists from "../../components/applists/Applist";
 import MenuItem from "antd/es/menu/MenuItem";
-import TbdDrawer from "./tbd"
+import TbdDrawer from "./tbd";
+import { Typography } from "antd";
+const { Text } = Typography;
 
 const { Header, Content, Footer, Sider } = Layout;
 

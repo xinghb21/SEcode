@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import type { MenuProps } from "antd";
 import { Menu } from "antd";
 import Applyasset from "./Applyasset";
-import Returnasset from "./Returnasset"
+import Returnasset from "./Returnasset";
 
 const items: MenuProps["items"] = [
     {

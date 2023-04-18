@@ -1,4 +1,4 @@
-import { Avatar, List, Space, Button, Tag, message, Modal, Input } from 'antd';
+import { Avatar, List, Space, Button, Tag, message, Modal, Input } from "antd";
 import React from "react";
 import { ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProList, QueryFilter, hrHRIntl } from "@ant-design/pro-components";
 import { Progress } from "antd";
@@ -29,25 +29,25 @@ const Applysubmit=(props:DialogProps)=>{
     const [reason,setreason]=useState<string>("");
     const handlesubmit=()=>{
         if(reason!==""){
-            request('api/user/ns/userapply',"POST",{assetsapply:props.proassetlist.map((val)=>{return{id:val.id,assetname:val.name,assetcount:val.count};}),reason:reason})
-            .then((res)=>{
-                message.success("提交成功，请等待审批");
-                props.onClose();
-                props.onSuccess();
-            })
-            .catch((err)=>{
+            request("api/user/ns/userapply","POST",{assetsapply:props.proassetlist.map((val)=>{return{id:val.id,assetname:val.name,assetcount:val.count};}),reason:reason})
+                .then((res)=>{
+                    message.success("提交成功，请等待审批");
+                    props.onClose();
+                    props.onSuccess();
+                })
+                .catch((err)=>{
                 //申请没成功就关闭页面
-                message.warning(err.message);
-                props.onClose();
-            })    
+                    message.warning(err.message);
+                    props.onClose();
+                });    
         }else{
             message.warning("请填写申请原因");
         }
-    }
+    };
     return (
-        <Modal  title="提交资产领用申请" onOk={()=>{handlesubmit()}} okButtonProps={{name:"提交"}} onCancel={props.onClose} open={props.isOpen}  >
+        <Modal  title="提交资产领用申请" onOk={()=>{handlesubmit();}} okButtonProps={{name:"提交"}} onCancel={props.onClose} open={props.isOpen}  >
             <label>请填写申请原因：</label>
-            <Input type='text' onChange={(e)=>{setreason(e.target.value)}} maxLength={200}></Input>
+            <Input type='text' onChange={(e)=>{setreason(e.target.value);}} maxLength={200}></Input>
             <ProList<asset>
                 toolBarRender={() => {
                     return [
@@ -65,14 +65,14 @@ const Applysubmit=(props:DialogProps)=>{
                         description: {
                             render: (_,row) => {
                                 return (
-                                <div>
+                                    <div>
                                         <div>
                                             {"现有数量: "+row.count}
                                         </div>
                                         <div>
                                             {"资产编号："+row.id}
                                         </div>
-                                </div>
+                                    </div>
                                 );
                             },
                         },

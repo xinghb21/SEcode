@@ -1,4 +1,4 @@
-import { Avatar, List, Space, Button, Tag, message, Modal, Input, Table } from 'antd';
+import { Avatar, List, Space, Button, Tag, message, Modal, Input, Table } from "antd";
 import React from "react";
 import { ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProList, QueryFilter, hrHRIntl } from "@ant-design/pro-components";
 import { Progress } from "antd";
@@ -9,7 +9,7 @@ import { request } from "../../utils/network";
 import { Md5 } from "ts-md5";
 import Column from "antd/es/table/Column";
 import Addapp from "../applists/Addapp";
-import { ColumnsType } from 'antd/es/table';
+import { ColumnsType } from "antd/es/table";
 interface DialogProps{
 
     id:number;
@@ -46,21 +46,21 @@ const Applydetail=(props:DialogProps)=>{
     const [assetlist,setassetlist]= useState<asset[]>([]);
 
     useEffect((()=>{
-    request('api/user/ns/assetsinapply',"GET",{id:props.id})
-    .then((res)=>{
-        setassetlist(res.info.map((val)=>{
-            return {
-                key:val.id,
-                id:val.id,
-                name:val.assetname,
-                count:val.assetcount,
-            }
-        }));
-    })
-    .catch((err)=>{
-        message.warning(err.message);
-    })
-   }),[props.id])
+        request("api/user/ns/assetsinapply","GET",{id:props.id})
+            .then((res)=>{
+                setassetlist(res.info.map((val)=>{
+                    return {
+                        key:val.id,
+                        id:val.id,
+                        name:val.assetname,
+                        count:val.assetcount,
+                    };
+                }));
+            })
+            .catch((err)=>{
+                message.warning(err.message);
+            });
+    }),[props.id]);
     return (
         <Modal  title="该领用的信息" onOk={props.onClose} onCancel={props.onClose} open={props.isOpen}  >
             <label>申请原因：</label>
