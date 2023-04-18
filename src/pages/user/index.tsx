@@ -80,7 +80,7 @@ const User: React.FC = () => {
                 setName(res.name);
                 fetchList(res.name);
             });
-    }, []);
+    }, [router]);
 
     //通过后端获取的funlist以及用户对应的identity实现侧边栏应用
     //具体的key还需要完善
