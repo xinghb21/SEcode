@@ -58,7 +58,7 @@ const PageList: any[] = [
 ];
 //xhb_end
 
-//这里的item应该从后端获取数据后形成？
+//这里的item从后端获取数据后形成
 const items: MenuItem[] = [];
 
 const User: React.FC = () => {
