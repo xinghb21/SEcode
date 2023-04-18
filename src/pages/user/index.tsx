@@ -138,7 +138,7 @@ const User: React.FC = () => {
                 else {
                     if (funclist[8] === "1") {
                         items.push(getItem("员工操作", "oper", <PieChartOutlined />, [
-                            getItem("资产申请", "user"),
+                            getItem("资产申请", 8),
                         ]));
                     }
                     else items.push(getItem("员工操作", "oper", <PieChartOutlined />));
