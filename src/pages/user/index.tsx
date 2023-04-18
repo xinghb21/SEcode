@@ -68,7 +68,7 @@ const User: React.FC = () => {
     const [load, setLoad] = useState(true);
     const [page, setPage] = useState(9);
     const [name, setName] = useState("");
-    const [isTBD, setTBD] = useState(true);
+    const [isTBD, setTBD] = useState(false);//true即有待办任务，false相反
     const [open, setOpen] = useState(false);
     const [identity, setID] = useState<number>(4);
     const showDrawer = () => {
@@ -138,6 +138,12 @@ const User: React.FC = () => {
                         }
                     }
                     items.push(getItem("资产管理", "asset", <PieChartOutlined />, child));
+                    //资产管理员界面需要设置tbd的状态
+                    request("/api/user/ep/istbd", "GET").then((subres) => {
+                        setTBD(subres.info);
+                    }).catch((err) => {
+                        message.warning(err.message);
+                    });
                 }
                 else {
                     if (funclist[8] === "1") {
