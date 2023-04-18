@@ -132,7 +132,7 @@ const User: React.FC = () => {
                     }
                     items.push(getItem("资产管理", "asset", <PieChartOutlined />, child));
                     let appsingle:MenuItem[]=[];
-                    appsingle.push(getItem(AppList[9],9));
+                    appsingle.push(getItem(AppList[9],12));
                     items.push(getItem("应用列表","apps",<PieChartOutlined/>,appsingle));
                 }
                 else {
@@ -143,7 +143,7 @@ const User: React.FC = () => {
                     }
                     else items.push(getItem("员工操作", "oper", <PieChartOutlined />));
                     let appsingle:MenuItem[]=[];
-                    appsingle.push(getItem(AppList[9],9));
+                    appsingle.push(getItem(AppList[9],12));
                     items.push(getItem("应用列表","apps",<PieChartOutlined/>,appsingle));
                 }
                 items.push(getItem("用户", "/User", <UserOutlined />, [

@@ -10,7 +10,7 @@ import { Md5 } from "ts-md5";
 import Column from "antd/es/table/Column";
 import Addapp from "../applists/Addapp";
 interface DialogProps{
-    children:string;
+
     isOpen: boolean;
     onClose: ()=>void;
     onSuccess:()=> void;

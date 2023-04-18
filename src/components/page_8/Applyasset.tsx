@@ -6,7 +6,7 @@ import { request } from '../../utils/network';
 import { ProList } from "@ant-design/pro-components";
 import Applysubmit from "./applysubmit"
 import { ColumnsType } from "antd/es/table";
-
+import Applydetail from "./Applydetail"
 interface asset{
     key:React.Key;
     id:number;
@@ -29,7 +29,11 @@ const Applyasset=()=>{
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [IsDialogOpen1,setIsDialogOpen1]=useState<boolean>(false);
     const [assetselected,setassetselected]= useState<asset[]>([]);
-    const [applylist,setapplylsit]=useState<applys[]>([])
+    const [applylist,setapplylsit]=useState<applys[]>([]);
+    const [isdetalopen,setisdetailopen]=useState<boolean>(false);
+    const [detailreason,setdetailreason] =useState<string>("");
+    const [datailmessage,setdetailmessage] = useState<string>("");
+    const [datailid,setdetailid] =useState<number>(0);
     useEffect((()=>{
         fetchlist();
         fetchapply();
@@ -96,11 +100,22 @@ const Applyasset=()=>{
         fetchlist();
         fetchapply();
     }  
+    const handledelete=(rowid:number)=>{
+        request('api//user/ns/deleteapplys',"DELETE",{id:rowid})
+        .then((res)=>{
+            fetchapply();
+            message.success("删除成功");
+        })
+        .catch((err)=>{
+            message.warning(err.message);
+        }
+        );
+    }
 
     return (
         <div>
-            <Applysubmit isOpen={IsDialogOpen1} onClose={()=>{}} children="fuckse" proassetlist={assetselected} onSuccess={handlesubmitsuccess} ></Applysubmit>
-            
+            <Applysubmit isOpen={IsDialogOpen1} onClose={()=>{setIsDialogOpen1(false)}} proassetlist={assetselected} onSuccess={handlesubmitsuccess} ></Applysubmit>
+            <Applydetail isOpen={isdetalopen} onClose={()=>{setisdetailopen(false)}} id={datailid} reason={detailreason} message={datailmessage} > </Applydetail>
             <ProList<asset>
                     toolBarRender={() => {
                         return [
@@ -192,7 +207,10 @@ const Applyasset=()=>{
                         actions: {
                             render: (_,row) => {
                                 return (
-                                    <Button onClick={()=>{}}>查看详情</Button>
+                                <div>
+                                    <Button onClick={()=>{setdetailid(row.id);setdetailmessage(row.message);setdetailreason(row.reason);setisdetailopen(true)}}>查看详情</Button>
+                                    <Button onClick={()=>{handledelete(row.id)}}> 删除 </Button>
+                                </div>
                                 );
                             },
                         },
