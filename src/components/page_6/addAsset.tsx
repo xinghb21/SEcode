@@ -4,17 +4,17 @@ import React, { useEffect, useState } from "react";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { request } from "../../utils/network";
 import type { ColumnsType } from "antd/es/table";
-import CryptoJS from 'crypto-js';
-import Base64 from 'base-64';
-import OSS from 'ali-oss';
-import 'react-quill/dist/quill.snow.css';
-import QuillMarkdown from 'quilljs-markdown';
-import MarkdownIt from 'markdown-it';
-const ReactQuill = typeof window === 'object' ? require('react-quill') : () => false;
-const Quill = typeof window === 'object' ? require('quill') : () => false;
-import MarkdownShortcuts from 'quill-markdown-shortcuts';
-import { RcFile } from 'antd/lib/upload';
-import * as XLSX from 'xlsx/xlsx.mjs'
+import CryptoJS from "crypto-js";
+import Base64 from "base-64";
+import OSS from "ali-oss";
+import "react-quill/dist/quill.snow.css";
+import QuillMarkdown from "quilljs-markdown";
+import MarkdownIt from "markdown-it";
+const ReactQuill = typeof window === "object" ? require("react-quill") : () => false;
+const Quill = typeof window === "object" ? require("quill") : () => false;
+import MarkdownShortcuts from "quill-markdown-shortcuts";
+import { RcFile } from "antd/lib/upload";
+import * as XLSX from "xlsx/xlsx.mjs";
 
 
 const md = new MarkdownIt();
@@ -65,10 +65,10 @@ const accessSecret = "z6KJp2mQNXioRZYF0jkIvNKL5w8fIz";
 const policyText = {
     "expiration": "2028-01-01T12:00:00.000Z", // 设置该Policy的失效时间，
     "conditions": [
-      ["content-length-range", 0, 1048576000] // 设置上传文件的大小限制
+        ["content-length-range", 0, 1048576000] // 设置上传文件的大小限制
     ]
 };
-const policyBase64 = Base64.encode(JSON.stringify(policyText))
+const policyBase64 = Base64.encode(JSON.stringify(policyText));
 const bytes = CryptoJS.HmacSHA1(policyBase64, accessSecret, { asBytes: true });
 const signature = bytes.toString(CryptoJS.enc.Base64); 
 
@@ -114,22 +114,22 @@ const AddAsset = () => {
 
     const modules = {
         toolbar: [
-          [{ header: [1, 2, 3, 4, false] }],
-          ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-          [{ list: 'ordered' }, { list: 'bullet' }],
+            [{ header: [1, 2, 3, 4, false] }],
+            ["bold", "italic", "underline", "strike", "blockquote"],
+            [{ list: "ordered" }, { list: "bullet" }],
         ],
         // markdownShortcuts: {},
     };
 
     const formats = [
-        'header',
-        'bold',
-        'italic',
-        'underline',
-        'strike',
-        'blockquote',
-        'list',
-        'bullet',
+        "header",
+        "bold",
+        "italic",
+        "underline",
+        "strike",
+        "blockquote",
+        "list",
+        "bullet",
     ];
 
     let additions: Addition[] = [];
@@ -153,7 +153,7 @@ const AddAsset = () => {
             .then((res) => {
                 setDepart(res.department);
                 setEntity(res.entity);
-            })
+            });
     }, []);
 
     const rowSelection = {
@@ -207,26 +207,26 @@ const AddAsset = () => {
             message.error("文件已上传");
             return false;
         }
-		let resData : Excel[] = [];// 存储获取到的数据
-		// 通过FileReader对象读取文件
-		const fileReader = new FileReader();
-		fileReader.readAsBinaryString(file);  //二进制
-		fileReader.onload = event => {
-			try {
-				const result = event.target?.result;
-				// 以二进制流方式读取得到整份excel表格对象		
-				const workbook = XLSX.read(result, { type: 'binary' });
-				// 遍历每张工作表进行读取（这里默认只读取第一张表）
-				for (const sheet in workbook.Sheets) {
-					if (workbook.Sheets.hasOwnProperty(sheet)) {
-						// 利用 sheet_to_json 方法将 excel 转成 json 数据
-						resData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet]);
-						break; // 如果只取第一张表，就取消注释这行
-					}
-				}
+        let resData : Excel[] = [];// 存储获取到的数据
+        // 通过FileReader对象读取文件
+        const fileReader = new FileReader();
+        fileReader.readAsBinaryString(file);  //二进制
+        fileReader.onload = event => {
+            try {
+                const result = event.target?.result;
+                // 以二进制流方式读取得到整份excel表格对象		
+                const workbook = XLSX.read(result, { type: "binary" });
+                // 遍历每张工作表进行读取（这里默认只读取第一张表）
+                for (const sheet in workbook.Sheets) {
+                    if (workbook.Sheets.hasOwnProperty(sheet)) {
+                        // 利用 sheet_to_json 方法将 excel 转成 json 数据
+                        resData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet]);
+                        break; // 如果只取第一张表，就取消注释这行
+                    }
+                }
                 let check: Boolean = true;
                 let fileAsset: Asset[] = [];
-				for(let i = 0; i < resData.length; i++) {
+                for(let i = 0; i < resData.length; i++) {
                     if(!("资产名称" in resData[i])) {
                         message.error("文件中缺少资产名称，请参照模板规范");
                         check = false;
@@ -265,12 +265,12 @@ const AddAsset = () => {
                     setFileList([...fileList, file]);
                     return true;
                 }
-			} catch (e) {
-				message.error("文件类型不正确");
+            } catch (e) {
+                message.error("文件类型不正确");
                 return false;
-			}
-		};
-	}
+            }
+        };
+    };
 
     return (
         <div style={{margin: 24}}>
@@ -311,10 +311,10 @@ const AddAsset = () => {
                             let file = imgList[0];
                             handleUpload(file, values.assetname).then(
                                 () => {
-                                  message.success("上传成功");
+                                    message.success("上传成功");
                                 },
                                 error => {
-                                  message.error("上传失败");
+                                    message.error("上传失败");
                                 }
                             );
                         }
@@ -417,7 +417,7 @@ const AddAsset = () => {
                                 success_action_status: 200,
                                 signature,
                             }}>
-                                <Button icon={<UploadOutlined />}>Upload</Button>
+                            <Button icon={<UploadOutlined />}>Upload</Button>
                         </Upload>
                         <ReactQuill
                             title="资产描述"
@@ -427,7 +427,7 @@ const AddAsset = () => {
                             formats={formats}
                             theme="snow"
                             placeholder="Write something..."
-                            />
+                        />
                     </ProForm.Group>
                     <ProForm.Group>
                         
