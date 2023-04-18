@@ -12,8 +12,9 @@ import Addapp from "../applists/Addapp";
 interface DialogProps{
     children:string;
     isOpen: boolean;
-    username:string;
     onClose: ()=>void;
+    onSuccess:()=> void;
+    proassetlist:asset[];
 }
 interface asset{
     key:React.Key;
@@ -24,12 +25,29 @@ interface asset{
     applycount:number;
 }
 
-const Appmagage=(props:DialogProps)=>{
-    const [assetlists,setassetlist]=useState<asset[]>([]);
+const Applysubmit=(props:DialogProps)=>{
     const [reason,setreason]=useState<string>("");
+    const handlesubmit=()=>{
+        if(reason!==""){
+            request('api/user/ns/userapply',"POST",{assetsapply:props.proassetlist.map((val)=>{return{id:val.id,assetname:val.name,assetcount:val.count};}),reason:reason})
+            .then((res)=>{
+                message.success("提交成功，请等待审批");
+                props.onClose();
+                props.onSuccess();
+            })
+            .catch((err)=>{
+                //申请没成功就关闭页面
+                message.warning(err.message);
+                props.onClose();
+            })    
+        }else{
+            message.warning("请填写申请原因");
+        }
+    }
     return (
-        <Modal  title="提交资产领用申请" onOk={()=>{}} onCancel={()=>{}} open={props.isOpen}  >
-            <Input type='text' onChange={(e)=>{setreason(e.target.value)}}></Input>
+        <Modal  title="提交资产领用申请" onOk={()=>{handlesubmit()}} okButtonProps={{name:"提交"}} onCancel={props.onClose} open={props.isOpen}  >
+            <label>请填写申请原因：</label>
+            <Input type='text' onChange={(e)=>{setreason(e.target.value)}} maxLength={200}></Input>
             <ProList<asset>
                 toolBarRender={() => {
                     return [
@@ -55,7 +73,6 @@ const Appmagage=(props:DialogProps)=>{
                                             {"资产编号："+row.id}
                                         </div>
                                 </div>
-
                                 );
                             },
                         },
@@ -75,10 +92,10 @@ const Appmagage=(props:DialogProps)=>{
                 }
                 rowKey="key"
                 headerTitle="本次领用的所有资产"
-                dataSource={assetlists}
+                dataSource={props.proassetlist}
             />
         </Modal>
     );
 };
 
-export default Appmagage;
+export default Applysubmit;

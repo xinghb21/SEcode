@@ -4,6 +4,7 @@ import type { MenuProps } from "antd";
 import { Button, Input, Menu, Space, Tag, message } from 'antd';
 import { request } from '../../utils/network';
 import { ProList } from "@ant-design/pro-components";
+import Applysubmit from "./applysubmit"
 
 interface asset{
     key:React.Key;
@@ -18,6 +19,8 @@ const Applyasset=()=>{
     const [useable_assetslist,setuseable_assetlist]=useState<asset[]>([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [IsDialogOpen1,setIsDialogOpen1]=useState<boolean>(false);
+    const [assetselected,setassetselected]= useState<asset[]>([]);
+    
     useEffect((()=>{
         fetchlist();
     }),[]);
@@ -62,62 +65,76 @@ const Applyasset=()=>{
         }
       };
     const hasSelected = selectedRowKeys.length > 0;
+    const handlesubmitsuccess=()=>{
+        //在员工成功申请之后，重新刷新页面
+        setSelectedRowKeys([]);
+        setassetselected([]);
+        fetchlist();
+    }  
+
     return (
-        
-        <ProList<asset>
-                toolBarRender={() => {
-                    return [
-                        <Button key="1" type="primary" onClick={()=>{setIsDialogOpen1(true);}}>
-                            创建资产管理员
-                        </Button>,                      
-                    ];
-                }}
-                pagination={{
-                    pageSize: 10,
-                }}
-                metas={{
-                    title: {dataIndex:"name",},
-                    description: {
-                        render: (_,row) => {
-                            return (
+        <div>
+            <Applysubmit isOpen={IsDialogOpen1} onClose={()=>{}} children="fuckse" proassetlist={assetselected} onSuccess={handlesubmitsuccess} ></Applysubmit>
+            <ProList<asset>
+                    toolBarRender={() => {
+                        return [
+                            <Button key="1" type="primary" disabled={hasSelected} onClick={()=>{setIsDialogOpen1(true);setassetselected(useable_assetslist.filter((obj)=>{return selectedRowKeys.find((key)=>{return key==obj.key}) != null }))}}>
+                                申请资产领用
+                            </Button>,                      
+                        ];
+                    }}
+                    pagination={{
+                        pageSize: 10,
+                    }}
+                    metas={{
+                        title: {dataIndex:"name",},
+                        description: {
+                            render: (_,row) => {
+                                return (
                                 <div>
-                                    {"现有数量: "+row.count}
+                                        <div>
+                                            {"现有数量: "+row.count}
+                                        </div>
+                                        <div>
+                                            {"资产编号："+row.id}
+                                        </div>
                                 </div>
-                            );
+                                );
+                            },
                         },
-                    },
-                    subTitle: {
-                        render: (_, row) => {
-                            return (
-                                <Space size={0}>
-                                    {(row.type===1)?<Tag color="blue" key={row.name}>{"数量型"}</Tag>
-                                        :<Tag color="blue" key={row.name}>{"条目型"}</Tag>  
-                                    }
-                                </Space>
-                            );
+                        subTitle: {
+                            render: (_, row) => {
+                                return (
+                                    <Space size={0}>
+                                        {(row.type===1)?<Tag color="blue" key={row.name}>{"数量型"}</Tag>
+                                            :<Tag color="blue" key={row.name}>{"条目型"}</Tag>  
+                                        }
+                                    </Space>
+                                );
+                            },
+                            search: false,
                         },
-                        search: false,
-                    },
-                    actions: {
-                        render: (_,row) => {
-                            return (
-                                <div >
-                                    <Input
-                                        onChange={(e)=>{handleChange(e,row.name)}}
-                                        placeholder="Input a number"
-                                        maxLength={16}
-                                        disabled = { !(selectedRowKeys.find((obj)=>{obj===row.key})!= null) }
-                                        />
-                                </div>
-                            );
+                        actions: {
+                            render: (_,row) => {
+                                return (
+                                    <div >
+                                        <Input
+                                            onChange={(e)=>{handleChange(e,row.name)}}
+                                            placeholder="Input a number"
+                                            maxLength={16}
+                                            disabled = { !(selectedRowKeys.find((obj)=>{obj===row.key})!= null) }
+                                            />
+                                    </div>
+                                );
+                            },
                         },
-                    },
-                }}
-                rowKey="key"
-                headerTitle="部门内可领用资产列表"
-                rowSelection={rowSelection}
-                dataSource={useable_assetslist}
-            />
+                    }}
+                    rowKey="key"
+                    headerTitle="部门内可领用资产列表"
+                    rowSelection={rowSelection}
+                    dataSource={useable_assetslist}
+                />
+            </div>
     );
 }
 
