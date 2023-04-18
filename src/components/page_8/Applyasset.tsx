@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import type { MenuProps } from "antd";
-import { Button, Input, Menu, Space, Tag, message } from 'antd';
+import { Button, Input, Menu, Space, Tag, message, Table } from 'antd';
 import { request } from '../../utils/network';
 import { ProList } from "@ant-design/pro-components";
 import Applysubmit from "./applysubmit"
+import { ColumnsType } from "antd/es/table";
 
 interface asset{
     key:React.Key;
@@ -14,16 +15,39 @@ interface asset{
     count:number;
     applycount:number;
 }
+interface applys{
+    key : React.Key;
+    id:number;
+    reason:string;
+    message:string;
+    state:number;
+}
+
 
 const Applyasset=()=>{
     const [useable_assetslist,setuseable_assetlist]=useState<asset[]>([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [IsDialogOpen1,setIsDialogOpen1]=useState<boolean>(false);
     const [assetselected,setassetselected]= useState<asset[]>([]);
-    
+    const [applylist,setapplylsit]=useState<applys[]>([])
     useEffect((()=>{
         fetchlist();
+        fetchapply();
     }),[]);
+    const fetchapply=()=>{
+        request("api/user/ns/getallapply","GET")
+        .then((res)=>{
+            setapplylsit(res.info.map((val)=>{return{
+                id:val.id,
+                reason:val.reason,
+                state:val.state,
+                message:val.message
+            }}));
+        })
+        .catch((err)=>{
+            message.warning(err.message);
+        })
+    }
     const fetchlist=()=>{
         request('api/user/ns/getassets',"GET")
         .then((res)=>{
@@ -70,11 +94,13 @@ const Applyasset=()=>{
         setSelectedRowKeys([]);
         setassetselected([]);
         fetchlist();
+        fetchapply();
     }  
 
     return (
         <div>
             <Applysubmit isOpen={IsDialogOpen1} onClose={()=>{}} children="fuckse" proassetlist={assetselected} onSuccess={handlesubmitsuccess} ></Applysubmit>
+            
             <ProList<asset>
                     toolBarRender={() => {
                         return [
@@ -134,6 +160,47 @@ const Applyasset=()=>{
                     rowSelection={rowSelection}
                     dataSource={useable_assetslist}
                 />
+                <ProList<applys>
+                    pagination={{
+                        pageSize: 10,
+                    }}
+                    metas={{
+                        title: {dataIndex:"id"},
+                        description: {
+                            render: (_,row) => {
+                                return (
+                                <div>
+                                        <div>
+                                            {"申请原因: "+row.reason}
+                                        </div>
+                                </div>
+                                );
+                            },
+                        },
+                        subTitle: {
+                            render: (_, row) => {
+                                return (
+                                    <Space size={0}>
+                                        {(row.state===0)?<Tag color="red" key={row.id}>{"拒绝"}</Tag>
+                                            :((row.state===1)?<Tag color="blue" key={row.id} >{"处理中"}</Tag>:<Tag color="green" key={row.id}>{"通过"}</Tag>)  
+                                        }
+                                    </Space>
+                                );
+                            },
+                            search: false,
+                        },
+                        actions: {
+                            render: (_,row) => {
+                                return (
+                                    <Button onClick={()=>{}}>查看详情</Button>
+                                );
+                            },
+                        },
+                    }}
+                    rowKey="key"
+                    headerTitle="你的申请列表"
+                    dataSource={applylist}
+                    />
             </div>
     );
 }
