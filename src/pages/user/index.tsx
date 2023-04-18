@@ -46,7 +46,11 @@ function getItem(
     } as MenuItem;
 }
 
-
+interface app{
+    key:React.Key;
+    name:string;
+    urlvalue:string;
+}
 const AppList: any[] = [
     "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产定义", "资产管理", "资产分析", "资产申请", "应用列表"
 ];
@@ -70,7 +74,7 @@ const User: React.FC = () => {
     const [load, setLoad] = useState(true);
     const [page, setPage] = useState(9);
     const [name, setName] = useState("");
-
+    const [applist,setapplist] =useState<app[]>([]);
 
     const [identity, setID] = useState<number>(4);
 
@@ -138,7 +142,21 @@ const User: React.FC = () => {
                     }
                     items.push(getItem("资产管理", "asset", <PieChartOutlined />, child));
                     let appsingle: MenuItem[] = [];
-                    appsingle.push(getItem(AppList[9], 12));
+                    request("api/user/getapplists","GET")
+                        .then((res)=>{
+                            let tempapplist:app[]=[];
+                            let i=0;
+                            let size=res.info.length;
+                            for (i;i<size;i++){
+                                tempapplist.push({key:res.info[i].name,name:res.info[i].name,urlvalue:res.info[i].urlvalue});
+                                appsingle.push(getItem(tempapplist[i].name,"url"+tempapplist[i].urlvalue));    
+                            }
+                            setapplist(tempapplist);
+                        })
+                        .catch((err)=>{
+                            message.warning(err.message);
+                        });
+                    
                     items.push(getItem("应用列表", "apps", <PieChartOutlined />, appsingle));
                 }
                 else {
@@ -149,7 +167,20 @@ const User: React.FC = () => {
                     }
                     else items.push(getItem("员工操作", "oper", <PieChartOutlined />));
                     let appsingle: MenuItem[] = [];
-                    appsingle.push(getItem(AppList[9], 12));
+                    request("api/user/getapplists","GET")
+                        .then((res)=>{
+                            let tempapplist:app[]=[];
+                            let i=0;
+                            let size=res.info.length;
+                            for (i;i<size;i++){
+                                tempapplist.push({key:res.info[i].name,name:res.info[i].name,urlvalue:res.info[i].urlvalue});
+                                appsingle.push(getItem(tempapplist[i].name,"url"+tempapplist[i].urlvalue));    
+                            }
+                            setapplist(tempapplist);
+                        })
+                        .catch((err)=>{
+                            message.warning(err.message);
+                        });
                     items.push(getItem("应用列表", "apps", <PieChartOutlined />, appsingle));
                 }
                 items.push(getItem("用户", "/User", <UserOutlined />, [
@@ -176,8 +207,28 @@ const User: React.FC = () => {
 
     //对于点击每个应用相应跳转
     const handleClick = (menuItem: any) => {
-        if (menuItem.key != "logout")
-            setPage(Number(menuItem.key));
+        if (menuItem.key != "logout"){
+            console.log(typeof menuItem.key);
+            if((typeof menuItem.key) === "number"  ){
+                setPage(Number(menuItem.key));
+            }else{
+                if((typeof menuItem.key) === "string"){
+                    if((menuItem.key as string).startsWith("url")){
+                            const w = window.open('_black'); //这里是打开新窗口
+                            let url = (menuItem.key as string).substring(3,(menuItem.key as string).length);
+                            if(w){
+                                w.location.href=url;
+                            }else{
+                                message.warning("url有误");
+                            }
+                    }else{
+                        setPage(Number(menuItem.key));
+                    }
+                }else{
+                    setPage(Number(menuItem.key));
+                }
+            }
+            }
         else {
             //实现登出
             request(

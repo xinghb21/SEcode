@@ -44,7 +44,7 @@ const Applyasset=()=>{
                 setapplylsit(res.info.map((val)=>{return{
                     id:val.id,
                     reason:val.reason,
-                    state:val.state,
+                    state:val.status,
                     message:val.message
                 };}));
             })
@@ -53,7 +53,7 @@ const Applyasset=()=>{
             });
     };
     const fetchlist=()=>{
-        request("api/user/ns/getassets","GET")
+        request("/api/user/ns/getassets","GET")
             .then((res)=>{
                 let tem=res.info.map((val)=>{
                     return({
@@ -101,7 +101,7 @@ const Applyasset=()=>{
         fetchapply();
     };  
     const handledelete=(rowid:number)=>{
-        request("api//user/ns/deleteapplys","DELETE",{id:rowid})
+        request("/api/user/ns/deleteapplys","DELETE",{id:rowid})
             .then((res)=>{
                 fetchapply();
                 message.success("删除成功");
@@ -209,7 +209,7 @@ const Applyasset=()=>{
                             return (
                                 <div>
                                     <Button onClick={()=>{setdetailid(row.id);setdetailmessage(row.message);setdetailreason(row.reason);setisdetailopen(true);}}>查看详情</Button>
-                                    <Button onClick={()=>{handledelete(row.id);}}> 删除 </Button>
+                                    <Button onClick={()=>{handledelete(row.id);}}disabled={(row.state !== 0)} > 删除 </Button>
                                 </div>
                             );
                         },
