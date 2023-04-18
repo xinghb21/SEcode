@@ -1,5 +1,5 @@
 import { ModalForm, ProForm, ProFormDigit, ProFormMoney, ProFormSelect, ProFormText, ProList } from "@ant-design/pro-components";
-import { Button, Form, Input, Table, Upload, UploadFile, UploadProps, message } from "antd";
+import { Button, Form, Input, Space, Table, Upload, UploadFile, UploadProps, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { request } from "../../utils/network";
@@ -13,6 +13,8 @@ import MarkdownIt from 'markdown-it';
 const ReactQuill = typeof window === 'object' ? require('react-quill') : () => false;
 const Quill = typeof window === 'object' ? require('quill') : () => false;
 import MarkdownShortcuts from 'quill-markdown-shortcuts';
+import { RcFile } from 'antd/lib/upload';
+import * as XLSX from 'xlsx/xlsx.mjs'
 
 
 const md = new MarkdownIt();
@@ -30,6 +32,19 @@ interface Asset{
     belonging?: string;
     addtional?: Object;
     type?: boolean;
+
+}
+
+interface Excel{
+
+    资产名称: string;
+    资产种类: string;
+    资产价值: Number;
+    资产使用年限: Number;
+    资产描述: string;
+    资产数量: Number;
+    上级资产名称: string;
+    挂账人: string;
 
 }
 
@@ -85,7 +100,8 @@ const AddAsset = () => {
     const [imagename, setImage] = useState<string>("");
     const [department, setDepart] = useState<string>("");
     const [entity, setEntity] = useState<string>("");
-    const [value, setValue] = useState('');
+    const [value, setValue] = useState("");
+    const [fileList, setFileList] = useState<RcFile[]>([]);
 
     //markdown
     const handleChange = (content: string) => {
@@ -98,19 +114,19 @@ const AddAsset = () => {
           ['bold', 'italic', 'underline', 'strike', 'blockquote'],
           [{ list: 'ordered' }, { list: 'bullet' }],
         ],
-        markdownShortcuts: {},
+        // markdownShortcuts: {},
     };
 
-    // const formats = [
-    //     'header',
-    //     'bold',
-    //     'italic',
-    //     'underline',
-    //     'strike',
-    //     'blockquote',
-    //     'list',
-    //     'bullet',
-    // ];
+    const formats = [
+        'header',
+        'bold',
+        'italic',
+        'underline',
+        'strike',
+        'blockquote',
+        'list',
+        'bullet',
+    ];
 
     let additions: Addition[] = [];
 
@@ -172,146 +188,211 @@ const AddAsset = () => {
             });
     });
 
+    const onImportExcel = (file: RcFile) => {
+        if(fileList.some(f => f.name === file.name)) {
+            message.error("文件已上传");
+            return false;
+        }
+		let resData : Asset[] = [];// 存储获取到的数据
+		// 通过FileReader对象读取文件
+		const fileReader = new FileReader();
+		fileReader.readAsBinaryString(file);  //二进制
+		fileReader.onload = event => {
+			try {
+				const result = event.target?.result;
+				// 以二进制流方式读取得到整份excel表格对象		
+				const workbook = XLSX.read(result, { type: 'binary' });
+				// 遍历每张工作表进行读取（这里默认只读取第一张表）
+				for (const sheet in workbook.Sheets) {
+					if (workbook.Sheets.hasOwnProperty(sheet)) {
+						// 利用 sheet_to_json 方法将 excel 转成 json 数据
+						resData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet]);
+						break; // 如果只取第一张表，就取消注释这行
+					}
+				}
+                let check: Boolean = true;
+				for(let i = 0; i < resData.length; i++) {
+                    if(!("key" in resData[i])) 
+                        resData[i].key = resData[i].name;
+                    if(!("name" in resData[i])) {
+                        message.error("文件中缺少资产名称，请参照模板规范");
+                        check = false;
+                        break;
+                    } else if(!("category" in resData[i])) {
+                        message.error("文件中缺少资产种类，请参照模板规范");
+                        check = false;
+                        break;
+                    } else if(!("life" in resData[i])) {
+                        message.error("文件中缺少资产使用年限，请参照模板规范");
+                        check = false;
+                        break;
+                    } else if(!("price" in resData[i])) {
+                        message.error("文件中缺少资产价值，请参照模板规范");
+                        check = false;
+                        break;
+                    }
+                }
+                if(check) {
+                    setAsset(assets => assets.concat(resData));
+                    message.success("导入成功");
+                    setFileList([...fileList, file]);
+                    return true;
+                }
+			} catch (e) {
+				message.error("文件类型不正确");
+                return false;
+			}
+		};
+	}
+
     return (
         <div style={{margin: 24}}>
-            <ModalForm
-                autoFocusFirstInput
-                modalProps={{
-                    destroyOnClose: true,
-                }}
-                trigger={
-                    <Button type="primary">
-                        <PlusOutlined />
-                        添加资产
-                    </Button>
-                }
-                onFinish={async (values: any) => {
-                    additions.splice(0);
-                    for(let i = 0; i < addition.length; i++) {
-                        additions.push({key: addition[i], value: values[addition[i]]});
+            <Space>
+                <ModalForm
+                    autoFocusFirstInput
+                    modalProps={{
+                        destroyOnClose: true,
+                    }}
+                    trigger={
+                        <Button type="primary">
+                            <PlusOutlined />
+                            添加资产
+                        </Button>
                     }
-                    const asset : Asset = {
+                    onFinish={async (values: any) => {
+                        additions.splice(0);
+                        for(let i = 0; i < addition.length; i++) {
+                            additions.push({key: addition[i], value: values[addition[i]]});
+                        }
+                        const asset : Asset = {
 
-                        key : values.assetname,
-                        name: values.assetname,
-                        description: values.description,
-                        category: values.category,
-                        parent: values.parent,
-                        life: values.life,
-                        price: values.price,
-                        number: values.number,
-                        belonging: values.belonging,
-                        addtional: additions,
-                        
-                    };
-                    setAsset([...assets, asset]);
+                            key : values.assetname,
+                            name: values.assetname,
+                            description: values.description,
+                            category: values.category,
+                            parent: values.parent,
+                            life: values.life,
+                            price: values.price,
+                            number: values.number,
+                            belonging: values.belonging,
+                            addtional: additions,
+                            
+                        };
+                        setAsset([...assets, asset]);
 
-                    return true;
-                }}
-            >
-                <ProForm.Group>
-                    <ProFormText
-                        width="md"
-                        name="assetname"
-                        label="资产名称"
-                        tooltip="最长为 128 位"
-                        placeholder="请输入名称"
-                        rules={[{ required: true, message: "请输入名称！" }]}
-                    />
-                    <ProFormText 
-                        width="md" 
-                        name="description" 
-                        label="资产描述" 
-                        initialValue={""}
-                        placeholder="请输入描述" 
-                    />
-                </ProForm.Group>
-                <ProForm.Group>
-                    <ProFormSelect
-                        options={labels}
-                        width="xs"
-                        name="category"
-                        label="资产类别"
-                        rules={[{ required: true, message: "请选择类别！" }]}
-                    />
-                    <ProFormText
-                        name="parent"
-                        width="md"
-                        label="上级资产名称"
-                        placeholder="请输入名称"
-                        initialValue={""}
-                    />
-                    <ProFormDigit
-                        label="资产使用年限"
-                        name="life"
-                        rules={[{ required: true, message: "请输入使用年限！" }]}
-                        min={0}
-                    />
-                    <ProFormDigit
-                        label="资产数量(条目型默认为1 输入无效)"
-                        name="number"
-                        rules={[{ required: true, message: "请输入数量！" }]}
-                        min={0}
-                    />
-                </ProForm.Group>
-                <ProForm.Group>
-                    <ProFormMoney
-                        label="资产价值"
-                        name="price"
-                        locale="￥"
-                        min={0}
-                        rules={[{ required: true, message: "请输入资产价值！" }]}
-                    />
-                    <ProFormText
-                        width="md" 
-                        name="belonging" 
-                        label="挂账人" 
-                        initialValue={""}
-                    />
-                </ProForm.Group>
-                <ProForm.Group>
-                    <StrListToProFormText strList={addition}/>
-                </ProForm.Group>
-                <ProForm.Group>
-                    <Upload 
-                        action={host}
-                        accept="image/*"
-                        maxCount={1}
-                        onChange={(info) => {
-                            if(info.file.status == "done")
-                                setImage(info.file.name);
-                            if(info.file.status == "removed")
-                                setImage("");
-                        }}
-                        onRemove={async (file: UploadFile) => {
-                            try {
-                              await client.delete(file.name);
-                              message.success(`${file.name} 已删除`);
-                            } catch (error) {
-                              alert(error);
-                            }
-                          }}
-                        data={{
-                            key: entity + "/" + department + "/" + "${filename}",
-                            policy: policyBase64,
-                            OSSAccessKeyId: accessKeyId,
-                            success_action_status: 200,
-                            signature,
-                        }}>
-                            <Button icon={<UploadOutlined />}>Upload</Button>
-                    </Upload>
-                </ProForm.Group>
-                <ProForm.Group>
-                    {/* <ReactQuill
-                        value={value}
-                        onChange={handleChange}
-                        modules={modules}
-                        // formats={formats}
-                        theme="snow"
-                        placeholder="Write something..."
-                        /> */}
-                </ProForm.Group>
-            </ModalForm>
+                        return true;
+                    }}
+                >
+                    <ProForm.Group>
+                        <ProFormText
+                            width="md"
+                            name="assetname"
+                            label="资产名称"
+                            tooltip="最长为 128 位"
+                            placeholder="请输入名称"
+                            rules={[{ required: true, message: "请输入名称！" }]}
+                        />
+                        <ProFormText 
+                            width="md" 
+                            name="description" 
+                            label="资产描述" 
+                            initialValue={""}
+                            placeholder="请输入描述" 
+                        />
+                    </ProForm.Group>
+                    <ProForm.Group>
+                        <ProFormSelect
+                            options={labels}
+                            width="xs"
+                            name="category"
+                            label="资产类别"
+                            rules={[{ required: true, message: "请选择类别！" }]}
+                        />
+                        <ProFormText
+                            name="parent"
+                            width="md"
+                            label="上级资产名称"
+                            placeholder="请输入名称"
+                            initialValue={""}
+                        />
+                        <ProFormDigit
+                            label="资产使用年限"
+                            name="life"
+                            rules={[{ required: true, message: "请输入使用年限！" }]}
+                            min={0}
+                        />
+                        <ProFormDigit
+                            label="资产数量(条目型默认为1 输入无效)"
+                            name="number"
+                            rules={[{ required: true, message: "请输入数量！" }]}
+                            min={0}
+                        />
+                    </ProForm.Group>
+                    <ProForm.Group>
+                        <ProFormMoney
+                            label="资产价值"
+                            name="price"
+                            locale="￥"
+                            min={0}
+                            rules={[{ required: true, message: "请输入资产价值！" }]}
+                        />
+                        <ProFormText
+                            width="md" 
+                            name="belonging" 
+                            label="挂账人" 
+                            initialValue={""}
+                        />
+                    </ProForm.Group>
+                    <ProForm.Group>
+                        <StrListToProFormText strList={addition}/>
+                    </ProForm.Group>
+                    <ProForm.Group>
+                        <Upload 
+                            action={host}
+                            accept="image/*"
+                            maxCount={1}
+                            onChange={(info) => {
+                                if(info.file.status == "done")
+                                    setImage(info.file.name);
+                                if(info.file.status == "removed")
+                                    setImage("");
+                            }}
+                            onRemove={async (file: UploadFile) => {
+                                try {
+                                await client.delete(file.name);
+                                message.success(`${file.name} 已删除`);
+                                } catch (error) {
+                                alert(error);
+                                }
+                            }}
+                            data={{
+                                key: entity + "/" + department + "/" + "${filename}",
+                                policy: policyBase64,
+                                OSSAccessKeyId: accessKeyId,
+                                success_action_status: 200,
+                                signature,
+                            }}>
+                                <Button icon={<UploadOutlined />}>Upload</Button>
+                        </Upload>
+                    </ProForm.Group>
+                    <ProForm.Group>
+                        <ReactQuill
+                            value={value}
+                            onChange={handleChange}
+                            modules={modules}
+                            formats={formats}
+                            theme="snow"
+                            placeholder="Write something..."
+                            />
+                    </ProForm.Group>
+                </ModalForm>
+                <Upload 
+                    beforeUpload={onImportExcel}
+                    showUploadList={false}
+                    accept=".xlsx">
+                    <Button icon={<UploadOutlined />}>从文件中导入</Button>
+                </Upload>
+            </Space>
             <div style={{marginTop: 24}}>
                 <Table rowSelection={rowSelection} columns={columns} dataSource={assets} />
                 <Button type="primary" onClick={onSubmit} disabled={!hasSelected}>
