@@ -395,8 +395,6 @@ const AddAsset = () => {
                             }}>
                                 <Button icon={<UploadOutlined />}>Upload</Button>
                         </Upload>
-                    </ProForm.Group>
-                    <ProForm.Group>
                         <ReactQuill
                             title="资产描述"
                             value={value}
@@ -406,6 +404,9 @@ const AddAsset = () => {
                             theme="snow"
                             placeholder="Write something..."
                             />
+                    </ProForm.Group>
+                    <ProForm.Group>
+                        
                     </ProForm.Group>
                 </ModalForm>
                 <Upload 

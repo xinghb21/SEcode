@@ -75,31 +75,18 @@ const User: React.FC = () => {
         if (!router.isReady) {
             return;
         }
-        // if(query.code != undefined) {
-        //     request("/api/feishu/isbound", "GET", query.code)
-        //         .then((res) => {
-        //             if(res.isbound) {
-
-        //             } else {
-
-        //             }
-        //         })
-        //         .catch((err) => {
-        //             alert(err);
-        //         });
-        // }
-        fetchList();
         request("/api/user/username", "GET")
             .then((res) => {
                 setName(res.name);
+                fetchList(res.name);
             });
     }, [router, query]);
 
     //通过后端获取的funlist以及用户对应的identity实现侧边栏应用
     //具体的key还需要完善
-    const fetchList = () => {
+    const fetchList = (name: string) => {
 
-        request(`/api/user/home/${localStorage.getItem("username")}`, "GET")
+        request(`/api/user/home/${name}`, "GET")
             .then((res) => {
                 items.splice(0);
                 let funclist = res.funclist.toString();

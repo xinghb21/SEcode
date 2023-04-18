@@ -24,21 +24,28 @@ export default () => {
         if (!router.isReady) {
             return;
         }
-        let url = "/api/feishu/isbound?code=" + query.code + "&redirect=http://localhost:3000/feishu";
+        let url = "/api/feishu/code?code=" + query.code + "&redirect=http://localhost:3000/feishu";
         request(url, "GET")
         .then((res) => {
-            if(res.isbound) {
-                request("/api/feishu/login", "POST", {
-                    name: res.name,
+            request("/api/feishu/isbound", "GET")
+                .then((res) => {
+                    if(res.isbound) {
+                        request("/api/feishu/login", "POST", {
+                            name: res.name,
+                        })
+                            .then(() => {
+                                localStorage.setItem("username",res.name);
+                                router.push("/user");
+                            })
+                            .catch((err) => {
+                                alert(err);
+                                router.push("/");
+                            })
+                    } 
                 })
-                    .then(() => {
-                        router.push("/user");
-                    })
-                    .catch((err) => {
-                        alert(err);
-                        router.push("/");
-                    })
-            } 
+                .catch((err) => {
+                    alert(err);
+                })
         })
         .catch((err) => {
             alert(err);
@@ -55,7 +62,7 @@ return (
                 <LoginForm
                     title="绑定系统帐号"
                     onFinish={async (form) => {
-                        request("/api/feishu/post", "POST", {
+                        request("/api/feishu/binduser", "POST", {
                             name: form.username,
                             password: Md5.hashStr(form.password),
                         })
@@ -64,6 +71,7 @@ return (
                                 name: form.username,
                             })
                             .then(() => {
+                                localStorage.setItem("username",form.username);
                                 router.push("/user");
                             })
                             .catch((err) => {
