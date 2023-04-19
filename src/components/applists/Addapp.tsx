@@ -37,7 +37,7 @@ const Addapp=(props:DialogProps)=>{
         <Modal title={"添加应用"} open={props.isOpen} onOk={()=>{add_app();props.onClose();}} onCancel={()=>{props.onClose();}} >
             <label>应用名称:</label>
             <Input type="text" value={appname} onChange={(e) => setappname(e.target.value)} />
-            <label>应用URL:</label>
+            <label> 应用URL:(请输入正确的URL,例如https://www.baidu.com/) </label>
             <Input type="URL" value={appurl} onChange={(e)=>{setappurl(e.target.value);}}></Input>
         </Modal>
     );

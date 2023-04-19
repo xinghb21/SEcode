@@ -79,9 +79,9 @@ const Applyasset=()=>{
         let index=useable_assetslist.findIndex((obj)=>{return obj.name === name;});
         if( (+inputvalue) > useable_assetslist[index].count){
             message.warning("数量超额，请重新输入");
-        }else{
-            useable_assetslist[index].applycount=+ inputvalue;
         }
+        useable_assetslist[index].applycount= + inputvalue;
+        
     };
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>,name:string) => {
         const { value: inputValue } = e.target;
@@ -111,6 +111,32 @@ const Applyasset=()=>{
             }
             );
     };
+    //检查一遍申请的资产数量
+    const checksubmit=()=>{
+        let selectasset=useable_assetslist.filter((obj)=>{return selectedRowKeys.find((key)=>{return key==obj.key;}) != null; });
+        let i = 0;
+        if(selectasset != null){
+            let size=selectasset.length;
+            let ans = true;
+            for(i;i<size;i++){
+                if(selectasset[i].applycount<=0 || selectasset[i].applycount>selectasset[i].count){
+                    ans=false;
+                    break;
+                }
+            }
+            return ans;
+        }else{
+            return false;
+        }
+    }
+    const handlesubclick=()=>{
+        if(checksubmit()){
+            setIsDialogOpen1(true);
+            setassetselected(useable_assetslist.filter((obj)=>{return selectedRowKeys.find((key)=>{return key==obj.key;}) != null; }));
+        }else{
+            message.warning("申请的资产数量超额或为0");
+        }
+    }
 
     return (
         <div>
@@ -119,13 +145,13 @@ const Applyasset=()=>{
             <ProList<asset>
                 toolBarRender={() => {
                     return [
-                        <Button key="1" type="primary" disabled={!hasSelected} onClick={()=>{setIsDialogOpen1(true);setassetselected(useable_assetslist.filter((obj)=>{return selectedRowKeys.find((key)=>{return key==obj.key;}) != null; }));}}>
+                        <Button key="1" type="primary" disabled={!hasSelected} onClick={()=>{handlesubclick()}}>
                                 申请资产领用
                         </Button>,                      
                     ];
                 }}
                 pagination={{
-                    pageSize: 10,
+                    pageSize: 5,
                 }}
                 metas={{
                     title: {dataIndex:"name",},
@@ -176,7 +202,7 @@ const Applyasset=()=>{
             />
             <ProList<applys>
                 pagination={{
-                    pageSize: 10,
+                    pageSize: 5,
                 }}
                 metas={{
                     title: {dataIndex:"id"},
