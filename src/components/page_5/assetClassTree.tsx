@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Spin, Tag } from "antd";
 import { request } from "../../utils/network";
-import { Modal, Tree, Tooltip, Table } from "antd";
+import { Modal, Tree, Tooltip, Table,message } from "antd";
 // import type { ColumnsType } from "antd/es/table";
 import {
     FormOutlined,
@@ -161,7 +161,7 @@ const ACtree = () => {
             })
             .catch((err) => {
                 setSpnning(false);
-                alert(err.message);
+                message.warning(err.message);
                 router.push("/");
             });
     };
@@ -193,7 +193,7 @@ const ACtree = () => {
                         fetchJson();
                     })
                     .catch((err) => {
-                        alert(err.message);
+                        message.warning(err.message);
                         if (isSpinning == true) {
                             setTimeout(() => {
                                 setSpnning(false);
@@ -211,12 +211,12 @@ const ACtree = () => {
     const handleCreateAC = (assetClassName: string, assetClass: string) => {
         //不允许空输入
         if (assetClassName.match("\\s+") || assetClassName.length == 0) {
-            alert("请输入资产类型名称");
+            message.warning("请输入资产类型名称");
             return;
         }
         //不允许不选
         if (assetClass.length == 0) {
-            alert("请选择资产类别为条目型或数量型");
+            message.warning("请选择资产类别为条目型或数量型");
             return;
         }
         setSpnning(true);
@@ -232,7 +232,7 @@ const ACtree = () => {
                     fetchJson();
                 })
                 .catch((err) => {
-                    alert(err.message);
+                    message.warning(err.message);
                     setSpnning(false);
                 });
         }
@@ -248,7 +248,7 @@ const ACtree = () => {
                     fetchJson();
                 })
                 .catch((err) => {
-                    alert(err.message);
+                    message.warning(err.message);
                     setSpnning(false);
                 });
         }
@@ -260,7 +260,7 @@ const ACtree = () => {
     const handleChangeAC = (assetClassName: string) => {
         //不允许空输入
         if (assetClassName.match("\\s+") || assetClassName.length == 0) {
-            alert("请输入资产类型名称");
+            message.warning("请输入资产类型名称");
             return;
         }
         setSpnning(true);
@@ -272,7 +272,7 @@ const ACtree = () => {
                 fetchJson();
             })
             .catch((err) => {
-                alert(err.message);
+                message.warning(err.message);
                 setSpnning(false);
             });
         setIsDialogOpenCE(false);

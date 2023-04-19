@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     HomeOutlined,
     DesktopOutlined,
     PieChartOutlined,
     UserOutlined,
 } from "@ant-design/icons";
-import { Button, MenuProps, Skeleton, Space, Avatar, message } from "antd";
+import { MenuProps, Skeleton, Space, Avatar, message } from "antd";
 import { useRouter } from "next/router";
 import { Layout, Menu, theme } from "antd";
 import { request } from "../../utils/network";
@@ -24,7 +24,9 @@ import Page_info from "../../components/page_info";
 import { ItemType } from "antd/es/breadcrumb/Breadcrumb";
 import Applists from "../../components/applists/Applist";
 import MenuItem from "antd/es/menu/MenuItem";
-
+import TbdDrawer from "./tbd";
+import { Typography } from "antd";
+const { Text } = Typography;
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -44,35 +46,44 @@ function getItem(
     } as MenuItem;
 }
 
-
+interface app{
+    key:React.Key;
+    name:string;
+    urlvalue:string;
+}
 const AppList: any[] = [
-    "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产定义", "资产管理", "资产分析", "资产申请","应用列表"
+    "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产定义", "资产管理", "资产分析", "资产申请", "应用列表"
 ];
 
 //xhb_begin
 const PageList: any[] = [
     <div key={0}><Page_0 /></div>, <div key={1}><EStable /></div>, <div key={2}><Page_2 /></div>,
-    <div key={3}><Page_3 /></div>, <div key={4}><Page_4 /></div>, <div key={5}><Page_5/></div>,
-    <div key={6}><App /></div>, <div key={7}><Page_7 /></div>, <div key={8}><Page_8 /></div>, 
-    <div key={9}><Page_home /></div>,<div key={10}><Page_set /></div>, <div key={11}><Page_info /></div>,<div key={12}><Applists/> </div>
+    <div key={3}><Page_3 /></div>, <div key={4}><Page_4 /></div>, <div key={5}><Page_5 /></div>,
+    <div key={6}><App /></div>, <div key={7}><Page_7 /></div>, <div key={8}><Page_8 /></div>,
+    <div key={9}><Page_home /></div>, <div key={10}><Page_set /></div>, <div key={11}><Page_info /></div>, <div key={12}><Applists /> </div>
 ];
 //xhb_end
 
-//这里的item应该从后端获取数据后形成？
+//这里的item从后端获取数据后形成
 const items: MenuItem[] = [];
-const dropitems: ItemType[] = [];
 
 const User: React.FC = () => {
     const router = useRouter();
     const query = router.query;
-    let identity: number;
+
 
     const [collapsed, setCollapsed] = useState(false);
     const [load, setLoad] = useState(true);
     const [page, setPage] = useState(9);
     const [name, setName] = useState("");
+    const [applist,setapplist] =useState<app[]>([]);
+
+    const [identity, setID] = useState<number>(4);
+
+
     useEffect(() => {
         if (!router.isReady) {
+            console.log("router isn't ready");
             return;
         }
         request("/api/user/username", "GET")
@@ -80,7 +91,7 @@ const User: React.FC = () => {
                 setName(res.name);
                 fetchList(res.name);
             });
-    }, []);
+    }, [router]);
 
     //通过后端获取的funlist以及用户对应的identity实现侧边栏应用
     //具体的key还需要完善
@@ -93,17 +104,17 @@ const User: React.FC = () => {
                 if (res.entity != "") {
                     localStorage.setItem("entity", res.entity);
                 }
-                if(res.department!=""){
-                    localStorage.setItem("department",res.department);
+                if (res.department != "") {
+                    localStorage.setItem("department", res.department);
                 }
-                identity = res.identity;
+                setID(res.identity);
                 items.push(getItem("业务首页", 9, <HomeOutlined />));
-                if (identity === 1) {
+                if (res.identity === 1) {
                 }
                 else {
                     localStorage.setItem("entityname", res.entity);
                 }
-                if (identity === 1) {
+                if (res.identity === 1) {
                     const child: MenuItem[] = [];
                     for (let index = 0; index < 2; index++) {
                         const element = funclist[index];
@@ -113,7 +124,7 @@ const User: React.FC = () => {
                     }
                     items.push(getItem("实体管理", "entity", <DesktopOutlined />, child));
                 }
-                else if (identity === 2) {
+                else if (res.identity === 2) {
                     const child: MenuItem[] = [];
                     for (let index = 2; index < 5; index++) {
                         const element = funclist[index];
@@ -123,7 +134,7 @@ const User: React.FC = () => {
                     }
                     items.push(getItem("企业管理", "corp", <HomeOutlined />, child));
                 }
-                else if (identity === 3) {
+                else if (res.identity === 3) {
                     const child: MenuItem[] = [];
                     for (let index = 5; index < 8; index++) {
                         const element = funclist[index];
@@ -132,20 +143,47 @@ const User: React.FC = () => {
                         }
                     }
                     items.push(getItem("资产管理", "asset", <PieChartOutlined />, child));
-                    let appsingle:MenuItem[]=[];
-                    appsingle.push(getItem(AppList[12],12));
-                    items.push(getItem("应用列表","apps",<PieChartOutlined/>,appsingle));
+                    let appsingle: MenuItem[] = [];
+                    request("api/user/getapplists","GET")
+                        .then((res)=>{
+                            let tempapplist:app[]=[];
+                            let i=0;
+                            let size=res.info.length;
+                            for (i;i<size;i++){
+                                tempapplist.push({key:res.info[i].name,name:res.info[i].name,urlvalue:res.info[i].urlvalue});
+                                appsingle.push(getItem(tempapplist[i].name,"url"+tempapplist[i].urlvalue));    
+                            }
+                            setapplist(tempapplist);
+                        })
+                        .catch((err)=>{
+                            message.warning(err.message);
+                        });
+                    
+                    items.push(getItem("应用列表", "apps", <PieChartOutlined />, appsingle));
                 }
                 else {
                     if (funclist[8] === "1") {
                         items.push(getItem("员工操作", "oper", <PieChartOutlined />, [
-                            getItem("资产申请", "user"),
+                            getItem("资产申请", 8),
                         ]));
                     }
                     else items.push(getItem("员工操作", "oper", <PieChartOutlined />));
-                    let appsingle:MenuItem[]=[];
-                    appsingle.push(getItem(AppList[12],12));
-                    items.push(getItem("应用列表","apps",<PieChartOutlined/>,appsingle));
+                    let appsingle: MenuItem[] = [];
+                    request("api/user/getapplists","GET")
+                        .then((res)=>{
+                            let tempapplist:app[]=[];
+                            let i=0;
+                            let size=res.info.length;
+                            for (i;i<size;i++){
+                                tempapplist.push({key:res.info[i].name,name:res.info[i].name,urlvalue:res.info[i].urlvalue});
+                                appsingle.push(getItem(tempapplist[i].name,"url"+tempapplist[i].urlvalue));    
+                            }
+                            setapplist(tempapplist);
+                        })
+                        .catch((err)=>{
+                            message.warning(err.message);
+                        });
+                    items.push(getItem("应用列表", "apps", <PieChartOutlined />, appsingle));
                 }
                 items.push(getItem("用户", "/User", <UserOutlined />, [
                     getItem("信息", 10),
@@ -171,8 +209,28 @@ const User: React.FC = () => {
 
     //对于点击每个应用相应跳转
     const handleClick = (menuItem: any) => {
-        if (menuItem.key != "logout")
-            setPage(Number(menuItem.key));
+        if (menuItem.key != "logout"){
+            console.log(typeof menuItem.key);
+            if((typeof menuItem.key) === "number"  ){
+                setPage(Number(menuItem.key));
+            }else{
+                if((typeof menuItem.key) === "string"){
+                    if((menuItem.key as string).startsWith("url")){
+                        const w = window.open("_black"); //这里是打开新窗口
+                        let url = (menuItem.key as string).substring(3,(menuItem.key as string).length);
+                        if(w){
+                            w.location.href=url;
+                        }else{
+                            message.warning("url有误");
+                        }
+                    }else{
+                        setPage(Number(menuItem.key));
+                    }
+                }else{
+                    setPage(Number(menuItem.key));
+                }
+            }
+        }
         else {
             //实现登出
             request(
@@ -186,38 +244,68 @@ const User: React.FC = () => {
                     router.push("/");
                 })
                 .catch((err) => {
-                    alert(err.message);
+                    message.warning(err.message);
                 });
         }
     };
-
-
-    return (
-        <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
-            <Layout style={{ minHeight: "100vh" }}>
-                <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-                    <Menu theme="dark" mode="inline" items={items}
-                        onClick={handleClick} />
-                </Sider>
-                <Layout className="site-layout">
-                    <Content style={{ margin: "0 16px" }}>
-                        <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
-                            <Space>
-                                <Avatar size="small" icon={<UserOutlined />} />
-                                <text fontWeight='bold'>
-                                    {name}
-                                </text>
+    if (identity === 3) {
+        return (
+            <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
+                <Layout style={{ minHeight: "100vh" }}>
+                    <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+                        <Menu theme="dark" mode="inline" items={items}
+                            onClick={handleClick} />
+                    </Sider>
+                    <Layout className="site-layout">
+                        <Content style={{ margin: "0 16px" }}>
+                            <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
+                                <TbdDrawer />
+                                <Space align="center">
+                                    <Avatar icon={<UserOutlined />} />
+                                    <Text strong>
+                                        {name}
+                                    </Text>
+                                </Space>
                             </Space>
-                        </Space>
-                        <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer, borderRadius: 10 }}>
-                            {PageList[page]}
-                        </div>
-                    </Content>
-                    <Footer style={{ textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
+                            <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer, borderRadius: 10 }}>
+                                {PageList[page]}
+                            </div>
+                        </Content>
+                        <Footer style={{ textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
+                    </Layout>
                 </Layout>
-            </Layout>
-        </Skeleton>
-    );
+            </Skeleton>
+        );
+    }
+    else {
+        return (
+            <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
+                <Layout style={{ minHeight: "100vh" }}>
+                    <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+                        <Menu theme="dark" mode="inline" items={items}
+                            onClick={handleClick} />
+                    </Sider>
+                    <Layout className="site-layout">
+                        <Content style={{ margin: "0 16px" }}>
+                            <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
+                                <Space align="center">
+                                    <Avatar icon={<UserOutlined />} />
+                                    <Text strong>
+                                        {name}
+                                    </Text>
+                                </Space>
+                            </Space>
+                            <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer, borderRadius: 10 }}>
+                                {PageList[page]}
+                            </div>
+                        </Content>
+                        <Footer style={{ textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
+                    </Layout>
+                </Layout>
+            </Skeleton>
+        );
+    }
+
 };
 
 export default User;

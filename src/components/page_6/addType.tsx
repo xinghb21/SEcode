@@ -36,7 +36,7 @@ const AddType = () => {
                 setType(typelist);
             })
             .catch((err) => {
-                alert(err);
+                message.warning(err);
             });
     }, []);
 
@@ -68,7 +68,7 @@ const AddType = () => {
                                 message.success("创建成功");
                             })
                             .catch((err) => {
-                                alert(err);
+                                message.warning(err);
                             });
                         return true;
                     }}

@@ -9,8 +9,9 @@ import {
 } from "@ant-design/pro-components";
 import { request } from "../../utils/network";
 import { useRouter } from "next/router";
+import React from "react";
 import { useEffect, useState } from "react";
-import { Skeleton } from "antd";
+import { Skeleton, message } from "antd";
 import { Md5 } from "ts-md5";
 
 
@@ -45,11 +46,11 @@ const Feishu = () => {
                         } 
                     })
                     .catch((err) => {
-                        alert(err);
+                        message.warning(err.message);
                     });
             })
             .catch((err) => {
-                alert(err);
+                message.warning(err.message);
             });
         setTimeout(() => {
             setLoad(false);
@@ -76,11 +77,12 @@ const Feishu = () => {
                                             router.push("/user");
                                         })
                                         .catch((err) => {
-                                            alert(err);
+                                            message.warning(err.message);
                                             router.push("/");
                                         });
                                 }) 
                                 .catch((err) => {
+                                    message.warning(err.message);
                                     alert(err);
                                 });
                         
