@@ -163,7 +163,6 @@ const Applyasset=()=>{
                                         onChange={(e)=>{handleChange(e,row.name);}}
                                         placeholder="Input a number"
                                         maxLength={16}
-                                        disabled = { (selectedRowKeys.find((obj)=>{obj===row.key;})!= null) }
                                     />
                                 </div>
                             );
