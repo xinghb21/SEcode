@@ -128,7 +128,7 @@ const Applyasset=()=>{
         }else{
             return false;
         }
-    }
+    };
     const handlesubclick=()=>{
         if(checksubmit()){
             setIsDialogOpen1(true);
@@ -136,7 +136,7 @@ const Applyasset=()=>{
         }else{
             message.warning("申请的资产数量超额或为0");
         }
-    }
+    };
 
     return (
         <div>
@@ -145,7 +145,7 @@ const Applyasset=()=>{
             <ProList<asset>
                 toolBarRender={() => {
                     return [
-                        <Button key="1" type="primary" disabled={!hasSelected} onClick={()=>{handlesubclick()}}>
+                        <Button key="1" type="primary" disabled={!hasSelected} onClick={()=>{handlesubclick();}}>
                                 申请资产领用
                         </Button>,                      
                     ];
