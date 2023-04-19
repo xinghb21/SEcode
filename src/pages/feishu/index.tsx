@@ -25,7 +25,7 @@ const Feishu = () => {
         if (!router.isReady) {
             return;
         }
-        let env = (process.env.NODE_ENV == "production" ? "https://Aplus-backend-Aplus.app.secoder.net/feishu":"http://localhost:3000/feishu");
+        let env = (process.env.NODE_ENV == "production" ? "https://frontend-feature-aplus.app.secoder.net/feishu":"http://localhost:3000/feishu");
         let url = "/api/feishu/code?code=" + query.code + "&redirect=" + env;
         request(url, "GET")
             .then((res) => {
