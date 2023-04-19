@@ -31,7 +31,7 @@ const Applysubmit=(props:DialogProps)=>{
     const handlesubmit=()=>{
         setloading(true);
         if(reason!==""){
-            request("api/user/ns/userapply","POST",{assetsapply:props.proassetlist.map((val)=>{return{id:val.id,assetname:val.name,assetcount:val.count};}),reason:reason})
+            request("api/user/ns/userapply","POST",{assetsapply:props.proassetlist.map((val)=>{return{id:val.id,assetname:val.name,assetcount:val.applycount};}),reason:reason})
                 .then((res)=>{
                     message.success("提交成功，请等待审批");
                     props.onClose();

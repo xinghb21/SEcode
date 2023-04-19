@@ -109,7 +109,6 @@ const AddAsset = () => {
     //markdown
     const handleChange = (content: string) => {
         setValue(content);
-        alert(123);
     };
 
     const modules = {
@@ -140,14 +139,14 @@ const AddAsset = () => {
                 setLabel(res.data);
             })
             .catch((err) => {
-                message.warning(err);
+                message.warning(err.message);
             });
         request("/api/asset/attributes", "GET")
             .then((res) => {
                 setAddition(res.info);
             })
             .catch((err) => {
-                message.warning(err);
+                message.warning(err.message);
             });
         request("/api/asset/getbelonging", "GET")
             .then((res) => {
@@ -200,7 +199,7 @@ const AddAsset = () => {
                 setLoading(false);
             })
             .catch((err) => {
-                message.warning(err);
+                message.warning(err.message);
                 setLoading(false);
             });
     });
@@ -424,7 +423,7 @@ const AddAsset = () => {
                             }}>
                             <Button icon={<UploadOutlined />}>Upload</Button>
                         </Upload>
-                        <ReactQuill
+                        {/* <ReactQuill
                             title="资产描述"
                             value={value}
                             onChange={handleChange}
@@ -432,7 +431,7 @@ const AddAsset = () => {
                             formats={formats}
                             theme="snow"
                             placeholder="Write something..."
-                        />
+                        /> */}
                     </ProForm.Group>
                     <ProForm.Group>
                         

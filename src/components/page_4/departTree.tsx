@@ -286,7 +286,7 @@ const Dtree = () => {
                 // console.log("newUser"+Depusers);
             })
             .catch((err) => {
-                message.warning(err);
+                message.warning(err.message);
             });
     };
 

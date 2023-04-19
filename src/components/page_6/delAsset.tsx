@@ -40,7 +40,7 @@ const DelAsset = ( () => {
                 setAssets(res.data);
             })
             .catch((err) => {
-                message.warning(err);
+                message.warning(err.message);
             });
     }, []);
 
@@ -67,7 +67,7 @@ const DelAsset = ( () => {
                 setSelectedRowKeys([]);
             })
             .catch((err) => {
-                message.warning(err);
+                message.warning(err.message);
             });
     });
 
@@ -102,7 +102,7 @@ const DelAsset = ( () => {
                                 setAssets(res.data);
                                 message.success("查询成功");
                             }).catch((err) => {
-                                message.warning(err);
+                                message.warning(err.message);
                             });
                     }}
                 >

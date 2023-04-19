@@ -45,7 +45,7 @@ const EStable=()=> {
                 setUsers(initaluser);
             })
             .catch((err)=>{
-                message.warning(err);
+                message.warning(err.message);
             });
     },[]);
     const start = () => {
@@ -78,7 +78,7 @@ const EStable=()=> {
                     setLoading(false);
                 })
                 .catch((err)=>{
-                    message.warning(err);
+                    message.warning(err.message);
                 });
             
         }
