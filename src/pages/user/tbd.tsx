@@ -68,7 +68,7 @@ const TbdDrawer = () => {
     const [tbdData, settbdData] = useState<DataType[]>([]);
     const [open, setOpen] = useState(false);
     const [assetdisdata, setassetdisData] = useState<AssetDisplayType[]>([]);
-    const [reason, setR] = useState("");
+
     const [chosenkey, setck] = useState<React.Key>();
     const [isDialogOpenSR, setIsDialogOpenSR] = useState(false);
     const [isTBD, setTBD] = useState(false);//true即有待办任务，false相反
@@ -115,6 +115,7 @@ const TbdDrawer = () => {
         }).then(() => {
             fetchtbdData();
             fetchtbd();
+            setIsDialogOpenSR(false);
         }).catch((err) => {
             message.warning(err.detail);
         });
@@ -128,6 +129,7 @@ const TbdDrawer = () => {
     
 
     const SendR = (props: DialogProps) => {
+        const [reason, setR] = useState("");
         const handleSendR = () => {
             props.onSendR(reason);
             setR("");
@@ -154,7 +156,7 @@ const TbdDrawer = () => {
                 }));
             })
             .catch((err) => {
-                message.warning(err);
+                message.warning(err.message);
             });
     };
     const columns: ColumnsType<DataType> = [

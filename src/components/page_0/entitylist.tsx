@@ -41,7 +41,7 @@ const Entitylist = (() => {
                 setEntitylist(initentities);
             })
             .catch((err) => {
-                message.warning(err);
+                message.warning(err.message);
             });
     }), []);
 
@@ -85,7 +85,7 @@ const Entitylist = (() => {
                     setIsDialogOpen(false);
                 })
                 .catch((err) => {
-                    message.warning(err);
+                    message.warning(err.message);
                 });
         }else{
             message.warning("用户名为空");
@@ -140,7 +140,7 @@ const Entitylist = (() => {
                     setSelectedRowKeys([]);
                 })
                 .catch((err) => {
-                    message.warning(err);
+                    message.warning(err.message);
                 });
         }
     });

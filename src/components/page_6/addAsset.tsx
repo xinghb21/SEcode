@@ -140,14 +140,14 @@ const AddAsset = () => {
                 setLabel(res.data);
             })
             .catch((err) => {
-                message.warning(err);
+                message.warning(err.message);
             });
         request("/api/asset/attributes", "GET")
             .then((res) => {
                 setAddition(res.info);
             })
             .catch((err) => {
-                message.warning(err);
+                message.warning(err.message);
             });
         request("/api/asset/getbelonging", "GET")
             .then((res) => {
@@ -200,7 +200,7 @@ const AddAsset = () => {
                 setLoading(false);
             })
             .catch((err) => {
-                message.warning(err);
+                message.warning(err.message);
                 setLoading(false);
             });
     });
