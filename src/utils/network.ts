@@ -32,14 +32,14 @@ export const request = async (
     method: "GET" | "POST" | "PUT" | "DELETE",
     data?: any,
 ) => {
-    if(method == "GET" && data != undefined) {
+    if((method == "GET") && data != undefined) {
         url += "?";
         for(const key in data) {
             if(data[key] != undefined)
                 url = url + key + "=" + data[key] + "&";
-            url=url.substring(0,url.length-1);
+            url = url.substring(0,url.length-1);
         }
-        data=null;
+        data = null;
     }
     const response = await network.request({ method, url, data })
         .catch((err: AxiosError) => {
