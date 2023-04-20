@@ -1,4 +1,4 @@
-import { Button } from "antd";
+import { Button, message } from "antd";
 import React from "react";
 import { ProList } from "@ant-design/pro-components";
 import { useState } from "react";
@@ -41,7 +41,7 @@ const Entitylist = (() => {
                 setEntitylist(initentities);
             })
             .catch((err) => {
-                alert(err);
+                message.warning(err.message);
             });
     }), []);
 
@@ -66,11 +66,11 @@ const Entitylist = (() => {
                     setIsassignOpen(false);
                 })
                 .catch((err) => {
-                    alert("创建失败");
+                    message.warning("创建失败");
                     setIsassignOpen(false);
                 });
         }else{
-            alert("用户名为空");
+            message.warning("用户名为空");
             setIsassignOpen(false);
         }
     };
@@ -85,10 +85,10 @@ const Entitylist = (() => {
                     setIsDialogOpen(false);
                 })
                 .catch((err) => {
-                    alert(err);
+                    message.warning(err.message);
                 });
         }else{
-            alert("用户名为空");
+            message.warning("用户名为空");
             setIsDialogOpen(false);
         }
     });
@@ -140,7 +140,7 @@ const Entitylist = (() => {
                     setSelectedRowKeys([]);
                 })
                 .catch((err) => {
-                    alert(err);
+                    message.warning(err.message);
                 });
         }
     });

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Spin } from "antd";
+import { Spin, message } from "antd";
 import { request } from "../../utils/network";
 import CtCeDT from "./ctceDT";
 import { Modal, Tree, Tooltip, Table } from "antd";
@@ -104,13 +104,13 @@ const Dtree = () => {
                     title: (<div>
                         <span>{key}</span>
                         <span>
-                            <Tooltip placement="bottomLeft" title={<span>修改部门名称</span>}>
+                            <Tooltip placement="bottomRight"  title={<span>修改部门名称</span>}>
                                 <FormOutlined style={{ marginLeft: 10 }} onClick={() => onEdit(key)} />
                             </Tooltip>
                             <Tooltip placement="bottom" title={<span>添加部门</span>}>
                                 <PlusSquareOutlined style={{ marginLeft: 10 }} onClick={() => onAdd(key)} />
                             </Tooltip>
-                            <Tooltip placement="bottomRight" title={<span>删除部门</span>}>
+                            <Tooltip placement="bottomLeft" title={<span>删除部门</span>}>
                                 < MinusSquareOutlined style={{ marginLeft: 10 }} onClick={() => onDelete(key)} />
                             </Tooltip>
                         </span>
@@ -121,13 +121,13 @@ const Dtree = () => {
                 title: (<div>
                     <span>{key}</span>
                     <span>
-                        <Tooltip placement="bottomLeft" title={<span>修改部门名称</span>}>
+                        <Tooltip placement="bottomRight" title={<span>修改部门名称</span>}>
                             <FormOutlined style={{ marginLeft: 10 }} onClick={() => onEdit(key)} />
                         </Tooltip>
                         <Tooltip placement="bottom" title={<span>添加部门</span>}>
                             <PlusSquareOutlined style={{ marginLeft: 10 }} onClick={() => onAdd(key)} />
                         </Tooltip>
-                        <Tooltip placement="bottomRight" title={<span>删除部门</span>}>
+                        <Tooltip placement="bottomLeft" title={<span>删除部门</span>}>
                             < MinusSquareOutlined style={{ marginLeft: 10 }} onClick={() => onDelete(key)} />
                         </Tooltip>
                     </span>
@@ -152,7 +152,7 @@ const Dtree = () => {
             })
             .catch((err) => {
                 setSpnning(false);
-                alert(err.message);
+                message.warning(err.message);
                 router.push("/");
             });
     };
@@ -190,7 +190,7 @@ const Dtree = () => {
                         }
                     })
                     .catch((err) => {
-                        alert(err.message);
+                        message.warning(err.message);
                         if (isSpinning == true) {
                             setTimeout(() => {
                                 setSpnning(false);
@@ -208,7 +208,7 @@ const Dtree = () => {
     const handleCreateDt = (department: string) => {
         //不允许空输入
         if (department.match("\\s+") || department.length == 0) {
-            alert("请输入部门名称");
+            message.warning("请输入部门名称");
             return;
         }
         setSpnning(true);
@@ -227,7 +227,7 @@ const Dtree = () => {
                 }
             })
             .catch((err) => {
-                alert(err.message);
+                message.warning(err.message);
                 setSpnning(false);
             });
         setIsDialogOpenCT(false);
@@ -236,7 +236,7 @@ const Dtree = () => {
     const handleChangeDt = (department: string) => {
         //不允许空输入
         if (department.match("\\s+") || department.length == 0) {
-            alert("请输入部门名称");
+            message.warning("请输入部门名称");
             return;
         }
         setSpnning(true);
@@ -254,7 +254,7 @@ const Dtree = () => {
                 }
             })
             .catch((err) => {
-                alert(err.message);
+                message.warning(err.message);
                 setSpnning(false);
             });
         setIsDialogOpenCE(false);
@@ -286,7 +286,7 @@ const Dtree = () => {
                 // console.log("newUser"+Depusers);
             })
             .catch((err) => {
-                alert(err);
+                message.warning(err.message);
             });
     };
 
@@ -296,13 +296,13 @@ const Dtree = () => {
     }), [Departs]);
     return (
         <div style={{ display: "flex", flex: "flex-start", flexDirection: "row", height: "100%", width: "100%" }}>
-            <div style={{ backgroundColor: "#ADD8E6", marginRight: 20, padding: 10, borderRadius: 10, width: "30%", height: "100%" }}>
+            <div style={{ backgroundColor: "#f7f7f7", marginRight: 20, padding: 10, borderRadius: 10, width: "30%", height: "100%" }}>
                 <Spin spinning={isSpinning}>
                     <Tree
                         showLine
                         switcherIcon={<CaretDownOutlined />}
                         checkStrictly={true}
-                        style={{ backgroundColor: "#fdfdfd", padding: 10, borderRadius: 20 }}
+                        style={{ backgroundColor: "#ffffff", padding: 10, borderRadius: 20 }}
                         checkable
                         treeData={parseTreeData(json)}
                         onCheck={handleCheck}

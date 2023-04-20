@@ -3,26 +3,29 @@ import type { MenuProps } from "antd";
 import { Menu } from "antd";
 import AddAsset from "./addAsset";
 import DelAsset from "./delAsset";
-import AddType from "./addType";
 
 
 const items: MenuProps["items"] = [
     {
-        label: "添加资产",
+        label: "资产录入",
         key: 0,
     },
     {
-        label: "删除资产",
+        label: "资产查看",
         key: 1,
     },
     {
-        label: "添加资产属性",
+        label: "资产调拨",
         key: 2,
+    },
+    {
+        label: "资产清退",
+        key: 3,
     },
 ];
 
 const PageList: any[] = [
-    <div key={0}> <AddAsset /></div>, <div key={1}><DelAsset /></div>, <div key={2}><AddType /></div>,
+    <div key={0}> <AddAsset /></div>, <div key={1}><DelAsset /></div>, <div key={1}>资产调拨</div>, <div key={1}>资产清退</div>, 
 ];
 
 const App: React.FC = () => {

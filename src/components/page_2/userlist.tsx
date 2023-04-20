@@ -14,6 +14,7 @@ import Column from "antd/es/table/Column";
 import CreateUser2 from "./CreateUser2";
 import CreateDE from "./CreateDE";
 import Manageapp from "./Manageapp";
+import Appmanage from "./Appmanage";
 interface User_to_show{
     key:React.Key;
     username:string;
@@ -75,6 +76,8 @@ const Userlist =( () => {
     const [olddepartment,setdepartment]=useState<string>("");
     const [appapduser,setappapduser]=useState<User_app>({username:"",identity:-1,oldapplist:""});
     const [isappOpen,setappopen]=useState<boolean>(false);
+    const [ismanageopen,setmanage]=useState<boolean>(false);
+    const [manageappname,setmanagename]=useState<string>("");
     useEffect((()=>{
         request("api/user/es/checkall","GET")
             .then((res)=>{
@@ -98,12 +101,12 @@ const Userlist =( () => {
                         }
                         setdepartmentlist(departs);
                     }).catch((err)=>{
-                        alert(err);
+                        message.warning(err.message);
                     });
                 }
             })
             .catch((err)=>{
-                alert(err);
+                message.warning(err.message);
             });
 
     }),[castnum]);
@@ -119,12 +122,12 @@ const Userlist =( () => {
                     setIsDialogOpen2(false);
                 })
                 .catch((err)=>{
-                    alert(err);
+                    message.warning(err.message);
                     setIsDialogOpen1(false);
                     setIsDialogOpen2(false);
                 });
         }else{
-            alert("用户名或部门为空");
+            message.warning("用户名或部门为空");
             setIsDialogOpen1(false);
             setIsDialogOpen2(false);
         }
@@ -138,7 +141,7 @@ const Userlist =( () => {
                 setisreset(false);
             })
             .catch((err)=>{
-                alert(err);
+                message.warning(err.message);
             });
     });
     const rowSelection = {
@@ -169,7 +172,7 @@ const Userlist =( () => {
                 setisDEOpen(false);
             })
             .catch((err)=>{
-                alert(err);
+                message.warning(err.message);
             });
 
     });
@@ -199,7 +202,7 @@ const Userlist =( () => {
                     setSelectedRowKeys([]);
                 })
                 .catch((err)=>{
-                    alert(err);
+                    message.warning(err.message);
                 });
         }
     });
@@ -211,7 +214,7 @@ const Userlist =( () => {
                 message.success("成功锁定该用户");
             })
             .catch((err)=>{
-                alert(err);
+                message.warning(err.message);
             });
     });
     const unlock=((name:string)=>{
@@ -222,7 +225,7 @@ const Userlist =( () => {
                 message.success("成功解锁该用户");
             })
             .catch((err)=>{
-                alert(err);
+                message.warning(err.message);
             });
     });
     const changepos=((changeuser:User_to_show)=>{
@@ -253,7 +256,7 @@ const Userlist =( () => {
                         message.success("查询成功");
                     })
                     .catch((err)=>{
-                        alert(err);
+                        message.warning(err.message);
                     });
             }}
             >
@@ -282,6 +285,7 @@ const Userlist =( () => {
                     />
                 </ProForm.Group>
             </QueryFilter>
+            <Appmanage isOpen={ismanageopen} username={manageappname} onClose={()=>{setmanage(false);}}>  </Appmanage>
             <CreateUser isOpen={isDialogOpen1} onClose={()=>setIsDialogOpen1(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser>
             <CreateUser2 isOpen={isDialogOpen2} onClose={()=>setIsDialogOpen2(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser2>
             <Resetpassword isOpen={isrest} onClose={()=>{setisreset(false);}} username={resetname} onCreateUser={reset} ></Resetpassword>
@@ -343,7 +347,8 @@ const Userlist =( () => {
                             return (
                                 <div style={{display:"flex" ,flexDirection:"column"}}>
                                     <Button onClick={()=>{assign({key:row.username,username: row.username , Department:row.departmentname});}} >调整部门</Button>
-                                    <Button onClick={()=>{ setappapduser({username:row.username,identity:row.character,oldapplist:row.lockedapp});setappopen(true);}}> 管理应用 </Button>
+                                    <Button onClick={()=>{ setappapduser({username:row.username,identity:row.character,oldapplist:row.lockedapp});setappopen(true);}}> 管理权限 </Button>
+                                    <Button onClick={()=>{setmanage(true);setmanagename(row.username);}}> 管理应用 </Button>
                                 </div>
                             );
                         },

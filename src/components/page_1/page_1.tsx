@@ -1,5 +1,5 @@
 import CreateES from "./createES";
-import { Button, Table } from "antd";
+import { Button, Table, message } from "antd";
 import { request } from "../../utils/network";
 import { Md5 } from "ts-md5";
 import type { ColumnsType } from "antd/es/table";
@@ -45,7 +45,7 @@ const EStable=()=> {
                 setUsers(initaluser);
             })
             .catch((err)=>{
-                alert(err);
+                message.warning(err.message);
             });
     },[]);
     const start = () => {
@@ -78,7 +78,7 @@ const EStable=()=> {
                     setLoading(false);
                 })
                 .catch((err)=>{
-                    alert(err);
+                    message.warning(err.message);
                 });
             
         }
@@ -102,7 +102,7 @@ const EStable=()=> {
                 setIsDialogOpen(false);
             })
             .catch((err)=>{
-                alert("创建失败");
+                message.warning("创建失败");
                 setIsDialogOpen(false);
             });
 

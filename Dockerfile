@@ -1,5 +1,3 @@
-# TODO Start: [Student] Complete Dockerfile
-# Stage 0: build
 FROM node:18 AS build
 
 ENV FRONTEND=/opt/frontend
@@ -14,18 +12,19 @@ RUN yarn install
 
 RUN yarn build
 
-RUN yarn export
-
-# Stage 1
-FROM nginx:1.22
+FROM node:18-alpine
 
 ENV HOME=/opt/app
 
 WORKDIR $HOME
 
-COPY --from=build /opt/frontend/out dist
+ENV NODE_ENV production
 
-COPY nginx /etc/nginx/conf.d
+COPY --from=build /opt/frontend/public ./public
+COPY --from=build /opt/frontend/.next ./.next
+COPY --from=build /opt/frontend/node_modules ./node_modules
+COPY --from=build /opt/frontend/package.json ./package.json
+
+CMD ["yarn", "start", "-p", "80"]
 
 EXPOSE 80
-# TODO End

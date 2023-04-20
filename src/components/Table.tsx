@@ -1,4 +1,4 @@
-import { Button, Table } from "antd";
+import { Button, Table, message } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import React, { useState } from "react";
 import { request } from "../utils/network";
@@ -56,7 +56,7 @@ const UserTable=(props: UserTableProps) =>{
                         }
                     })
                     .catch((err)=>{
-                        alert(tobedeleteuser?.username+"delete failed");
+                        message.warning(tobedeleteuser?.username+"delete failed");
                     });
                 request("/api/user/deleteuser","POST",{name:tobedeleteuser.username})
                     .then((res)=>{
@@ -65,7 +65,7 @@ const UserTable=(props: UserTableProps) =>{
                         }
                     })
                     .catch((err)=>{
-                        alert(tobedeleteuser?.username+"delete failed");
+                        message.warning(tobedeleteuser?.username+"delete failed");
                     });
             }         
         }
