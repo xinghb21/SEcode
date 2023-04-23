@@ -32,19 +32,6 @@ type AssetDisplayType = {
     assetcount: number;//申请数量
 }
 
-// const data = [{
-//     key: 1,
-//     name: "cjt",
-//     reason: "电脑",
-//     oper: 1,
-
-// }, {
-//     key: 2,
-//     name: "hqf",
-//     reason: "电脑",
-//     oper: 4,
-// }];
-
 const Assetcolumns: ColumnsType<AssetDisplayType> = [
     {
         title: "资产编号",

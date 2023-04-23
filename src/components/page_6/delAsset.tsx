@@ -1,4 +1,4 @@
-import { Button, message } from "antd";
+import { Button, Descriptions, message, Modal } from "antd";
 import React from "react";
 import { ProFormDateRangePicker, ProFormDigitRange, ProList } from "@ant-design/pro-components";
 import { useState } from "react";
@@ -10,6 +10,7 @@ import {
     ProFormText,
     QueryFilter,
 } from "@ant-design/pro-components";
+import DisplayModel from "./displayModel";
 
 interface Asset {
 
@@ -27,22 +28,28 @@ interface Asset {
     type?: boolean;
 
 }
+
 type customfeature = {
     //自定义属性的格式
     name: string;//名称
     content: string;//具体内容
 }
+
 type AssetDisplayType = {
     //table数据的格式
     key: React.Key;//资产的编号
     name: string;//资产的名称
     username: string[];//使用者的名字
-    assetclass: string;//对该资产进行什么操作：1领用，2转移，3维保，4退库
-    assetcount: number;//资产数量
+    assetclass: string;//资产的类型
+    assetcount: number[];//资产数量
     description: string;//资产描述
     type: boolean;
     custom: customfeature[];//自定义属性
+    date: string;//创建时间
+    oriprice: number;//资产原始价值
 }
+
+const ddata: AssetDisplayType = { key: 0, name: "", username: [], assetclass: "", assetcount: [], description: "", type: true, custom: [], date: "", oriprice: 0 };
 
 const DelAsset = (() => {
 
@@ -51,6 +58,7 @@ const DelAsset = (() => {
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [customfeatureList, setcustomFeature] = useState<string[]>();
     const [chosenname, setCname] = useState<string>();
+    const [displaydata, setDisplay] = useState<AssetDisplayType>(ddata);
 
     useEffect(() => {
         request("/api/asset/get", "GET")
@@ -73,7 +81,9 @@ const DelAsset = (() => {
         onChange: (keys: React.Key[]) => setSelectedRowKeys(keys),
     };
 
-
+    const handleCancel = () => {
+        setIsDetailOpen(false);
+    };
     //给后端发请求删除对应的asset
     const delete_asset = (() => {
 
@@ -114,13 +124,13 @@ const DelAsset = (() => {
                                 assetclass: values.category,
                                 name: values.name,
                                 belonging: values.belonging,
-                                from: (values.date != undefined) ? values.date[0] : '',
-                                to: (values.date != undefined) ? values.date[1] : '',
+                                from: (values.date != undefined) ? values.date[0] : "",
+                                to: (values.date != undefined) ? values.date[1] : "",
                                 user: values.user,
                                 status: values.status,
-                                pricefrom: (values.price != undefined) ? values.price[0] : '',
-                                priceto: (values.price != undefined) ? values.price[1] : '',
-                                custom: '{' + values.cusfeature + ':' + ((values.cuscontent != undefined) ? values.cuscontent : '') + '}',
+                                pricefrom: (values.price != undefined) ? values.price[0] : "",
+                                priceto: (values.price != undefined) ? values.price[1] : "",
+                                custom: "{" + values.cusfeature + ":" + ((values.cuscontent != undefined) ? values.cuscontent : "") + "}",
                             })
                             .then((res) => {
                                 setAssets(res.data);
@@ -141,23 +151,27 @@ const DelAsset = (() => {
                             options={[
                                 {
                                     value: 0,
-                                    label: "闲置",
+                                    label: "全部闲置",
                                 },
                                 {
                                     value: 1,
-                                    label: "被部分占用",
-                                },
-                                {
-                                    value: 2,
                                     label: "被全部占用",
                                 },
                                 {
+                                    value: 2,
+                                    label: "全部维保中",
+                                },
+                                {
                                     value: 3,
-                                    label: "维保中",
+                                    label: "需要清退",
                                 },
                                 {
                                     value: 4,
-                                    label: "需要清退",
+                                    label: "被部分占用",
+                                },
+                                {
+                                    value: 5,
+                                    label: "部分维保中",
                                 },
                             ]}
                             width="xs"
@@ -245,7 +259,6 @@ const DelAsset = (() => {
                 headerTitle="资产列表"
                 rowSelection={rowSelection}
                 dataSource={assets}
-
                 toolBarRender={() => {
                     return [
                         <Button key="2" type="default" danger={true} onClick={delete_asset} disabled={!hasSelected}>
@@ -254,6 +267,7 @@ const DelAsset = (() => {
                     ];
                 }}
             />
+            <DisplayModel isOpen={isDetailOpen} onClose={() => { setIsDetailOpen(false); }} content={displaydata} />
         </>
     );
 }

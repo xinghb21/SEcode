@@ -243,7 +243,7 @@ const Userlist =( () => {
     return (
         <div >
             <QueryFilter labelWidth="auto" onFinish={async (values) => {
-                 console.log(values);
+                console.log(values);
                 request("api/user/es/searchuser","POST",{username:values.username,department:values.department,identity:values.identity})
                     .then((res)=>{
                         let initiallist:User_to_show[]=[];
