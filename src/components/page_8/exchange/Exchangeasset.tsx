@@ -46,6 +46,7 @@ const Exchangeasset=()=>{
                 let tmp = res.info.filter(item => (item.type == 2));
                 setapplylist(tmp.map((val) => {
                     return{
+                        id:val.id,
                         reason:val.reason,
                         state:val.status,
                         message:val.message

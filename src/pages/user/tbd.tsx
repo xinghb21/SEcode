@@ -186,7 +186,7 @@ const TbdDrawer = () => {
                     </Tag>
                     );
                 }
-                else {
+                else if (text === 4){
                     return (
                         <Tag color="volcano">
                             资产退库
