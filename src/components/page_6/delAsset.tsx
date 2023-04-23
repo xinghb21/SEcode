@@ -75,7 +75,9 @@ const DelAsset = (() => {
                 message.warning(err.message);
             });
     }, []);
-
+    const showModal = () => {
+        setIsDetailOpen(true);
+    };
     const rowSelection = {
         selectedRowKeys,
         onChange: (keys: React.Key[]) => setSelectedRowKeys(keys),
@@ -210,6 +212,8 @@ const DelAsset = (() => {
                             name="price"
                             label="资产价值区间"
                         />
+                    </ProForm.Group>
+                    <ProForm.Group>
                         <div>
                             <ProFormSelect
                                 options={customfeatureList}
@@ -246,8 +250,13 @@ const DelAsset = (() => {
                         render: (_, row) => {
                             return (
                                 <Button type="link" onClick={() => {
-                                    setCname(row.name);
-                                    setIsDetailOpen(true);
+                                    // setCname(row.name);
+                                    // request("/api/asset/getdetail", "GET", {
+                                    //     id: chosenname
+                                    // }).then((res) => {
+                                    // });
+                                    // showModal();
+                                    // setIsDetailOpen(true);
                                 }}>
                                     查看详情
                                 </Button>
