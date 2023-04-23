@@ -1,8 +1,8 @@
 import { Button, message } from "antd";
 import React from "react";
-import { ProFormDateRangePicker, ProFormDigitRange, ProList} from "@ant-design/pro-components";
+import { ProFormDateRangePicker, ProFormDigitRange, ProList } from "@ant-design/pro-components";
 import { useState } from "react";
-import {useEffect} from "react";
+import { useEffect } from "react";
 import { request } from "../../utils/network";
 import {
     ProForm,
@@ -11,7 +11,7 @@ import {
     QueryFilter,
 } from "@ant-design/pro-components";
 
-interface Asset{
+interface Asset {
 
     key: React.Key;
     name: string;
@@ -28,11 +28,12 @@ interface Asset{
 
 }
 
-const DelAsset = ( () => {
+const DelAsset = (() => {
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [assets, setAssets] = useState<Asset[]>([]);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
+    const [customfeatureList, setcustomFeature] = useState<string[]>();
 
     useEffect(() => {
         request("/api/asset/get", "GET")
@@ -40,6 +41,12 @@ const DelAsset = ( () => {
                 setAssets(res.data);
             })
             .catch((err) => {
+                message.warning(err.message);
+            });
+        request("/api/asset/attributes", "GET")
+            .then((res) => {
+                setcustomFeature(res.info);
+            }).catch((err) => {
                 message.warning(err.message);
             });
     }, []);
@@ -54,12 +61,12 @@ const DelAsset = ( () => {
     const delete_asset = (() => {
 
         const newAssets = assets.filter(item => !selectedRowKeys.includes(item.key));
-        
+
         const selectedNames = selectedRowKeys.map(key => {
             const item = assets.find(data => data.key === key);
             return item ? item.name : "";
         });
-        
+
         request("/api/asset/delete", "DELETE", selectedNames)
             .then(() => {
                 setAssets(newAssets);
@@ -74,29 +81,29 @@ const DelAsset = ( () => {
     const hasSelected = selectedRowKeys.length > 0;
 
     return (
-        <div> 
-            
-            {/* <div
+        <>
+            <div
                 style={{
                     margin: 20,
                 }}
-            > */}
-            {/* <QueryFilter 
-                    labelWidth="auto" 
+            >
+                <QueryFilter
+                    labelWidth="auto"
                     onFinish={async (values) => {
-                        
-                        request("/api/asset/get", "GET", 
+                        console.log(values.custom);
+                        request("/api/user/ep/queryasset", "GET",
                             {
                                 parent: values.parent,
-                                category: values.category,
+                                assetclass: values.category,
                                 name: values.name,
                                 belonging: values.belonging,
-                                from: values.date[0],
-                                to: values.date[1],
+                                from: (values.date != undefined) ? values.date[0] : '',
+                                to: (values.date != undefined) ? values.date[1] : '',
                                 user: values.user,
                                 status: values.status,
-                                pricefrom: values.price[0],
-                                priceto: values.price[1],
+                                pricefrom: (values.price != undefined) ? values.price[0] : '',
+                                priceto: (values.price != undefined) ? values.price[1] : '',
+                                custom: '{' + values.cusfeature + ':' + values.cuscontent + '}',
                             })
                             .then((res) => {
                                 setAssets(res.data);
@@ -111,7 +118,6 @@ const DelAsset = ( () => {
                             width="md"
                             name="name"
                             label="资产名称"
-                            initialValue={""}
                             placeholder="请输入名称"
                         />
                         <ProFormSelect
@@ -122,17 +128,20 @@ const DelAsset = ( () => {
                                 },
                                 {
                                     value: 1,
-                                    label: "使用中",
+                                    label: "被部分占用",
                                 },
                                 {
                                     value: 2,
-                                    label: "维保",
+                                    label: "被全部占用",
                                 },
                                 {
                                     value: 3,
-                                    label: "清退",
+                                    label: "维保中",
                                 },
-                                
+                                {
+                                    value: 4,
+                                    label: "需要清退",
+                                },
                             ]}
                             width="xs"
                             name="status"
@@ -142,49 +151,57 @@ const DelAsset = ( () => {
                             width="md"
                             name="date"
                             label="资产创建时间"
-                        
                         />
-                    </ProForm.Group>
-                    <ProForm.Group>
-                        <ProFormText 
-                            width="md" 
-                            name="parent" 
-                            label="上级资产名称" 
+                        <ProFormText
+                            width="md"
+                            name="parent"
+                            label="上级资产名称"
                             initialValue={""}
                         />
-                        <ProFormText 
-                            width="md" 
-                            name="category" 
-                            label="资产类别" 
+                        <ProFormText
+                            width="md"
+                            name="category"
+                            label="资产类别"
                         />
 
-                    </ProForm.Group>
-                    <ProForm.Group>
-                        <ProFormText 
-                            width="md" 
-                            name="belonging" 
-                            label="资产挂账人" 
+                        <ProFormText
+                            width="md"
+                            name="belonging"
+                            label="资产挂账人"
                         />
-                        <ProFormText 
-                            width="md" 
-                            name="user" 
-                            label="当前使用者" 
+                        <ProFormText
+                            width="md"
+                            name="user"
+                            label="当前使用者"
                         />
+                        <ProFormDigitRange
+                            width="xs"
+                            name="price"
+                            label="资产价值区间"
+                        />
+                        <div>
+                            <ProFormSelect
+                                options={customfeatureList}
+                                width="xs"
+                                name="cusfeature"
+                                label="自定义属性"
+                            />
+                            <ProFormText
+                                width="md"
+                                name="cuscontent"
+                                placeholder="请输入属性详细"
+                            />
+                        </div>
                     </ProForm.Group>
-                    <ProFormDigitRange
-                        width="xs"
-                        name="price"
-                        label="资产价值区间"
-                    />
                 </QueryFilter>
-            </div> */}
+            </div>
             <ProList<Asset>
 
-                pagination = {{pageSize: 10}}
-                metas = {{
-                    title: {dataIndex:"name"},
+                pagination={{ pageSize: 10 }}
+                metas={{
+                    title: { dataIndex: "name" },
                     description: {
-                        render: (_,row) => {
+                        render: (_, row) => {
                             return (
                                 <div>
                                     {row.description == "" ? "暂无描述" : row.description}
@@ -195,13 +212,13 @@ const DelAsset = ( () => {
                     avatar: {},
                     extra: {},
                     actions: {
-                        // render: (_,row) => {
-                        //     return (
-                        //         <Button type="link" onClick={() => {setIsDetailOpen(true)}}>
-                        //             查看详情
-                        //         </Button>
-                        //     );
-                        // },
+                        render: (_,row) => {
+                            return (
+                                <Button type="link" onClick={() => {setIsDetailOpen(true)}}>
+                                    查看详情
+                                </Button>
+                            );
+                        },
                     },
                 }}
                 rowKey="key"
@@ -211,13 +228,13 @@ const DelAsset = ( () => {
 
                 toolBarRender={() => {
                     return [
-                        <Button key="2" type="default" danger={true} onClick = {delete_asset} disabled = {!hasSelected}> 
+                        <Button key="2" type="default" danger={true} onClick={delete_asset} disabled={!hasSelected}>
                             删除选中资产
                         </Button>
                     ];
                 }}
             />
-        </div>
+        </>
     );
 }
 );
