@@ -27,6 +27,22 @@ interface Asset {
     type?: boolean;
 
 }
+type customfeature = {
+    //自定义属性的格式
+    name: string;//名称
+    content: string;//具体内容
+}
+type AssetDisplayType = {
+    //table数据的格式
+    key: React.Key;//资产的编号
+    name: string;//资产的名称
+    username: string[];//使用者的名字
+    assetclass: string;//对该资产进行什么操作：1领用，2转移，3维保，4退库
+    assetcount: number;//资产数量
+    description: string;//资产描述
+    type: boolean;
+    custom: customfeature[];//自定义属性
+}
 
 const DelAsset = (() => {
 
@@ -34,6 +50,7 @@ const DelAsset = (() => {
     const [assets, setAssets] = useState<Asset[]>([]);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [customfeatureList, setcustomFeature] = useState<string[]>();
+    const [chosenname, setCname] = useState<string>();
 
     useEffect(() => {
         request("/api/asset/get", "GET")
@@ -103,7 +120,7 @@ const DelAsset = (() => {
                                 status: values.status,
                                 pricefrom: (values.price != undefined) ? values.price[0] : '',
                                 priceto: (values.price != undefined) ? values.price[1] : '',
-                                custom: '{' + values.cusfeature + ':' + values.cuscontent + '}',
+                                custom: '{' + values.cusfeature + ':' + ((values.cuscontent != undefined) ? values.cuscontent : '') + '}',
                             })
                             .then((res) => {
                                 setAssets(res.data);
@@ -212,9 +229,12 @@ const DelAsset = (() => {
                     avatar: {},
                     extra: {},
                     actions: {
-                        render: (_,row) => {
+                        render: (_, row) => {
                             return (
-                                <Button type="link" onClick={() => {setIsDetailOpen(true)}}>
+                                <Button type="link" onClick={() => {
+                                    setCname(row.name);
+                                    setIsDetailOpen(true);
+                                }}>
                                     查看详情
                                 </Button>
                             );

@@ -29,7 +29,7 @@ type AssetDisplayType = {
     key: React.Key;//id
     assetname: string;//申请人的名字
     assetclass: string,//对该资产进行什么操作：1领用，2转移，3维保，4退库
-    assetcount: number;//申请原因
+    assetcount: number;//申请数量
 }
 
 // const data = [{
