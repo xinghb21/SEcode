@@ -292,7 +292,6 @@ const AddAsset = () => {
                         for(let i = 0; i < addition.length; i++) {
                             additions.push({key: addition[i], value: values[addition[i]]});
                         }
-                        alert(value);
                         const asset : Asset = {
 
                             key : values.assetname,

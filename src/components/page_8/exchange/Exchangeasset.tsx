@@ -41,7 +41,7 @@ const Exchangeasset=()=>{
     }),[]);
 
     const fetchapply=()=>{
-        request("api/user/ns/possess", "GET")
+        request("api/user/ns/getallapply", "GET")
             .then((res)=>{
                 let tmp = res.info.filter(item => (item.type == 2));
                 setapplylist(tmp.map((val) => {
@@ -66,7 +66,7 @@ const Exchangeasset=()=>{
                         id:val.id,
                         name:val.name,
                         type:val.type,
-                        count:val.count,
+                        count:val.number,
                         applycount:1
                     });
                 });

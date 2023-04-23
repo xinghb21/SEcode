@@ -33,16 +33,17 @@ const Exchangesubmit=(props:DialogProps)=>{
     const handlesubmit=()=>{
         setloading(true);
         if(reason !== "" && person !== ""){
-            request("api/user/ns/userapply","POST",
+            request("api/user/ns/exchange","POST",
             {
                 exchange: props.proassetlist.map((val) => {
                     return {
                         id: val.id,
                         assetname: val.name,
-                        assetcount: val.applycount
+                        assetnumber: val.applycount
                     };
                 }),
-                reason: reason
+                reason: reason,
+                username: person
             })
                 .then((res)=>{
                     message.success("提交成功，请等待审批");
