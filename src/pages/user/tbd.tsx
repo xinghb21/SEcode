@@ -265,6 +265,7 @@ const TbdDrawer = () => {
                     open={open}
                     title="该员工所申请资产详细"
                     onOk={handleOk}
+                    onCancel={handleCancel}
                     footer={[
                         <Button key="back" onClick={handleCancel}>
                         Return

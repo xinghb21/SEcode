@@ -3,6 +3,7 @@ import type { MenuProps } from "antd";
 import { Menu } from "antd";
 import Applyasset from "./Applyasset";
 import Returnasset from "./Returnasset";
+import Exchangeasset from "./exchange/Exchangeasset";
 
 const items: MenuProps["items"] = [
     {
@@ -13,10 +14,14 @@ const items: MenuProps["items"] = [
         label: "资产退库",
         key: 1,
     },
+    {
+        label: "资产转移",
+        key: 2,
+    },
 ];
 
 const PageList: any[] = [
-    <div key={0}> <Applyasset /></div>, <div key={1}><Returnasset /></div> 
+    <div key={0}> <Applyasset /></div>, <div key={1}><Returnasset /></div> , <div key={2}><Exchangeasset/></div>
 ];
 
 const Page_8:React.FC = () => {

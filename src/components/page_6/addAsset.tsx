@@ -8,11 +8,8 @@ import CryptoJS from "crypto-js";
 import Base64 from "base-64";
 import OSS from "ali-oss";
 import "react-quill/dist/quill.snow.css";
-import QuillMarkdown from "quilljs-markdown";
 import MarkdownIt from "markdown-it";
 const ReactQuill = typeof window === "object" ? require("react-quill") : () => false;
-const Quill = typeof window === "object" ? require("quill") : () => false;
-import MarkdownShortcuts from "quill-markdown-shortcuts";
 import { RcFile } from "antd/lib/upload";
 import * as XLSX from "xlsx/xlsx.mjs";
 
@@ -32,6 +29,7 @@ interface Asset{
     belonging?: string;
     addtional?: Object;
     type?: boolean;
+    additionalinfo?: string;
 
 }
 
@@ -117,7 +115,6 @@ const AddAsset = () => {
             ["bold", "italic", "underline", "strike", "blockquote"],
             [{ list: "ordered" }, { list: "bullet" }],
         ],
-        // markdownShortcuts: {},
     };
 
     const formats = [
@@ -295,6 +292,7 @@ const AddAsset = () => {
                         for(let i = 0; i < addition.length; i++) {
                             additions.push({key: addition[i], value: values[addition[i]]});
                         }
+                        alert(value);
                         const asset : Asset = {
 
                             key : values.assetname,
@@ -307,6 +305,7 @@ const AddAsset = () => {
                             number: values.number,
                             belonging: values.belonging,
                             addtional: additions,
+                            additionalinfo: value,
                             
                         };
                         setAsset([...assets, asset]);
@@ -370,8 +369,6 @@ const AddAsset = () => {
                             rules={[{ required: true, message: "请输入数量！" }]}
                             min={0}
                         />
-                    </ProForm.Group>
-                    <ProForm.Group>
                         <ProFormMoney
                             label="资产价值"
                             name="price"
@@ -379,6 +376,8 @@ const AddAsset = () => {
                             min={0}
                             rules={[{ required: true, message: "请输入资产价值！" }]}
                         />
+                    </ProForm.Group>
+                    <ProForm.Group>
                         <ProFormText
                             width="md" 
                             name="belonging" 
@@ -423,18 +422,22 @@ const AddAsset = () => {
                             }}>
                             <Button icon={<UploadOutlined />}>Upload</Button>
                         </Upload>
-                        {/* <ReactQuill
-                            title="资产描述"
-                            value={value}
-                            onChange={handleChange}
-                            modules={modules}
-                            formats={formats}
-                            theme="snow"
-                            placeholder="Write something..."
-                        /> */}
                     </ProForm.Group>
                     <ProForm.Group>
-                        
+                        <div style={{marginTop: 20}}>
+                            <Space direction="vertical">
+                                <div>补充说明</div>
+                                <ReactQuill
+                                    title="资产描述"
+                                    value={value}
+                                    onChange={handleChange}
+                                    modules={modules}
+                                    formats={formats}
+                                    theme="snow"
+                                    placeholder="Write something..."
+                                />
+                            </Space>
+                        </div>
                     </ProForm.Group>
                 </ModalForm>
                 <Upload 
