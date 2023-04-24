@@ -20,7 +20,7 @@ interface Asset {
     department?: string;
     parent?: string;
     child?: string;
-    category: string;
+    assetclass: string;
     description?: string;
     number?: Number;
     addtion?: Object;
@@ -119,22 +119,28 @@ const DelAsset = (() => {
                 <QueryFilter
                     labelWidth="auto"
                     onFinish={async (values) => {
-                        console.log(values.custom);
-                        request("/api/user/ep/queryasset", "GET",
+                        console.log(values.name)
+                        console.log(values.parent)
+                        console.log(values.assetclass)
+                        console.log(values.belonging)
+                        console.log(values.user)
+                        console.log(values.cusfeature)
+                        request("/api/user/ep/queryasset", "POST",
                             {
-                                parent: values.parent,
-                                assetclass: values.category,
+                                parent: (values.parent!= undefined) ?values.parent:"",
+                                assetclass: (values.assetclass!= undefined) ?values.assetclass:"",
                                 name: values.name,
-                                belonging: values.belonging,
-                                from: (values.date != undefined) ? values.date[0] : "",
-                                to: (values.date != undefined) ? values.date[1] : "",
-                                user: values.user,
-                                status: values.status,
-                                pricefrom: (values.price != undefined) ? values.price[0] : "",
-                                priceto: (values.price != undefined) ? values.price[1] : "",
-                                custom: "{" + values.cusfeature + ":" + ((values.cuscontent != undefined) ? values.cuscontent : "") + "}",
+                                belonging: (values.belonging!= undefined) ?values.belonging:"",
+                                from: (values.date != undefined) ? values.date[0] : 0,
+                                to: (values.date != undefined) ? values.date[1] : 0,
+                                user: (values.user!=undefined)?values.user:"",
+                                status: (values.status!= undefined) ? values.status : -1,
+                                pricefrom: (values.price != undefined) ? values.price[0] : 0,
+                                priceto: (values.price != undefined) ? values.price[1] : 0,
+                                custom: "{" + ((values.cusfeature!= undefined)? values.cusfeature: "")+ ":" + ((values.cuscontent != undefined) ? values.cuscontent : "") + "}",
                             })
                             .then((res) => {
+                                console.log(res.data);
                                 setAssets(res.data);
                                 message.success("查询成功");
                             }).catch((err) => {
@@ -193,7 +199,7 @@ const DelAsset = (() => {
                         />
                         <ProFormText
                             width="md"
-                            name="category"
+                            name="assetclass"
                             label="资产类别"
                         />
 
