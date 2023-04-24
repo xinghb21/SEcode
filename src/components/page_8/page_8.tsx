@@ -13,11 +13,10 @@ const items: MenuProps["items"] = [
         label: "资产退库",
         key: 1,
     },
-    
 ];
 
 const PageList: any[] = [
-    <div key={0}> <Applyasset /></div>, <div key={1}><Returnasset /></div> 
+    <div key={0}> <Applyasset /></div>, <div key={1}><Returnasset /></div>, 
 ];
 
 const Page_8:React.FC = () => {
