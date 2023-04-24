@@ -26,7 +26,7 @@ const ClearAsset = (() => {
                         assetname: item.assetname,
                         assetclass: item.assetclass,
                         department: item.department,
-                        number:item.number,
+                        number: item.number,
                     };
                 }));
             })
@@ -49,7 +49,10 @@ const ClearAsset = (() => {
             return item ? item.assetname : "";
         });
 
-        request("/api/user/ep/assetclear", "POST", selectedNames)
+        request("/api/user/ep/assetclear", "POST", 
+        { 
+            name: selectedNames 
+        })
             .then(() => {
                 setAlist(newAssets);
                 message.success("成功清退");
