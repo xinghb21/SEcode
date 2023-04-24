@@ -16,58 +16,60 @@ interface DialogProps {
     subtitle: string;
 }
 
-type DataType = {
-    //table数据的格式
-    key: React.Key;//id
-    name: string;//申请人的名字
-    oper: number,//对该资产进行什么操作：1领用，2转移，3维保，4退库
-    reason: string;//申请原因
+type Asset = {
+    key: React.Key;
+    assetname: string;
+    number: number;
 }
 
-type AssetDisplayType = {
-    //table数据的格式
-    key: React.Key;//id
-    assetname: string;//申请人的名字
-    assetclass: string,//对该资产进行什么操作：1领用，2转移，3维保，4退库
-    assetcount: number;//申请原因
+type Message = {
+    key: React.Key;
+    id: number;
+    message: string;
+    type: number;
+    status: number;
+    assets: Asset[];
 }
 
-// const data = [{
-//     key: 1,
-//     name: "cjt",
-//     reason: "电脑",
-//     oper: 1,
 
-// }, {
-//     key: 2,
-//     name: "hqf",
-//     reason: "电脑",
-//     oper: 4,
-// }];
-
-const Assetcolumns: ColumnsType<AssetDisplayType> = [
-    {
-        title: "资产编号",
-        dataIndex: "key",
-    },
+const Assetcolumns: ColumnsType<Asset> = [
     {
         title: "资产名称",
         dataIndex: "assetname",
     },
     {
-        title: "资产类别",
-        dataIndex: "assetclass",
-    },
-    {
         title: "资产数量",
-        dataIndex: "assetcount",
+        dataIndex: "number",
     }
 ];
 
+const columns: ColumnsType<Message> = [
+    {
+        title: "资产名称",
+        dataIndex: "assetname",
+    },
+    {
+        title: "资产数量",
+        dataIndex: "number",
+    },
+    {
+        title: "指定类别",
+        dataIndex: "operation",
+        render: (_, record) => {
+            return (
+                <Space>
+                    <Button type="primary" onClick={() => { }}>指定</Button>
+                </Space>
+            );
+        },
+    },
+];
+
 const NSTbdDrawer = () => {
-    const [tbdData, settbdData] = useState<DataType[]>([]);
+
+    const [messages, setMessage] = useState<Message[]>([]);
     const [open, setOpen] = useState(false);
-    const [assetdisdata, setassetdisData] = useState<AssetDisplayType[]>([]);
+    const [assetdisdata, setassetdisData] = useState<Message>();
 
     const [chosenkey, setck] = useState<React.Key>();
     const [isDialogOpenSR, setIsDialogOpenSR] = useState(false);
@@ -100,70 +102,41 @@ const NSTbdDrawer = () => {
             setOpen(false);
         }, 3000);
     };
-    //拒绝申请输入原因
-    const handleSendR = (reason: string) => {
-        //不允许空输入
-        if (reason.match("\\s+") || reason.length == 0) {
-            message.warning("请输入具体原因");
-            return;
-        }
-        request("/api/user/ep/reapply", "POST", {
-            id: chosenkey,
-            status: 1,
-            reason: reason
-        }).then(() => {
-            fetchtbdData();
-            fetchtbd();
-            setIsDialogOpenSR(false);
-        }).catch((err) => {
-            message.warning(err.detail);
-        });
-        setIsDialogOpenSR(false);
-    };
 
     const handleCancel = () => {
         setOpen(false);
     };
 
-    const SendR = (props: DialogProps) => {
-        const [reason, setR] = useState("");
-        const handleSendR = () => {
-            props.onSendR(reason);
-            setR("");
-        };
-        return (
-            <Modal title={props.title} open={props.isOpen} onOk={handleSendR} onCancel={props.onClose} >
-                <div>
-                    <label>{props.subtitle}</label>
-                    <Input type="reason" value={reason} onChange={(e) => setR(e.target.value)} />
-                </div>
-            </Modal>
-        );
-    };
     const fetchtbdData = () => {
-        request("/api/user/ep/getallapply", "GET")
+        request("/api/user/ns/getmessage", "GET")
             .then((res) => {
-                settbdData(res.info.map((item) => {
-                    return {
-                        key: item.id,
-                        name: item.name,
-                        reason: item.reason,
-                        oper: item.oper
-                    };
-                }));
+                let data: Message[] = res.info;
+                if(data.length != 0){
+                    data.forEach((item) => {
+                        item.key = item.id; 
+                        if(item.assets != null){
+                            item.assets.forEach((item) => {
+                                item.key = item.assetname;
+                                return item;
+                            });
+                        }
+                        return item;
+                    });
+                }
+                setMessage(data);
             })
             .catch((err) => {
                 message.warning(err.message);
             });
     };
-    const columns: ColumnsType<DataType> = [
+    const columns: ColumnsType<Message> = [
         {
-            title: "申请人",
-            dataIndex: "name",
+            title: "消息编号",
+            dataIndex: "id",
         },
         {
-            title: "请求",
-            dataIndex: "oper",
+            title: "操作类型",
+            dataIndex: "type",
             render: (text) => {
                 if (text === 1) {
                     return (<Tag color="blue">
@@ -189,56 +162,40 @@ const NSTbdDrawer = () => {
                             资产退库
                         </Tag>
                     );
+                } else {
+                    return (
+                        <Tag color="purple">
+                            待确认资产
+                        </Tag>
+                    );
                 }
             },
         },
         {
-            title: "申请原因",
-            dataIndex: "reason",
+            title: "审批结果",
+            dataIndex: "status",
+            render: (text) => {
+                return (
+                    text == 1 ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag>
+                );
+            },
         },
         {
             title: "操作",
-            render: (record) => (
-                <Space size="middle">
-                    <Button type="link" onClick={() => {
-                        request("/api/user/ep/assetsinapply", "GET", {
-                            id: record.key
-                        }).then((res) => {
-                            setassetdisData(res.info.map((item) => {
-                                return {
-                                    key: item.id,
-                                    assetname: item.assetname,
-                                    assetclass: item.assetclass,
-                                    assetcount: item.assetcount
-                                };
-                            }));
+            render: (record) => {
+                return (
+                     <Button type="primary" onClick={() => {
+                        request("/api/user/ns/read", "POST", {
+                            id: record.id
+                        }).then(() => {
+                            setassetdisData(messages.filter((item) => item.id === record.id)[0]);
                             showModal();
                         }).catch((err) => {
                             message.warning(err.detail);
                         });
-                    }}>详细</Button>
-                    <Button danger={true} onClick={() => {
-                        setck(record.key);
-                        setIsDialogOpenSR(true);
-                    }}>
-                        拒绝
-                    </Button>
-                    <Button type="primary" onClick={() => {
-                        request("/api/user/ep/reapply", "POST", {
-                            id: record.key,
-                            status: 0,
-                            reason: "Success!"
-                        }).then(() => {
-                            fetchtbdData();
-                            fetchtbd();
-                        }).catch((err) => {
-                            message.warning(err.detail);
-                        });
-                    }}>
-                        同意
-                    </Button>
-                </Space>
-            ),
+                    }}> 查看</Button> 
+                );
+            },
         },
     ];
 
@@ -252,26 +209,31 @@ const NSTbdDrawer = () => {
                 </Button>
             </Tooltip>
             <Drawer
-                title="待办任务列表"
-                width={"70%"}
+                title="消息列表"
+                width={"60%"}
                 onClose={onClose}
                 open={dopen}
             >
-                <Table columns={columns} dataSource={tbdData} />
+                <Table columns={columns} dataSource={messages} />
                 <Modal
                     open={open}
-                    title="该员工所申请资产详细"
+                    title="详细信息"
                     onOk={handleOk}
                     onCancel={handleCancel}
                     footer={[
                         <Button key="back" onClick={handleCancel}>
-                        Return
+                            Return
                         </Button>,
                     ]}
-                >
-                    <Table columns={Assetcolumns} dataSource={assetdisdata} />
+                >   
+                    <p>消息编号：{assetdisdata?.id}</p>
+                    <p>操作类型：{assetdisdata?.type === 1 ? "资产领用" : assetdisdata?.type === 2 ? "资产转移" : assetdisdata?.type === 3 ? "资产维保" : assetdisdata?.type === 4 ? "资产退库" : "待确认资产"}</p>
+                    <p>审批结果：{assetdisdata?.status === 1 ? "通过" : "未通过"}</p>
+                    <p>审批意见：{assetdisdata?.message}</p>
+                    {assetdisdata?.type != 5 ? <Table columns={Assetcolumns} dataSource={assetdisdata?.assets} /> : 
+                        <Table columns={Assetcolumns} dataSource={assetdisdata?.assets} />
+                    }
                 </Modal>
-                <SendR title={"请输入拒绝原因"} subtitle={"具体原因为："} isOpen={isDialogOpenSR} onClose={() => setIsDialogOpenSR(false)} onSendR={handleSendR} />
             </Drawer>
         </>
     );
