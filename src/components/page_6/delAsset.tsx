@@ -119,12 +119,12 @@ const DelAsset = (() => {
                 <QueryFilter
                     labelWidth="auto"
                     onFinish={async (values) => {
-                        console.log(values.name)
-                        console.log(values.parent)
-                        console.log(values.assetclass)
-                        console.log(values.belonging)
-                        console.log(values.user)
-                        console.log(values.cusfeature)
+                        console.log(values.name);
+                        console.log(values.parent);
+                        console.log(values.assetclass);
+                        console.log(values.belonging);
+                        console.log(values.user);
+                        console.log(values.cusfeature);
                         request("/api/user/ep/queryasset", "POST",
                             {
                                 parent: (values.parent!= undefined) ?values.parent:"",
