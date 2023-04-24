@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import { request } from "../../utils/network";
-import { Button, Descriptions, message, Modal } from "antd";
-import { ProFormDateRangePicker, ProFormDigitRange, ProList } from "@ant-design/pro-components";
+import { Button, message} from "antd";
+import {  ProList } from "@ant-design/pro-components";
 
 interface AssetDisplayType {
     //table数据的格式
@@ -50,9 +50,9 @@ const ClearAsset = (() => {
         });
 
         request("/api/user/ep/assetclear", "POST", 
-        { 
-            name: selectedNames 
-        })
+            { 
+                name: selectedNames 
+            })
             .then(() => {
                 setAlist(newAssets);
                 message.success("成功清退");
