@@ -61,6 +61,7 @@ const DelAsset = (() => {
     const [displaydata, setDisplay] = useState<AssetDisplayType>(ddata);
 
     useEffect(() => {
+        //获取当下部门所有的资产
         request("/api/asset/get", "GET")
             .then((res) => {
                 setAssets(res.data);
@@ -68,6 +69,7 @@ const DelAsset = (() => {
             .catch((err) => {
                 message.warning(err.message);
             });
+        //获取部门下的自定义属性
         request("/api/asset/attributes", "GET")
             .then((res) => {
                 setcustomFeature(res.info);
@@ -75,9 +77,11 @@ const DelAsset = (() => {
                 message.warning(err.message);
             });
     }, []);
+
     const showModal = () => {
         setIsDetailOpen(true);
     };
+    
     const rowSelection = {
         selectedRowKeys,
         onChange: (keys: React.Key[]) => setSelectedRowKeys(keys),
@@ -86,6 +90,7 @@ const DelAsset = (() => {
     const handleCancel = () => {
         setIsDetailOpen(false);
     };
+
     //给后端发请求删除对应的asset
     const delete_asset = (() => {
 
@@ -119,12 +124,7 @@ const DelAsset = (() => {
                 <QueryFilter
                     labelWidth="auto"
                     onFinish={async (values) => {
-                        console.log(values.name);
-                        console.log(values.parent);
-                        console.log(values.assetclass);
-                        console.log(values.belonging);
-                        console.log(values.user);
-                        console.log(values.cusfeature);
+                        //发送查询请求，注意undefined的情况
                         request("/api/user/ep/queryasset", "POST",
                             {
                                 parent: (values.parent!= undefined) ?values.parent:"",

@@ -14,9 +14,11 @@ interface AssetDisplayType {
 }
 
 const ClearAsset = (() => {
+    
     const [assetList, setAlist] = useState<AssetDisplayType[]>([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
+    //初始化获取需要清退的资产
     useEffect(() => {
         request("/api/user/ep/assetstbc", "GET")
             .then((res) => {
@@ -35,10 +37,12 @@ const ClearAsset = (() => {
             });
     }, []);
 
+    //选择后的处理
     const rowSelection = {
         selectedRowKeys,
         onChange: (keys: React.Key[]) => setSelectedRowKeys(keys),
     };
+
     //给后端发请求清退对应的asset
     const clear_asset = (() => {
 
@@ -63,6 +67,7 @@ const ClearAsset = (() => {
             });
     });
 
+    //是否有选中的清退资产
     const hasSelected = selectedRowKeys.length > 0;
 
     return (
