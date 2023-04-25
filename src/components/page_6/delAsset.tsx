@@ -81,7 +81,7 @@ const DelAsset = (() => {
     const showModal = () => {
         setIsDetailOpen(true);
     };
-    
+
     const rowSelection = {
         selectedRowKeys,
         onChange: (keys: React.Key[]) => setSelectedRowKeys(keys),
@@ -127,17 +127,18 @@ const DelAsset = (() => {
                         //发送查询请求，注意undefined的情况
                         request("/api/user/ep/queryasset", "POST",
                             {
-                                parent: (values.parent!= undefined) ?values.parent:"",
-                                assetclass: (values.assetclass!= undefined) ?values.assetclass:"",
-                                name: values.name,
-                                belonging: (values.belonging!= undefined) ?values.belonging:"",
-                                from: (values.date != undefined) ? values.date[0] : 0,
-                                to: (values.date != undefined) ? values.date[1] : 0,
-                                user: (values.user!=undefined)?values.user:"",
-                                status: (values.status!= undefined) ? values.status : -1,
+                                parent: (values.parent != undefined) ? values.parent : "",
+                                assetclass: (values.assetclass != undefined) ? values.assetclass : "",
+                                name: (values.name != undefined) ? values.name : "",
+                                belonging: (values.belonging != undefined) ? values.belonging : "",
+                                from: (values.date != undefined) ? Date.parse(values.date[0]) : 0,
+                                to: (values.date != undefined) ? Date.parse(values.date[1]) : 0,
+                                user: (values.user != undefined) ? values.user : "",
+                                status: (values.status != undefined) ? values.status : -1,
                                 pricefrom: (values.price != undefined) ? values.price[0] : 0,
                                 priceto: (values.price != undefined) ? values.price[1] : 0,
-                                custom: "{" + ((values.cusfeature!= undefined)? values.cusfeature: "")+ ":" + ((values.cuscontent != undefined) ? values.cuscontent : "") + "}",
+                                custom: (values.cusfeature != undefined) ? values.cusfeature : "",
+                                content: (values.cuscontent != undefined) ? values.cuscontent : "",
                             })
                             .then((res) => {
                                 console.log(res.data);
