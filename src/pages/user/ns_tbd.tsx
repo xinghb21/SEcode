@@ -184,7 +184,7 @@ const NSTbdDrawer = () => {
             title: "操作",
             render: (record) => {
                 return (
-                     <Button type="primary" onClick={() => {
+                    <Button type="primary" onClick={() => {
                         request("/api/user/ns/read", "POST", {
                             id: record.id
                         }).then(() => {
