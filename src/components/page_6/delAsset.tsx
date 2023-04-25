@@ -58,6 +58,7 @@ const DelAsset = (() => {
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [customfeatureList, setcustomFeature] = useState<string[]>();
     const [chosenname, setCname] = useState<string>();
+    const [assetclasslist, setac] = useState<string[]>([]);
     const [displaydata, setDisplay] = useState<AssetDisplayType>(ddata);
 
     useEffect(() => {
@@ -76,12 +77,19 @@ const DelAsset = (() => {
             }).catch((err) => {
                 message.warning(err.message);
             });
+        //获取部门下的资产类别
+        request("/api/asset/assetclass", "GET")
+            .then((res) => {
+                setac(res.data);
+            }).catch((err) => {
+                message.warning(err.message);
+            });
     }, []);
 
     const showModal = () => {
         setIsDetailOpen(true);
     };
-    
+
     const rowSelection = {
         selectedRowKeys,
         onChange: (keys: React.Key[]) => setSelectedRowKeys(keys),
@@ -127,26 +135,27 @@ const DelAsset = (() => {
                         //发送查询请求，注意undefined的情况
                         request("/api/user/ep/queryasset", "POST",
                             {
-                                parent: (values.parent!= undefined) ?values.parent:"",
-                                assetclass: (values.assetclass!= undefined) ?values.assetclass:"",
-                                name: values.name,
-                                belonging: (values.belonging!= undefined) ?values.belonging:"",
-                                from: (values.date != undefined) ? values.date[0] : 0,
-                                to: (values.date != undefined) ? values.date[1] : 0,
-                                user: (values.user!=undefined)?values.user:"",
-                                status: (values.status!= undefined) ? values.status : -1,
+                                parent: (values.parent != undefined) ? values.parent : "",
+                                assetclass: (values.assetclass != undefined) ? values.assetclass : "",
+                                name: (values.name != undefined) ? values.name : "",
+                                belonging: (values.belonging != undefined) ? values.belonging : "",
+                                from: (values.date != undefined) ? Date.parse(values.date[0]) : 0,
+                                to: (values.date != undefined) ? Date.parse(values.date[1]) : 0,
+                                user: (values.user != undefined) ? values.user : "",
+                                status: (values.status != undefined) ? values.status : -1,
                                 pricefrom: (values.price != undefined) ? values.price[0] : 0,
                                 priceto: (values.price != undefined) ? values.price[1] : 0,
-                                custom: "{" + ((values.cusfeature!= undefined)? values.cusfeature: "")+ ":" + ((values.cuscontent != undefined) ? values.cuscontent : "") + "}",
+                                custom: (values.cusfeature != undefined) ? values.cusfeature : "",
+                                content: (values.cuscontent != undefined) ? values.cuscontent : "",
                             })
                             .then((res) => {
-                                console.log(res.data);
                                 setAssets(res.data);
                                 message.success("查询成功");
                             }).catch((err) => {
                                 message.warning(err.message);
                             });
-                    }}
+                    }
+                    }
                 >
                     <ProForm.Group>
                         <ProFormText
@@ -197,7 +206,8 @@ const DelAsset = (() => {
                             label="上级资产名称"
                             initialValue={""}
                         />
-                        <ProFormText
+                        <ProFormSelect
+                            options={assetclasslist}
                             width="md"
                             name="assetclass"
                             label="资产类别"
