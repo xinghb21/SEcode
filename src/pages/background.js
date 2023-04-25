@@ -90,7 +90,7 @@ class Circle extends Component {
             }
             // ctx.restore();
             //延迟50ms
-            requestAnimationFrame(draw);
+            requestAnimationFrame(draw, 1000);
         }
         //调用绘制
         draw();

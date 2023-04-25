@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Drawer, Space, Button, Table, Tag, message, Modal, Input } from "antd";
+import { Drawer, Space, Button, Table, Tag, message, Modal, Input, Select } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { request } from "../../utils/network";
 import {
@@ -28,9 +28,8 @@ type Message = {
     message: string;
     type: number;
     status: number;
-    assets: Asset[];
+    info: Asset[];
 }
-
 
 const Assetcolumns: ColumnsType<Asset> = [
     {
@@ -43,48 +42,96 @@ const Assetcolumns: ColumnsType<Asset> = [
     }
 ];
 
-const columns: ColumnsType<Message> = [
-    {
-        title: "资产名称",
-        dataIndex: "assetname",
-    },
-    {
-        title: "资产数量",
-        dataIndex: "number",
-    },
-    {
-        title: "指定类别",
-        dataIndex: "operation",
-        render: (_, record) => {
-            return (
-                <Space>
-                    <Button type="primary" onClick={() => { }}>指定</Button>
-                </Space>
-            );
-        },
-    },
-];
+type assetType = {
+    assetname: string;
+    label: string;
+}
 
 const NSTbdDrawer = () => {
 
     const [messages, setMessage] = useState<Message[]>([]);
     const [open, setOpen] = useState(false);
     const [assetdisdata, setassetdisData] = useState<Message>();
-
-    const [chosenkey, setck] = useState<React.Key>();
-    const [isDialogOpenSR, setIsDialogOpenSR] = useState(false);
+    const [labels, setLabels] = useState<string[]>([]);
     const [isTBD, setTBD] = useState(false);//true即有待办任务，false相反
     const [dopen, setDOpen] = useState(false);
+    const [assetTypes, setAssetTypes] = useState<assetType[]>([]);
+    const [isChoose, setIsChoose] = useState(false); //true即需要选择，false相反
+
     const showDrawer = () => {
         setDOpen(true);
     };
     const onClose = () => {
+        fetchtbd();
         setDOpen(false);
     };
     useEffect((() => {
-        fetchtbdData();
+        request("/api/user/ns/getmessage", "GET")
+            .then((res) => {
+                let data: Message[] = res.info;
+                if(data.length != 0){
+                    data.forEach((item) => {
+                        item.key = item.id; 
+                        if(item.info != null){
+                            item.info.forEach((item) => {
+                                item.key = item.assetname;
+                                return item;
+                            });
+                        }
+                        return item;
+                    });
+                }
+                data.push({key: 1, id: 1, message: "无待办任务", type: 5, status: 1, info: [{key: 1, assetname: "1234", number: 1}, {key: 2, assetname: "xing", number: 2}]});
+                setMessage(data);
+                for(let i = 0; i < data.length; i++){
+                    if(data[i].type === 5){
+                        setIsChoose(true);
+                        request("/api/asset/assetclass", "GET").then((res) => {
+                            let label_data: string[] = res.data;
+                            setLabels(label_data);
+                        }).catch((err) => {
+                            message.warning(err.message);
+                        });
+                    }
+                }
+            })
+            .catch((err) => {
+                message.warning(err.message);
+            });
         fetchtbd();
     }), []);
+    
+    const column: ColumnsType<Asset> = [
+        {
+            title: "资产名称",
+            dataIndex: "assetname",
+        },
+        {
+            title: "资产数量",
+            dataIndex: "number",
+        },
+        {
+            title: "指定类别",
+            dataIndex: "operation",
+            render: (_, record) => {
+                return (
+                    <Space>
+                        <Select style={{ width: 120 }} placeholder="请选择"
+                            options={labels.map((item) => {return {label: item, value: item};})}
+                            onChange={(value) => {
+                                let data = assetTypes;
+                                if(data.filter((item) => item.assetname === record.assetname).length > 0)
+                                    data.filter((item) => item.assetname === record.assetname)[0].label = value;
+                                else
+                                    data.push({assetname: record.assetname, label: value});
+                                setAssetTypes(data);
+                            }}
+                        />
+                    </Space>
+                );
+            },
+        },
+    ];
 
     const showModal = () => {
         setOpen(true);
@@ -97,13 +144,23 @@ const NSTbdDrawer = () => {
             message.warning(err.message);
         });
     };
-    const handleOk = () => {
-        setTimeout(() => {
-            setOpen(false);
-        }, 3000);
-    };
 
     const handleCancel = () => {
+        if(isChoose && assetTypes.length != assetdisdata?.info.length){
+            message.warning("请为所有资产指定类别");
+            return false;
+        }
+        assetTypes.forEach((item) => {
+            request("/api/user/ns/setcat", "POST", {
+                assetname: item.assetname,
+                label: item.label,
+            }).catch((err) => {
+                message.warning(err.message);
+            });
+        });
+        if(isChoose) message.success("操作成功");
+        fetchtbdData();
+        fetchtbd();
         setOpen(false);
     };
 
@@ -114,8 +171,8 @@ const NSTbdDrawer = () => {
                 if(data.length != 0){
                     data.forEach((item) => {
                         item.key = item.id; 
-                        if(item.assets != null){
-                            item.assets.forEach((item) => {
+                        if(item.info != null){
+                            item.info.forEach((item) => {
                                 item.key = item.assetname;
                                 return item;
                             });
@@ -218,11 +275,10 @@ const NSTbdDrawer = () => {
                 <Modal
                     open={open}
                     title="详细信息"
-                    onOk={handleOk}
-                    onCancel={handleCancel}
+                    closable={false}
                     footer={[
                         <Button key="back" onClick={handleCancel}>
-                            Return
+                            确认
                         </Button>,
                     ]}
                 >   
@@ -230,8 +286,8 @@ const NSTbdDrawer = () => {
                     <p>操作类型：{assetdisdata?.type === 1 ? "资产领用" : assetdisdata?.type === 2 ? "资产转移" : assetdisdata?.type === 3 ? "资产维保" : assetdisdata?.type === 4 ? "资产退库" : "待确认资产"}</p>
                     <p>审批结果：{assetdisdata?.status === 1 ? "通过" : "未通过"}</p>
                     <p>审批意见：{assetdisdata?.message}</p>
-                    {assetdisdata?.type != 5 ? <Table columns={Assetcolumns} dataSource={assetdisdata?.assets} /> : 
-                        <Table columns={Assetcolumns} dataSource={assetdisdata?.assets} />
+                    {
+                        assetdisdata?.type === 5 ? <Table columns={column} dataSource={assetdisdata?.info} /> : <Table columns={Assetcolumns} dataSource={assetdisdata?.info} />      
                     }
                 </Modal>
             </Drawer>

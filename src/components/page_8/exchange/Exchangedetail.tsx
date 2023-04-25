@@ -59,7 +59,6 @@ const Exchangedetail=(props:DialogProps)=>{
                         };
                     }));
                     setperson(res.user);
-                    alert(res.user);
                 })
                 .catch((err)=>{
                     message.warning(err.message);
