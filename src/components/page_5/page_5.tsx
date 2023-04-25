@@ -4,7 +4,7 @@ import {
     BarsOutlined
 } from "@ant-design/icons";
 import ACtree from "./assetClassTree";
-import AddType from "../page_6/addType";
+import AddType from "./addType";
 import Label from "./label";
 
 const items: MenuProps["items"] = [
