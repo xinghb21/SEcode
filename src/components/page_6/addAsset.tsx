@@ -288,6 +288,10 @@ const AddAsset = () => {
                         </Button>
                     }
                     onFinish={async (values: any) => {
+                        if(assets.filter(item => item.key === values.assetname).length > 0){
+                            message.error("资产名称重复");
+                            return false;
+                        }
                         additions.splice(0);
                         for(let i = 0; i < addition.length; i++) {
                             additions.push({key: addition[i], value: values[addition[i]]});

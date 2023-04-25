@@ -81,7 +81,6 @@ const NSTbdDrawer = () => {
                         return item;
                     });
                 }
-                data.push({key: 1, id: 1, message: "无待办任务", type: 5, status: 1, info: [{key: 1, assetname: "1234", number: 1}, {key: 2, assetname: "xing", number: 2}]});
                 setMessage(data);
                 for(let i = 0; i < data.length; i++){
                     if(data[i].type === 5){
