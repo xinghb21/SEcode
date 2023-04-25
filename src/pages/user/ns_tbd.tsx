@@ -3,7 +3,7 @@ import { Drawer, Space, Button, Table, Tag, message, Modal, Input } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { request } from "../../utils/network";
 import {
-    CarryOutTwoTone,
+    MessageOutlined,
 } from "@ant-design/icons";
 
 import { Badge, Tooltip } from "antd";
@@ -64,7 +64,7 @@ const Assetcolumns: ColumnsType<AssetDisplayType> = [
     }
 ];
 
-const TbdDrawer = () => {
+const NSTbdDrawer = () => {
     const [tbdData, settbdData] = useState<DataType[]>([]);
     const [open, setOpen] = useState(false);
     const [assetdisdata, setassetdisData] = useState<AssetDisplayType[]>([]);
@@ -89,8 +89,7 @@ const TbdDrawer = () => {
     };
 
     const fetchtbd=()=>{
-        //资产管理员界面需要设置tbd的状态
-        request("/api/user/ep/istbd", "GET").then((res) => {
+        request("/api/user/ns/hasmessage", "GET").then((res) => {
             setTBD(res.info);
         }).catch((err) => {
             message.warning(err.message);
@@ -125,8 +124,6 @@ const TbdDrawer = () => {
     const handleCancel = () => {
         setOpen(false);
     };
-
-    
 
     const SendR = (props: DialogProps) => {
         const [reason, setR] = useState("");
@@ -247,10 +244,10 @@ const TbdDrawer = () => {
 
     return (
         <>
-            <Tooltip placement="bottomLeft" title={<span>代办任务</span>}>
+            <Tooltip placement="bottomLeft" title={<span>通知消息</span>}>
                 <Button type="text" size="large" style={{ margin: 5 }} onClick={showDrawer}>
                     <Badge dot style={{ visibility: (!isTBD) ? "hidden" : "visible" }}>
-                        <CarryOutTwoTone twoToneColor={(!isTBD) ? "#a8a8a8" : "#f82212"} style={{ fontSize: "25px" }} />
+                        <MessageOutlined twoToneColor={(!isTBD) ? "#a8a8a8" : "#f82212"} style={{ fontSize: "25px" }} />
                     </Badge>
                 </Button>
             </Tooltip>
@@ -279,4 +276,4 @@ const TbdDrawer = () => {
         </>
     );
 };
-export default TbdDrawer;
+export default NSTbdDrawer;

@@ -4,9 +4,9 @@ import type { MenuProps } from "antd";
 import { Button, Input, Menu, Space, Tag, message, Table } from "antd";
 import { request } from "../../../utils/network";
 import { ProList } from "@ant-design/pro-components";
-import Applysubmit from "../applysubmit";
+import Applysubmit from "./Applysubmit";
 import { ColumnsType } from "antd/es/table";
-import Applydetail from "../Applydetail";
+import Applydetail from "./Applydetail";
 interface asset{
     key:React.Key;
     id:number;
@@ -14,6 +14,7 @@ interface asset{
     type:number;
     count:number;
     applycount:number;
+    state:string;
 }
 interface applys{
     key : React.Key;
@@ -41,12 +42,13 @@ const Mentainasset=()=>{
     const fetchapply=()=>{
         request("/api/user/ns/getallapply","GET")
             .then((res)=>{
-                setapplylsit(res.info.map((val)=>{return{
+                
+                let tmp = res.info.filter(item => (item.type == 3));
+                setapplylsit(tmp.map((val)=>{return{
                     id:val.id,
                     reason:val.reason,
                     state:val.status,
-                    message:val.message,
-                    
+                    message:val.message
                 };}));
             })
             .catch((err)=>{
@@ -56,17 +58,27 @@ const Mentainasset=()=>{
     const fetchlist=()=>{
         request("/api/user/ns/possess","GET")
             .then((res)=>{
-                let tem=res.info.map((val)=>{
-                    return({
-                        key:val.id,
-                        id:val.id,
-                        name:val.name,
-                        type:val.type,
-                        count:val.count,
-                        applycount:val.count,
+                let size = res.assets.length;
+                let tem :asset[]=[];
+                for (let i=0;i<size;i++){
+                    let state :object = res.assets[i].state;
+                    let statenum="";
+                    Object.entries(state).forEach(([k, v]) => {
+                        if(v!==0){
+                            tem.push({
+                                    key:res.assets[i].name+" "+k,
+                                    id:res.assets[i].id,
+                                    name:res.assets[i].name,
+                                    type:res.assets[i].type,
+                                    count:v,
+                                    applycount:v,
+                                    state:k,
+                            });
+                        }
                     });
-                });
-                setuseable_assetlist(tem);
+                }
+                let useable :asset[] = tem.filter(item =>(item.state==="1"));
+                setuseable_assetlist(useable);
             })
             .catch((err)=>{
                 message.warning(err.message);
@@ -147,7 +159,7 @@ const Mentainasset=()=>{
                 toolBarRender={() => {
                     return [
                         <Button key="1" type="primary" disabled={!hasSelected} onClick={()=>{handlesubclick();}}>
-                                申请资产领用
+                                申请资产维保
                         </Button>,                      
                     ];
                 }}
@@ -173,31 +185,40 @@ const Mentainasset=()=>{
                     subTitle: {
                         render: (_, row) => {
                             return (
-                                <Space size={0}>
-                                    {(row.type===1)?<Tag color="blue" key={row.name}>{"数量型"}</Tag>
-                                        :<Tag color="blue" key={row.name}>{"条目型"}</Tag>  
+                                <div>
+                                    <Space size={0} key={1}>
+                                        {(row.type===1)?<Tag color="blue" key={row.name}>{"数量型"}</Tag>
+                                            :<Tag color="blue" key={row.name}>{"条目型"}</Tag>  
+                                        }
+                                    </Space>
+                                    <Space size={0} key={2}>
+                                    {(row.state==="1")?<Tag color="blue" key={row.name}>{"使用中"}</Tag>
+                                        :((row.state==="2")?<Tag color="blue" key={row.name}>{"维保中"}</Tag>
+                                        :(((row.state==="3")?<Tag color="blue" key={row.name}>{"报废"}</Tag>
+                                        :<Tag color="blue" key={row.name}>{"正在处理"}</Tag>)))  
                                     }
-                                </Space>
+                                    </Space>
+                                </div>              
                             );
                         },
                         search: false,
                     },
-                    actions: {
-                        render: (_,row) => {
-                            return (
-                                <div >
-                                    <Input
-                                        onChange={(e)=>{handleChange(e,row.name);}}
-                                        placeholder="Input a number"
-                                        maxLength={16}
-                                    />
-                                </div>
-                            );
-                        },
-                    },
+                    // actions: {
+                    //     render: (_,row) => {
+                    //         return (
+                    //             <div >
+                    //                 <Input
+                    //                     onChange={(e)=>{handleChange(e,row.name);}}
+                    //                     placeholder="Input a number"
+                    //                     maxLength={16}
+                    //                 />
+                    //             </div>
+                    //         );
+                    //     },
+                    // },
                 }}
                 rowKey="key"
-                headerTitle="部门内可领用资产列表"
+                headerTitle="您拥有的资产列表"
                 rowSelection={rowSelection}
                 dataSource={useable_assetslist}
             />
@@ -242,7 +263,7 @@ const Mentainasset=()=>{
                     },
                 }}
                 rowKey="key"
-                headerTitle="你的申请列表"
+                headerTitle="您的维保申请列表"
                 dataSource={applylist}
             />
         </div>

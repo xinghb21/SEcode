@@ -1,11 +1,10 @@
 import { Avatar, List, Space, Button, Tag, message, Modal, Input } from "antd";
 import React from "react";
-import { ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProList, QueryFilter, hrHRIntl } from "@ant-design/pro-components";
-import { Progress } from "antd";
-import type { ReactText } from "react";
+import { ProList } from "@ant-design/pro-components";
 import { useState } from "react";
 import {useEffect} from "react";
-import { request } from "../../utils/network";
+import { request } from "../../../utils/network";
+
 interface DialogProps{
 
     isOpen: boolean;
@@ -14,21 +13,38 @@ interface DialogProps{
     proassetlist:asset[];
 }
 interface asset{
+
     key:React.Key;
     id:number;
     name:string;
     type:number;
     count:number;
     applycount:number;
+
+
 }
 
-const Applysubmit=(props:DialogProps)=>{
-    const [reason,setreason]=useState<string>("");
-    const [loading,setloading]=useState<boolean>(false);
+const Exchangesubmit=(props:DialogProps)=>{
+
+    const [reason,setreason] = useState<string>("");
+    const [loading,setloading] = useState<boolean>(false);
+    const [person, setperson] = useState<string>("");
+
     const handlesubmit=()=>{
         setloading(true);
-        if(reason!==""){
-            request("api/user/ns/userapply","POST",{assetsapply:props.proassetlist.map((val)=>{return{id:val.id,assetname:val.name,assetcount:val.applycount};}),reason:reason})
+        if(reason !== "" && person !== ""){
+            request("api/user/ns/exchange","POST",
+            {
+                exchange: props.proassetlist.map((val) => {
+                    return {
+                        id: val.id,
+                        assetname: val.name,
+                        assetnumber: val.applycount
+                    };
+                }),
+                reason: reason,
+                username: person
+            })
                 .then((res)=>{
                     message.success("提交成功，请等待审批");
                     props.onClose();
@@ -41,8 +57,11 @@ const Applysubmit=(props:DialogProps)=>{
                     props.onClose();
                     setloading(false);
                 });    
-        }else{
+        }else if(reason == ""){
             message.warning("请填写申请原因");
+            setloading(false);
+        }else {
+            message.warning("请填写转移人员");
             setloading(false);
         }
     };
@@ -50,6 +69,8 @@ const Applysubmit=(props:DialogProps)=>{
         <Modal  title="资产领用申请" onOk={()=>{handlesubmit();}} okText={"提交申请"} confirmLoading={loading} onCancel={props.onClose} open={props.isOpen}  >
             <label>请填写申请原因：</label>
             <Input type='text' onChange={(e)=>{setreason(e.target.value);}} maxLength={200}></Input>
+            <label>请填写转移人员：</label>
+            <Input type='text' onChange={(e)=>{setperson(e.target.value);}} maxLength={200}></Input>
             <ProList<asset>
                 pagination={{
                     pageSize: 6,
@@ -68,7 +89,7 @@ const Applysubmit=(props:DialogProps)=>{
                                             {"资产编号："+row.id}
                                         </div>
                                         <div>
-                                            {"申请数量："+row.applycount}
+                                            {"转移数量："+row.applycount}
                                         </div>
                                     </div>
                                 );
@@ -89,11 +110,11 @@ const Applysubmit=(props:DialogProps)=>{
                     }
                 }
                 rowKey="key"
-                headerTitle="本次领用的所有资产"
+                headerTitle="本次转移的所有资产"
                 dataSource={props.proassetlist}
             />
         </Modal>
     );
 };
 
-export default Applysubmit;
+export default Exchangesubmit;
