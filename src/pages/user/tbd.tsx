@@ -75,7 +75,7 @@ const TbdDrawer = () => {
         setOpen(true);
     };
 
-    const fetchtbd=()=>{
+    const fetchtbd = () => {
         //资产管理员界面需要设置tbd的状态
         request("/api/user/ep/istbd", "GET").then((res) => {
             setTBD(res.info);
@@ -83,11 +83,7 @@ const TbdDrawer = () => {
             message.warning(err.message);
         });
     };
-    const handleOk = () => {
-        setTimeout(() => {
-            setOpen(false);
-        }, 3000);
-    };
+
     //拒绝申请输入原因
     const handleSendR = (reason: string) => {
         //不允许空输入
@@ -113,7 +109,7 @@ const TbdDrawer = () => {
         setOpen(false);
     };
 
-    
+
 
     const SendR = (props: DialogProps) => {
         const [reason, setR] = useState("");
@@ -251,10 +247,10 @@ const TbdDrawer = () => {
                 <Modal
                     open={open}
                     title="该员工所申请资产详细"
-                    onOk={handleOk}
+                    onOk={handleCancel}
                     footer={[
                         <Button key="back" onClick={handleCancel}>
-                        Return
+                            关闭
                         </Button>,
                     ]}
                 >
