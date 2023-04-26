@@ -145,7 +145,7 @@ const NSTbdDrawer = () => {
     };
 
     const handleCancel = () => {
-        if(isChoose && assetTypes.length != assetdisdata?.info.length){
+        if(isChoose && assetdisdata?.type === 5 && assetTypes.length != assetdisdata?.info.length){
             message.warning("请为所有资产指定类别");
             return false;
         }
