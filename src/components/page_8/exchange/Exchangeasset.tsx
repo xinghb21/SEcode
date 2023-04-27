@@ -149,7 +149,7 @@ const Exchangeasset=()=>{
     const handlesubclick=()=>{
         if(checksubmit()){
             setIsDialogOpen1(true);
-            setassetselected(useable_assetslist.filter((obj)=>{return selectedRowKeys.find((key)=>{return key==obj.key;}) != null; }));
+            setassetselected(useable_assetslist.filter((obj)=>{return selectedRowKeys.find((key)=>{return key == obj.key;}) != null; }));
         }else{
             message.warning("转移的资产数量超额或为0");
         }

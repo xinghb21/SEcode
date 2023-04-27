@@ -34,17 +34,17 @@ const Exchangesubmit=(props:DialogProps)=>{
         setloading(true);
         if(reason !== "" && person !== ""){
             request("api/user/ns/exchange","POST",
-            {
-                exchange: props.proassetlist.map((val) => {
-                    return {
-                        id: val.id,
-                        assetname: val.name,
-                        assetnumber: val.applycount
-                    };
-                }),
-                reason: reason,
-                username: person
-            })
+                {
+                    exchange: props.proassetlist.map((val) => {
+                        return {
+                            id: val.id,
+                            assetname: val.name,
+                            assetnumber: val.applycount
+                        };
+                    }),
+                    reason: reason,
+                    username: person
+                })
                 .then((res)=>{
                     message.success("提交成功，请等待审批");
                     props.onClose();

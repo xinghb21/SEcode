@@ -5,6 +5,7 @@ import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { request } from "../utils/network";
 import { Md5 } from "ts-md5";
+import Circle from "./background";
 
 interface LoginFormProps {
     username: string,
@@ -41,7 +42,7 @@ const LoginForm = (props: LoginFormProps) => {
     return (
         <div>
             <div className="login-background" />
-            <div className="login-box">
+            <div className="login-box"> 
                 <div style={{
                     position: "absolute", left: "50%", top: "50%",
                     transform: "translate(-50%, -50%)"
@@ -78,6 +79,9 @@ const LoginForm = (props: LoginFormProps) => {
                     <Divider >Or</Divider>
                     <Button block shape='round' href="https://passport.feishu.cn/suite/passport/oauth/authorize?client_id=cli_a4b17e84d0f8900e&redirect_uri=https://aplus-frontend-aplus.app.secoder.net/feishu&response_type=code">使用飞书登录</Button>
                 </div>
+            </div>
+            <div>
+                <Circle />
             </div>
         </div>
     );
