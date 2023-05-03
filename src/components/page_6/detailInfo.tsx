@@ -4,17 +4,17 @@ import { request } from "../../utils/network";
 interface Asset{
 
     key: React.Key;
-    assetname: string;
-    person: string;
-    department: string;
-    parent: string;
-    child: string;
-    status: string;
+    name: string;
+    person?: string;
+    department?: string;
+    parent?: string;
+    child?: string;
     category: string;
-    description: string;
-    type: boolean;
-    number: Number;
-    addtion: string;
+    description?: string;
+    number?: Number;
+    addtion?: Object;
+    status?: Number;
+    type?: boolean;
 
 }
 
@@ -33,5 +33,11 @@ const DetailInfo = (props: DetailProps) => {
             });
     }, []);
 
-    
+    return (
+        <>
+        131312342
+        </>
+    );
 };
+
+export default DetailInfo;

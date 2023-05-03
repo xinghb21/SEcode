@@ -11,7 +11,7 @@ const items: MenuProps["items"] = [
         key: 0,
     },
     {
-        label: "资产查看",
+        label: "资产修改",
         key: 1,
     },
     {
