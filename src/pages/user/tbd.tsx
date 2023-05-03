@@ -247,7 +247,7 @@ const TbdDrawer = () => {
                 <Modal
                     open={open}
                     title="该员工所申请资产详细"
-                    onOk={handleOk}
+                    onOk={handleCancel}
                     onCancel={handleCancel}
                     footer={[
                         <Button key="back" onClick={handleCancel}>
