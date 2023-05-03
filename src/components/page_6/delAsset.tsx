@@ -39,17 +39,23 @@ type AssetDisplayType = {
     //table数据的格式
     key: React.Key;//资产的编号
     name: string;//资产的名称
+    parent?: string;//父资产的名称
     username: string[];//使用者的名字
-    assetclass: string;//资产的类型
-    assetcount: number[];//资产数量
+    category: string;//资产的类型
     description: string;//资产描述
-    type: boolean;
-    custom: customfeature[];//自定义属性
-    date: string;//创建时间
-    oriprice: number;//资产原始价值
+    create_time: string;//创建时间
+    price: number;//资产原始价值
+    life: number;//资产使用年限
+    belonging: string;//挂账人
+    additional: string;//附加信息
+    number_idle: number;//闲置数量
 }
 
-const ddata: AssetDisplayType = { key: 0, name: "", username: [], assetclass: "", assetcount: [], description: "", type: true, custom: [], date: "", oriprice: 0 };
+const ddata: AssetDisplayType = {
+    key: 0, name: "", username: [], category: "", number_idle: 0, description: "", additional: "{}", create_time: "", price: 0,
+    life: 0,
+    belonging: ""
+};
 
 const DelAsset = (() => {
 
@@ -93,10 +99,6 @@ const DelAsset = (() => {
     const rowSelection = {
         selectedRowKeys,
         onChange: (keys: React.Key[]) => setSelectedRowKeys(keys),
-    };
-
-    const handleCancel = () => {
-        setIsDetailOpen(false);
     };
 
     //给后端发请求删除对应的asset
@@ -266,15 +268,17 @@ const DelAsset = (() => {
                         render: (_, row) => {
                             return (
                                 <Button type="link" onClick={() => {
-                                    // setCname(row.name);
-                                    // request("/api/asset/getdetail", "GET", {
-                                    //     id: chosenname
-                                    // }).then((res) => {
-                                    // });
-                                    // showModal();
-                                    // setIsDetailOpen(true);
+                                    setCname(row.name);
+                                    request("/api/asset/getdetail", "GET", {
+                                        name: row.name
+                                    }).then((res) => {
+                                        setDisplay(res.data)
+                                        showModal();
+                                    }).catch((err) => {
+                                        message.warning(err.message);
+                                    });
                                 }}>
-                                    查看详情
+                                    查看及修改资产信息
                                 </Button>
                             );
                         },
