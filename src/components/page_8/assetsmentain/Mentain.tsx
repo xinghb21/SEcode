@@ -66,13 +66,13 @@ const Mentainasset=()=>{
                     Object.entries(state).forEach(([k, v]) => {
                         if(v!==0){
                             tem.push({
-                                    key:res.assets[i].name+" "+k,
-                                    id:res.assets[i].id,
-                                    name:res.assets[i].name,
-                                    type:res.assets[i].type,
-                                    count:v,
-                                    applycount:v,
-                                    state:k,
+                                key:res.assets[i].name+" "+k,
+                                id:res.assets[i].id,
+                                name:res.assets[i].name,
+                                type:res.assets[i].type,
+                                count:v,
+                                applycount:v,
+                                state:k,
                             });
                         }
                     });
@@ -192,11 +192,11 @@ const Mentainasset=()=>{
                                         }
                                     </Space>
                                     <Space size={0} key={2}>
-                                    {(row.state==="1")?<Tag color="blue" key={row.name}>{"使用中"}</Tag>
-                                        :((row.state==="2")?<Tag color="blue" key={row.name}>{"维保中"}</Tag>
-                                        :(((row.state==="3")?<Tag color="blue" key={row.name}>{"报废"}</Tag>
-                                        :<Tag color="blue" key={row.name}>{"正在处理"}</Tag>)))  
-                                    }
+                                        {(row.state==="1")?<Tag color="blue" key={row.name}>{"使用中"}</Tag>
+                                            :((row.state==="2")?<Tag color="blue" key={row.name}>{"维保中"}</Tag>
+                                                :(((row.state==="3")?<Tag color="blue" key={row.name}>{"报废"}</Tag>
+                                                    :<Tag color="blue" key={row.name}>{"正在处理"}</Tag>)))  
+                                        }
                                     </Space>
                                 </div>              
                             );

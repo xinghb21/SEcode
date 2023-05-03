@@ -25,30 +25,30 @@ const Page_3 = () => {
         current: 1, // 当前页码
         pageSize: 10, // 每页显示条数
         total: 0, // 总记录数
-    })
+    });
 
     useEffect((()=>{
         request("/api/user/es/getlogs","GET",{page:1})
-          .then((res) => {
+            .then((res) => {
             // 更新表格数据源和分页器状态
-            setloglist(res.info.map((val)=>{
-                return {
-                    key:val.id,
-                    id:val.id,
-                    content:val.content,
-                    type:val.type,
-                    time:val.time,
-                }
-            }))
-            setpagenation({
-              current: 1,
-              pageSize: 10,
-              total: res.count,
+                setloglist(res.info.map((val)=>{
+                    return {
+                        key:val.id,
+                        id:val.id,
+                        content:val.content,
+                        type:val.type,
+                        time:val.time,
+                    };
+                }));
+                setpagenation({
+                    current: 1,
+                    pageSize: 10,
+                    total: res.count,
+                });
+            })
+            .catch((error) => {
+                message.warning(error.message);
             });
-          })
-          .catch((error) => {
-            message.warning(error.message);
-          });
     }),[]);
 
     //这个函数用于每次切换页码之后向后端请求数据，page和pageSize这两个参数的名字不能变
@@ -56,27 +56,27 @@ const Page_3 = () => {
         // 构造请求参数
         // 发送请求获取数据
         request("/api/user/es/getlogs","GET",{page:page})
-          .then((res) => {
+            .then((res) => {
             // 更新表格数据源和分页器状态
-            setloglist(res.info.map((val)=>{
-                return {
-                    key:val.id,
-                    id:val.id,
-                    content:val.content,
-                    type:val.type,
-                    time:val.time,
-                }
-            }))
-            setpagenation({
-              current: page,
-              pageSize: 10,
-              total: res.count,
+                setloglist(res.info.map((val)=>{
+                    return {
+                        key:val.id,
+                        id:val.id,
+                        content:val.content,
+                        type:val.type,
+                        time:val.time,
+                    };
+                }));
+                setpagenation({
+                    current: page,
+                    pageSize: 10,
+                    total: res.count,
+                });
+            })
+            .catch((error) => {
+                message.warning(error.message);
             });
-          })
-          .catch((error) => {
-            message.warning(error.message);
-          });
-      };
+    };
     return (
         <div>
             <ProList<log,Params>

@@ -4,7 +4,7 @@ import { Menu } from "antd";
 import Applyasset from "./Applyasset";
 import Returnasset from "./assetsreturn/Returnasset";
 import Exchangeasset from "./exchange/Exchangeasset";
-import Mentainasset from "./assetsmentain/Mentain"
+import Mentainasset from "./assetsmentain/Mentain";
 
 const items: MenuProps["items"] = [
     {

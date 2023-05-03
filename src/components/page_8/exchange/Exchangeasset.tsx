@@ -70,13 +70,13 @@ const Exchangeasset=()=>{
                     Object.entries(state).forEach(([k, v]) => {
                         if(v!==0){
                             tem.push({
-                                    key:res.assets[i].name+" "+k,
-                                    id:res.assets[i].id,
-                                    name:res.assets[i].name,
-                                    type:res.assets[i].type,
-                                    count:v,
-                                    applycount:v,
-                                    state:k,
+                                key:res.assets[i].name+" "+k,
+                                id:res.assets[i].id,
+                                name:res.assets[i].name,
+                                type:res.assets[i].type,
+                                count:v,
+                                applycount:v,
+                                state:k,
                             });
                         }
                     });
