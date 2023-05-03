@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Row, Statistic, message } from 'antd';
+import { Button, Col, Row, Statistic, message } from "antd";
 import { request } from "../../utils/network";
-import ReactECharts from 'echarts-for-react';
-import { Typography } from 'antd';
+import ReactECharts from "echarts-for-react";
+import { Typography } from "antd";
 
 const { Title } = Typography;
 
@@ -46,39 +46,39 @@ const AssetStat = () => {
 
     let option = {
         tooltip: {
-            trigger: 'item'
+            trigger: "item"
         },
         legend: {
-            top: '5%',
-            left: 'center'
+            top: "5%",
+            left: "center"
         },
         series: [
             {
-                name: 'Access From',
-                type: 'pie',
-                radius: ['40%', '70%'],
+                name: "Access From",
+                type: "pie",
+                radius: ["40%", "70%"],
                 avoidLabelOverlap: false,
                 label: {
                     show: false,
-                    position: 'center'
+                    position: "center"
                 },
                 emphasis: {
                     label: {
                         show: true,
                         fontSize: 40,
-                        fontWeight: 'bold'
+                        fontWeight: "bold"
                     }
                 },
                 labelLine: {
                     show: false
                 },
                 data: [
-                    { value: freeNumber, name: '闲置' },
-                    { value: totccupyNumber, name: '完全占用' },
-                    { value: partccupyNumber, name: '部分占用' },
-                    { value: totfixNumber, name: '完全维保' },
-                    { value: partfixNumber, name: '部分维保' },
-                    { value: tbfixNumber, name: '需要清退' }
+                    { value: freeNumber, name: "闲置" },
+                    { value: totccupyNumber, name: "完全占用" },
+                    { value: partccupyNumber, name: "部分占用" },
+                    { value: totfixNumber, name: "完全维保" },
+                    { value: partfixNumber, name: "部分维保" },
+                    { value: tbfixNumber, name: "需要清退" }
                 ]
             }
         ]
