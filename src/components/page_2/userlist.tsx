@@ -243,12 +243,12 @@ const Userlist =( () => {
     return (
         <div >
             <QueryFilter labelWidth="auto" onFinish={async (values) => {
+                console.log(values);
                 request("api/user/es/searchuser","POST",{username:values.username,department:values.department,identity:values.identity})
                     .then((res)=>{
                         let initiallist:User_to_show[]=[];
                         let size1:number=(res.data).length;
                         let i=0;
-                        console.log(size1);
                         for (i;i<size1;i++){
                             initiallist.push({key:res.data[i].name,username:res.data[i].name,departmentname:res.data[i].department,entityname:res.data[i].entity,character:res.data[i].identity as number,whetherlocked:res.data[i].locked,lockedapp:res.data[i].lockedapp});
                         }

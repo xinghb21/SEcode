@@ -29,21 +29,8 @@ type AssetDisplayType = {
     key: React.Key;//id
     assetname: string;//申请人的名字
     assetclass: string,//对该资产进行什么操作：1领用，2转移，3维保，4退库
-    assetcount: number;//申请原因
+    assetcount: number;//申请数量
 }
-
-// const data = [{
-//     key: 1,
-//     name: "cjt",
-//     reason: "电脑",
-//     oper: 1,
-
-// }, {
-//     key: 2,
-//     name: "hqf",
-//     reason: "电脑",
-//     oper: 4,
-// }];
 
 const Assetcolumns: ColumnsType<AssetDisplayType> = [
     {
@@ -88,7 +75,7 @@ const TbdDrawer = () => {
         setOpen(true);
     };
 
-    const fetchtbd=()=>{
+    const fetchtbd = () => {
         //资产管理员界面需要设置tbd的状态
         request("/api/user/ep/istbd", "GET").then((res) => {
             setTBD(res.info);
@@ -96,11 +83,7 @@ const TbdDrawer = () => {
             message.warning(err.message);
         });
     };
-    const handleOk = () => {
-        setTimeout(() => {
-            setOpen(false);
-        }, 3000);
-    };
+
     //拒绝申请输入原因
     const handleSendR = (reason: string) => {
         //不允许空输入
@@ -126,7 +109,7 @@ const TbdDrawer = () => {
         setOpen(false);
     };
 
-    
+
 
     const SendR = (props: DialogProps) => {
         const [reason, setR] = useState("");
@@ -264,11 +247,10 @@ const TbdDrawer = () => {
                 <Modal
                     open={open}
                     title="该员工所申请资产详细"
-                    onOk={handleOk}
                     onCancel={handleCancel}
                     footer={[
                         <Button key="back" onClick={handleCancel}>
-                        Return
+                            关闭
                         </Button>,
                     ]}
                 >

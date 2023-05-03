@@ -4,6 +4,7 @@ import {
     DesktopOutlined,
     PieChartOutlined,
     UserOutlined,
+    AppstoreAddOutlined,
 } from "@ant-design/icons";
 import { MenuProps, Skeleton, Space, Avatar, message } from "antd";
 import { useRouter } from "next/router";
@@ -155,12 +156,13 @@ const User: React.FC = () => {
                                 appsingle.push(getItem(tempapplist[i].name,"url"+tempapplist[i].urlvalue));    
                             }
                             setapplist(tempapplist);
+                            items.push(getItem("应用列表", "apps", <PieChartOutlined />, appsingle));
                         })
                         .catch((err)=>{
                             message.warning(err.message);
                         });
                     
-                    items.push(getItem("应用列表", "apps", <PieChartOutlined />, appsingle));
+                    
                 }
                 else {
                     if (funclist[8] === "1") {
@@ -180,11 +182,13 @@ const User: React.FC = () => {
                                 appsingle.push(getItem(tempapplist[i].name,"url"+tempapplist[i].urlvalue));    
                             }
                             setapplist(tempapplist);
+                            items.push(getItem("应用列表", "apps", <PieChartOutlined />, appsingle));
                         })
                         .catch((err)=>{
                             message.warning(err.message);
                         });
-                    items.push(getItem("应用列表", "apps", <PieChartOutlined />, appsingle));
+                    
+                    
                 }
                 items.push(getItem("用户", "/User", <UserOutlined />, [
                     getItem("信息", 10),

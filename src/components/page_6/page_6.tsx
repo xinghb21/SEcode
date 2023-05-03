@@ -3,6 +3,7 @@ import type { MenuProps } from "antd";
 import { Menu } from "antd";
 import AddAsset from "./addAsset";
 import DelAsset from "./delAsset";
+import ClearAsset from "./clearAsset";
 
 
 const items: MenuProps["items"] = [
@@ -25,7 +26,7 @@ const items: MenuProps["items"] = [
 ];
 
 const PageList: any[] = [
-    <div key={0}> <AddAsset /></div>, <div key={1}><DelAsset /></div>, <div key={1}>资产调拨</div>, <div key={1}>资产清退</div>, 
+    <div key={0}> <AddAsset /></div>, <div key={1}><DelAsset /></div>, <div key={1}>资产调拨</div>, <div key={1}><ClearAsset/></div>, 
 ];
 
 const App: React.FC = () => {
