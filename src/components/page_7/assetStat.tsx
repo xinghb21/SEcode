@@ -3,8 +3,10 @@ import { Button, Col, Row, Statistic, message } from "antd";
 import { request } from "../../utils/network";
 import ReactECharts from "echarts-for-react";
 import { Typography } from "antd";
+import moment from "moment";
 
 const { Title } = Typography;
+
 
 
 const AssetStat = () => {
@@ -19,6 +21,10 @@ const AssetStat = () => {
     const [totfixNumber, setTFN] = useState(0);
     const [partfixNumber, setPFN] = useState(0);
     const [tbfixNumber, setTBF] = useState(0);
+    //资产净值统计
+    const [totalNV, setTNV] = useState(0);
+    const [NVCdate, setNVD] = useState<string[]>([]);
+    const [NVCvalue, setNVV] = useState([]);
 
     useEffect((() => {
         fetchtData();
@@ -39,6 +45,29 @@ const AssetStat = () => {
             setTFN(res.info.totfixNumber);
             setPFN(res.info.partfixNumber);
             setTBF(res.info.tbfixNumber);
+        }).catch((err) => {
+            message.warning(err.message);
+        });
+        request("/api/user/ep/as/totalnvalue", "GET").then((res) => {
+            setTNV(res.info.totalnetvalue);
+        }).catch((err) => {
+            message.warning(err.message);
+        });
+        request("/api/user/ep/as/nvcurve", "GET").then((res) => {
+            setNVD(res.info.map((item) => {
+                if (item.netvalue == -1) {
+                }
+                else {
+                    return moment((item.date) * 1000).format("YYYY-MM-DD");
+                }
+            }));
+            setNVV(res.info.map((item) => {
+                if (item.netvalue == -1) {
+                }
+                else {
+                    return item.netvalue;
+                }
+            }));
         }).catch((err) => {
             message.warning(err.message);
         });
@@ -83,10 +112,35 @@ const AssetStat = () => {
             }
         ]
     };
-
+    let optionforNV = {
+        xAxis: {
+            name: "日期",
+            type: "category",
+            data: NVCdate,
+            nameTextStyle: {
+                fontWeight: 600,
+                fontSize: 15
+            }
+        },
+        yAxis: {
+            name: "单位：元",
+            type: "value",
+            nameTextStyle: {
+                fontWeight: 600,
+                fontSize: 15
+            }
+        },
+        series: [
+            {
+                data: NVCvalue,
+                type: "line",
+                smooth: true
+            }
+        ]
+    };
     return (
         <>
-            <div style={{ width: "100%", height: "40%" }}>
+            <div style={{ width: "100%", height: "20%" }}>
                 <Row gutter={16}>
                     <Col span={12}>
                         <Statistic title="数量型资产类别数量" value={quantTypetotal} />
@@ -99,12 +153,14 @@ const AssetStat = () => {
                     </Col>
                 </Row>
             </div>
-            <div style={{ width: "100%", height: "30%" }}>
+            <div style={{ width: "100%", height: "40%" }}>
                 <Title level={4}>资产状态分布</Title>
                 <ReactECharts option={option} />
             </div>
-            <div style={{ width: "100%", height: "30%" }}>
+            <div style={{ width: "100%", height: "40%" }}>
                 <Title level={4}>资产净值统计</Title>
+                <Statistic title="当前资产总净值 单位：元" value={totalNV} />
+                <ReactECharts option={optionforNV} />
             </div>
         </>
     );
