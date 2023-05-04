@@ -7,11 +7,11 @@ import { ProList } from "@ant-design/pro-components";
 import { ColumnsType } from "antd/es/table";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import moment from "moment";
-import OSS from "ali-oss"
+import OSS from "ali-oss";
 import CryptoJS from "crypto-js";
 import Base64 from "base-64";
-import VirtualList from 'rc-virtual-list';
-import InfiniteScroll from "react-infinite-scroll-component"
+import VirtualList from "rc-virtual-list";
+import InfiniteScroll from "react-infinite-scroll-component";
 interface asset{
     key:React.Key;
     id:number;
@@ -41,8 +41,8 @@ const client = new OSS({
     bucket: "aplus-secoder",
 });
 
-const state: string [] =["使用中","使用中","维保中","报废","使用中","正在处理"]
-const color: string [] =["","green","blue","red","","yellow"]
+const state: string [] =["使用中","使用中","维保中","报废","使用中","正在处理"];
+const color: string [] =["","green","blue","red","","yellow"];
 
 const Lookup = () => {
     const [assetlist,setassetlist]=useState<asset[]>([]);
@@ -82,12 +82,12 @@ const Lookup = () => {
 
     return (
         <div 
-        style={{
-            height: 600,
-            overflow: 'auto',
-            padding: '0 16px',
-            border: '1px solid rgba(140, 140, 140, 0.35)',
-          }}
+            style={{
+                height: 600,
+                overflow: "auto",
+                padding: "0 16px",
+                border: "1px solid rgba(140, 140, 140, 0.35)",
+            }}
         >
             <ProList<asset,Params>
                 //切换页面的实现在于pagination的配置，如下
@@ -101,18 +101,18 @@ const Lookup = () => {
                                 let count : number = v as number;
                                 if(v!==0){
                                     switch (stnum){
-                                        case 1:
-                                            statelist.push(<div><Tag color="green" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
-                                            break;
-                                        case 2:
-                                            statelist.push(<div><Tag color="green" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
-                                            break;
-                                        case 3:
-                                            statelist.push(<div><Tag color="red" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
-                                            break;
-                                        case 5:
-                                            statelist.push(<div><Tag color="yellow" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
-                                            break;
+                                    case 1:
+                                        statelist.push(<div><Tag color="green" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
+                                        break;
+                                    case 2:
+                                        statelist.push(<div><Tag color="green" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
+                                        break;
+                                    case 3:
+                                        statelist.push(<div><Tag color="red" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
+                                        break;
+                                    case 5:
+                                        statelist.push(<div><Tag color="yellow" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
+                                        break;
                                     }
                                 }
                             });
