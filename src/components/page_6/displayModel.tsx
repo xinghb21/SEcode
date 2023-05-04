@@ -28,35 +28,38 @@ type AssetChangeType = {
     name: string;//资产的名称
     parent?: string;//父资产的名称
     number: number;//闲置数量
-    price: number;//资产原始价值
     description: string;//资产描述
     additional: string;//附加信息
 }  
 
 const DisplayModel = (props: ModelProps) => {
 
+    const [editRowKeys, seteditRowKeys] = useState<React.Key[]>([]);
+
     const [assetChange, setAssetChange] = useState<AssetChangeType>({
         name: props.content.name,
         parent: props.content.parent,
         number: props.content.number_idle,
-        price: props.content.price,
         description: props.content.description,
         additional: props.content.additional,
     });
 
+    let assetDisplay: AssetDisplayType = props.content;
+
     const handleOk = () => {
         request("/api//user/ep/modifyasset", "POST", assetChange)
             .then((res) => {
-                if (res.code === 200) {
-                    message.success("修改成功");
-                    props.onClose();
-                } else {
-                    message.error("修改失败");
-                }
+                message.success("修改成功");
+                props.onClose();
             }).catch((err) => {
-                message.error("修改失败");
+                message.error(err.message);
             })
     }
+
+    const rowSelection = {
+        editRowKeys,
+        onChange: (keys: React.Key[]) => seteditRowKeys(keys),
+    };
 
     return (
         <Modal
@@ -71,23 +74,32 @@ const DisplayModel = (props: ModelProps) => {
             <ProDescriptions<AssetDisplayType>
                 column={2}
                 title={props.content.name}
-                request={async () => ({
-                    data: props.content,
-                    success: true,
-                })}
-                params={{
-                    id: props.content.key,
-                }}
+                dataSource={assetDisplay}
                 editable={{
+                    
                     onSave: async (key, row) => {
-                        setAssetChange({
-                            name: row.name,
-                            parent: row.parent,
-                            number: row.number_idle,
-                            price: row.price,
-                            description: row.description,
-                            additional: row.additional,
-                        });
+
+                        assetDisplay.parent = row.parent;
+                        assetDisplay.number_idle = row.number_idle;
+                        assetDisplay.description = row.description;
+                        assetDisplay.additional = row.additional;
+                        
+                        if(row.parent == null) {
+                            setAssetChange({
+                                name: row.name,
+                                number: row.number_idle,
+                                description: row.description,
+                                additional: row.additional,
+                            });
+                        } else {
+                            setAssetChange({
+                                name: row.name,
+                                parent: row.parent,
+                                number: row.number_idle,
+                                description: row.description,
+                                additional: row.additional,
+                            });
+                        }
                     }
                 }}
                 columns={[
@@ -150,12 +162,6 @@ const DisplayModel = (props: ModelProps) => {
                         dataIndex: "description",
                         key: "description",
                         valueType: "text",
-                    },
-                    {
-                        title: "资产原始价值",
-                        dataIndex: "price",
-                        key: "price",
-                        valueType: "money",
                     },
                     {
                         title: "创建时间",

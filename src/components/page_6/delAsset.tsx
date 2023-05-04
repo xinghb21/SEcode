@@ -63,7 +63,6 @@ const DelAsset = (() => {
     const [assets, setAssets] = useState<Asset[]>([]);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [customfeatureList, setcustomFeature] = useState<string[]>();
-    const [chosenname, setCname] = useState<string>();
     const [assetclasslist, setac] = useState<string[]>([]);
     const [displaydata, setDisplay] = useState<AssetDisplayType>(ddata);
 
@@ -92,34 +91,28 @@ const DelAsset = (() => {
             });
     }, []);
 
-    const showModal = () => {
-        setIsDetailOpen(true);
-    };
-
     const rowSelection = {
         selectedRowKeys,
         onChange: (keys: React.Key[]) => setSelectedRowKeys(keys),
     };
 
-    //给后端发请求删除对应的asset
-    const delete_asset = (() => {
-
-        const newAssets = assets.filter(item => !selectedRowKeys.includes(item.key));
+    //给后端发请求转移对应的asset
+    const change_asset = (() => {
 
         const selectedNames = selectedRowKeys.map(key => {
             const item = assets.find(data => data.key === key);
             return item ? item.name : "";
         });
 
-        request("/api/asset/delete", "DELETE", selectedNames)
+        request("/api/user/ep/transfer", "POST", selectedNames)
             .then(() => {
-                setAssets(newAssets);
-                message.success("删除成功");
+                message.success("转移成功");
                 setSelectedRowKeys([]);
             })
             .catch((err) => {
                 message.warning(err.message);
             });
+
     });
 
     const hasSelected = selectedRowKeys.length > 0;
@@ -268,12 +261,11 @@ const DelAsset = (() => {
                         render: (_, row) => {
                             return (
                                 <Button type="link" onClick={() => {
-                                    setCname(row.name);
                                     request("/api/asset/getdetail", "GET", {
                                         name: row.name
                                     }).then((res) => {
-                                        setDisplay(res.data)
-                                        showModal();
+                                        setDisplay(res.data);
+                                        setIsDetailOpen(true);
                                     }).catch((err) => {
                                         message.warning(err.message);
                                     });
@@ -290,8 +282,8 @@ const DelAsset = (() => {
                 dataSource={assets}
                 toolBarRender={() => {
                     return [
-                        <Button key="2" type="default" danger={true} onClick={delete_asset} disabled={!hasSelected}>
-                            删除选中资产
+                        <Button key="2" type="default" onClick={change_asset} disabled={!hasSelected}>
+                            转移选中资产
                         </Button>
                     ];
                 }}
