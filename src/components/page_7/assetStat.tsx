@@ -76,7 +76,7 @@ const AssetStat = () => {
         request("/api/user/ep/as/departasset", "GET").then((res) => {
             setDS(res.info.map((item)=>{
                 return {value:item.number, name: item.name};
-            }))
+            }));
         }).catch((err) => {
             message.warning(err.message);
         });
@@ -157,8 +157,8 @@ const AssetStat = () => {
     //资产净值变化曲线
     let optionforNV = {
         tooltip: {// 提示框组件。// trigger:'item' 默认的鼠标移动到色块上触发
-            trigger: 'axis', // 鼠标只要在轴上就会触发
-          },
+            trigger: "axis", // 鼠标只要在轴上就会触发
+        },
         xAxis: {
             name: "日期",
             type: "category",
