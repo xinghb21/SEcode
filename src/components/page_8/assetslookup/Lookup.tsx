@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import type { MenuProps } from "antd";
-import { Button, Input, Menu, Space, Tag, message, Table } from "antd";
+import { Button, Input, Menu, Space, Tag, message, Table, Skeleton, Divider } from "antd";
 import { request } from "../../../utils/network";
 import { ProList } from "@ant-design/pro-components";
 import { ColumnsType } from "antd/es/table";
@@ -10,6 +10,8 @@ import moment from "moment";
 import OSS from "ali-oss"
 import CryptoJS from "crypto-js";
 import Base64 from "base-64";
+import VirtualList from 'rc-virtual-list';
+import InfiniteScroll from "react-infinite-scroll-component"
 interface asset{
     key:React.Key;
     id:number;
@@ -50,7 +52,7 @@ const Lookup = () => {
         total: 0, // 总记录数
     });
     const  fetchlist=()=>{
-        request("/api/user/ns/process","GET")
+        request("/api/user/ns/possess","GET")
             .then((res) => {
             // 更新表格数据源和分页器状态
                 let  templist= res.assets.map((val)=>{ 
@@ -68,6 +70,7 @@ const Lookup = () => {
                         imageurl:imageurli,
                     };
                 });
+                setassetlist(templist);
             })
             .catch((error) => {
                 message.warning(error.message);
@@ -78,34 +81,19 @@ const Lookup = () => {
     }),[]);
 
     return (
-        <div>
+        <div 
+        style={{
+            height: 600,
+            overflow: 'auto',
+            padding: '0 16px',
+            border: '1px solid rgba(140, 140, 140, 0.35)',
+          }}
+        >
             <ProList<asset,Params>
                 //切换页面的实现在于pagination的配置，如下
-                pagination={{pageSize:pagenation.pageSize}}
                 metas={{
-                    title: {dataIndex:"id",},
+                    title: {dataIndex:"name",},
                     description: {
-                        render: (_,row) => {
-                            return (
-                                <div>
-                                    {row.name}
-                                </div>
-                            );
-                        },
-                    },
-                    subTitle: {
-                        render: (_, row) => {
-                            return (
-                                <Space size={0} key={1}>
-                                    {(row.type===1)?<Tag color="blue" key={row.name}>{"数量型"}</Tag>
-                                        :<Tag color="blue" key={row.name}>{"条目型"}</Tag>  
-                                    }
-                                </Space>
-                            );
-                        },
-                        search: false,
-                    },
-                    extra: {
                         render: (_,row) =>{
                             let statelist : any[] = [];
                             Object.entries(row.state).forEach(([k, v]) => {
@@ -129,16 +117,28 @@ const Lookup = () => {
                                 }
                             });
                             return(
-                                <div style={{display:"flex",flexDirection:"column"}}>
+                                <div style={{display:"flex",flexDirection:"row"}}>
                                     {statelist}
                                 </div>
                             );
                         },
                     },
+                    subTitle: {
+                        render: (_, row) => {
+                            return (
+                                <Space size={0} key={1}>
+                                    {(row.type===1)?<Tag color="blue" key={row.name}>{"数量型"}</Tag>
+                                        :<Tag color="blue" key={row.name}>{"条目型"}</Tag>  
+                                    }
+                                </Space>
+                            );
+                        },
+                        search: false,
+                    },
                     actions:{
                         render:(_,row) =>{
                             return(
-                                <img src={row.imageurl} width={50} height={50}></img>
+                                <img src={row.imageurl} width={60} height={60} loading="lazy" ></img>
                             );
                         }
                     },
