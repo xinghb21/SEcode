@@ -145,6 +145,17 @@ const NSTbdDrawer = () => {
     };
 
     const handleCancel = () => {
+        if(assetdisdata?.type != 5) {
+            request("/api/user/ns/read", "POST", {
+                id: assetdisdata?.id,
+            }).catch((err) => {
+                message.warning(err.detail);
+            });
+            fetchtbdData();
+            fetchtbd();
+            setOpen(false);
+            return true;
+        }
         if(isChoose && assetdisdata?.type === 5 && assetTypes.length != assetdisdata?.info.length){
             message.warning("请为所有资产指定类别");
             return false;
@@ -153,11 +164,17 @@ const NSTbdDrawer = () => {
             request("/api/user/ns/setcat", "POST", {
                 assetname: item.assetname,
                 label: item.label,
+            }).then((res) => {
+                message.success("操作成功");
+                request("/api/user/ns/read", "POST", {
+                    id: assetdisdata?.id,
+                }).catch((err) => {
+                    message.warning(err.detail);
+                });
             }).catch((err) => {
-                message.warning(err.message);
+                message.warning(err.detail);
             });
         });
-        if(isChoose) message.success("操作成功");
         fetchtbdData();
         fetchtbd();
         setOpen(false);
@@ -241,14 +258,8 @@ const NSTbdDrawer = () => {
             render: (record) => {
                 return (
                     <Button type="primary" onClick={() => {
-                        request("/api/user/ns/read", "POST", {
-                            id: record.id
-                        }).then(() => {
-                            setassetdisData(messages.filter((item) => item.id === record.id)[0]);
-                            showModal();
-                        }).catch((err) => {
-                            message.warning(err.detail);
-                        });
+                        setassetdisData(messages.filter((item) => item.id === record.id)[0]);
+                        showModal();
                     }}> 查看</Button> 
                 );
             },

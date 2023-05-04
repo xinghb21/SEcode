@@ -104,14 +104,14 @@ const DelAsset = (() => {
             return item ? item.name : "";
         });
 
-        request("/api/user/ep/transfer", "POST", selectedNames)
-            .then(() => {
-                message.success("转移成功");
-                setSelectedRowKeys([]);
-            })
-            .catch((err) => {
-                message.warning(err.message);
-            });
+        // request("/api/user/ep/transfer", "POST", selectedNames)
+        //     .then(() => {
+        //         message.success("转移成功");
+        //         setSelectedRowKeys([]);
+        //     })
+        //     .catch((err) => {
+        //         message.warning(err.message);
+        //     });
 
     });
 
@@ -262,7 +262,7 @@ const DelAsset = (() => {
                             return (
                                 <Button type="link" onClick={() => {
                                     request("/api/asset/getdetail", "GET", {
-                                        name: row.name
+                                        id: row.key
                                     }).then((res) => {
                                         setDisplay(res.data);
                                         setIsDetailOpen(true);
@@ -282,7 +282,7 @@ const DelAsset = (() => {
                 dataSource={assets}
                 toolBarRender={() => {
                     return [
-                        <Button key="2" type="default" onClick={change_asset} disabled={!hasSelected}>
+                        <Button key="2" type="primary" onClick={change_asset} disabled={!hasSelected}>
                             转移选中资产
                         </Button>
                     ];
