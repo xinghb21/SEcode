@@ -21,6 +21,8 @@ const AssetStat = () => {
     const [totfixNumber, setTFN] = useState(0);
     const [partfixNumber, setPFN] = useState(0);
     const [tbfixNumber, setTBF] = useState(0);
+    //资产部门分布统计
+    const [departStata, setDS] = useState([]);
     //资产净值统计
     const [totalNV, setTNV] = useState(0);
     const [NVCdate, setNVD] = useState<string[]>([]);
@@ -71,9 +73,16 @@ const AssetStat = () => {
         }).catch((err) => {
             message.warning(err.message);
         });
+        request("/api/user/ep/as/departasset", "GET").then((res) => {
+            setDS(res.info.map((item)=>{
+                return {value:item.number, name: item.name};
+            }))
+        }).catch((err) => {
+            message.warning(err.message);
+        });
     };
-
-    let option = {
+    //资产状态统计
+    let optionforSN = {
         tooltip: {
             trigger: "item"
         },
@@ -112,7 +121,44 @@ const AssetStat = () => {
             }
         ]
     };
+    //资产部门统计
+    let optionforDN = {
+        tooltip: {
+            trigger: "item"
+        },
+        legend: {
+            top: "5%",
+            left: "center"
+        },
+        series: [
+            {
+                name: "Access From",
+                type: "pie",
+                radius: ["40%", "70%"],
+                avoidLabelOverlap: false,
+                label: {
+                    show: false,
+                    position: "center"
+                },
+                emphasis: {
+                    label: {
+                        show: true,
+                        fontSize: 40,
+                        fontWeight: "bold"
+                    }
+                },
+                labelLine: {
+                    show: false
+                },
+                data: departStata
+            }
+        ]
+    };
+    //资产净值变化曲线
     let optionforNV = {
+        tooltip: {// 提示框组件。// trigger:'item' 默认的鼠标移动到色块上触发
+            trigger: 'axis', // 鼠标只要在轴上就会触发
+          },
         xAxis: {
             name: "日期",
             type: "category",
@@ -125,10 +171,14 @@ const AssetStat = () => {
         yAxis: {
             name: "单位：元",
             type: "value",
+            axisLine: {
+                show: true
+            },
             nameTextStyle: {
                 fontWeight: 600,
                 fontSize: 15
             }
+
         },
         series: [
             {
@@ -137,6 +187,7 @@ const AssetStat = () => {
                 smooth: true
             }
         ]
+
     };
     return (
         <>
@@ -153,9 +204,15 @@ const AssetStat = () => {
                     </Col>
                 </Row>
             </div>
-            <div style={{ width: "100%", height: "40%" }}>
-                <Title level={4}>资产状态分布</Title>
-                <ReactECharts option={option} />
+            <div style={{ width: "100%", height: "40%", display: "flex", flexDirection: "row" }}>
+                <div style={{ width: "50%" }}>
+                    <Title level={4}>资产状态分布</Title>
+                    <ReactECharts option={optionforSN} />
+                </div>
+                <div style={{ width: "50%" }}>
+                    <Title level={4}>资产部门分布</Title>
+                    <ReactECharts option={optionforDN} />
+                </div>
             </div>
             <div style={{ width: "100%", height: "40%" }}>
                 <Title level={4}>资产净值统计</Title>
