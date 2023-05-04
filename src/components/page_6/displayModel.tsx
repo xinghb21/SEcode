@@ -47,19 +47,18 @@ const DisplayModel = (props: ModelProps) => {
     let assetDisplay: AssetDisplayType = props.content;
 
     const handleOk = () => {
-        request("/api//user/ep/modifyasset", "POST", assetChange)
+        if(editRowKeys == null || editRowKeys.length == 0) {
+            request("/api//user/ep/modifyasset", "POST", assetChange)
             .then((res) => {
                 message.success("修改成功");
                 props.onClose();
             }).catch((err) => {
                 message.error(err.message);
             })
+        } else {
+            message.warning("请确认修改");
+        }
     }
-
-    const rowSelection = {
-        editRowKeys,
-        onChange: (keys: React.Key[]) => seteditRowKeys(keys),
-    };
 
     return (
         <Modal
@@ -75,8 +74,13 @@ const DisplayModel = (props: ModelProps) => {
                 column={2}
                 title={props.content.name}
                 dataSource={assetDisplay}
+                
                 editable={{
-                    
+
+                    onChange(editableKeys, editableRows) {
+                        seteditRowKeys(editableKeys);
+                    },
+
                     onSave: async (key, row) => {
 
                         assetDisplay.parent = row.parent;
