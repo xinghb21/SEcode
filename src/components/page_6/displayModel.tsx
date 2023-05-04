@@ -49,16 +49,16 @@ const DisplayModel = (props: ModelProps) => {
     const handleOk = () => {
         if(editRowKeys == null || editRowKeys.length == 0) {
             request("/api//user/ep/modifyasset", "POST", assetChange)
-            .then((res) => {
-                message.success("修改成功");
-                props.onClose();
-            }).catch((err) => {
-                message.error(err.message);
-            })
+                .then((res) => {
+                    message.success("修改成功");
+                    props.onClose();
+                }).catch((err) => {
+                    message.error(err.message);
+                });
         } else {
             message.warning("请确认修改");
         }
-    }
+    };
 
     return (
         <Modal
