@@ -30,6 +30,7 @@ interface Asset{
     addtional?: Object;
     type?: boolean;
     additionalinfo?: string;
+    hasimage: boolean;
 
 }
 
@@ -256,6 +257,7 @@ const AddAsset = () => {
                         parent: resData[i].上级资产名称,
                         belonging: resData[i].挂账人,
                         number: resData[i].资产数量? resData[i].资产数量: 1,
+                        hasimage: false,
                         
                     };
                     fileAsset.push(resAsset);
@@ -296,6 +298,22 @@ const AddAsset = () => {
                         for(let i = 0; i < addition.length; i++) {
                             additions.push({key: addition[i], value: values[addition[i]]});
                         }
+
+                        let hasImage: boolean = false;
+
+                        if(imgList.length > 0) {
+                            hasImage = true;
+                            let file = imgList[0];
+                            handleUpload(file, values.assetname).then(
+                                () => {
+                                    message.success("上传成功");
+                                },
+                                error => {
+                                    message.error("上传失败");
+                                }
+                            );
+                        }
+
                         const asset : Asset = {
 
                             key : values.assetname,
@@ -309,21 +327,12 @@ const AddAsset = () => {
                             belonging: values.belonging,
                             addtional: additions,
                             additionalinfo: value,
+                            hasimage: hasImage,
                             
                         };
                         setAsset([...assets, asset]);
 
-                        if(imgList.length > 0) {
-                            let file = imgList[0];
-                            handleUpload(file, values.assetname).then(
-                                () => {
-                                    message.success("上传成功");
-                                },
-                                error => {
-                                    message.error("上传失败");
-                                }
-                            );
-                        }
+                        
 
                         return true;
                     }}
