@@ -38,7 +38,6 @@ const DisplayModel = (props: ModelProps) => {
 
     const [assetChange, setAssetChange] = useState<AssetChangeType>({
         name: props.content.name,
-        parent: props.content.parent,
         number: props.content.number_idle,
         description: props.content.description,
         additional: props.content.additional,
@@ -88,7 +87,7 @@ const DisplayModel = (props: ModelProps) => {
                         assetDisplay.description = row.description;
                         assetDisplay.additional = row.additional;
                         
-                        if(row.parent == null) {
+                        if(row.parent == "暂无上级资产") {
                             setAssetChange({
                                 name: row.name,
                                 number: row.number_idle,
