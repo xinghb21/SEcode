@@ -207,7 +207,7 @@ const Dtree = () => {
     //创建新的部门
     const handleCreateDt = (department: string) => {
         //不允许空输入
-        if (department.match("\\s+") || department.length == 0) {
+        if (!department.trim() ||department.length == 0) {
             message.warning("请输入部门名称");
             return;
         }
@@ -235,7 +235,7 @@ const Dtree = () => {
     //更改部门的名称
     const handleChangeDt = (department: string) => {
         //不允许空输入
-        if (department.match("\\s+") || department.length == 0) {
+        if (!department.trim() ||department.length == 0) {
             message.warning("请输入部门名称");
             return;
         }

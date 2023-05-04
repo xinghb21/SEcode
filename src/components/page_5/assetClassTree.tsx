@@ -23,31 +23,6 @@ type TreeData = {
 
 const { confirm } = Modal;
 
-//定义table的column
-// const columns: ColumnsType<Depuser> = [
-//     {
-//         title: "用户名",
-//         dataIndex: "username",
-//     },
-//     {
-//         title: "部门",
-//         dataIndex: "department",
-//     },
-//     {
-//         title: "职位",
-//         dataIndex: "identity",
-//     }
-
-// ];
-
-//定义table里的每个item
-// type Depuser = {
-//     key: React.Key;
-//     username: string;
-//     department: string;
-//     identity: string;
-// }
-
 //定义page_5的核心组件：一个树组件
 const ACtree = () => {
     // const [data, setData] = useState<TreeData[]>([]);
@@ -210,7 +185,7 @@ const ACtree = () => {
     //创建新的资产类型
     const handleCreateAC = (assetClassName: string, assetClass: string) => {
         //不允许空输入
-        if (assetClassName.match("\\s+") || assetClassName.length == 0) {
+        if (!assetClassName.trim()  || assetClassName.length == 0) {
             message.warning("请输入资产类型名称");
             return;
         }
@@ -259,7 +234,7 @@ const ACtree = () => {
     //更改部门的名称
     const handleChangeAC = (assetClassName: string) => {
         //不允许空输入
-        if (assetClassName.match("\\s+") || assetClassName.length == 0) {
+        if (!assetClassName.trim()  || assetClassName.length == 0) {
             message.warning("请输入资产类型名称");
             return;
         }
@@ -277,39 +252,6 @@ const ACtree = () => {
             });
         setIsDialogOpenCE(false);
     };
-    //选中节点后传给table显示相应部门下的用户
-    // const handleCheck = (checkedKeys) => {
-    //     setDepart(checkedKeys.checked);
-    // console.log(checkedKeys.checked);
-    // };
-
-    //获取该企业实体下的所有用户用来在table里显示
-    // useEffect((() => {
-    //     request("/api/user/es/checkall", "GET")
-    //         .then((res) => {
-    //             let oriUser: Depuser[] = res.data.map((val) => ({
-    //                 key: val.name,
-    //                 username: val.name,
-    //                 department: val.department,
-    //                 identity: (val.identity == 3) ? "资产管理员" : "员工",
-    //             }));
-    //             let newUser: Depuser[] = [];
-    //             let len = res.data.length;
-    //             // console.log("oriUser" + oriUser);
-    //             // console.log("departs" + Departs);
-    //             for (let index = 0; index < len; index++) {
-    //                 //利用includes函数筛选出相应的部门的用户
-    //                 if (Departs.includes(oriUser[index].department)) {
-    //                     newUser.push(oriUser[index]);
-    //                 }
-    //             }
-    //             setUser(newUser);
-    //             // console.log("newUser"+Depusers);
-    //         })
-    //         .catch((err) => {
-    //             alert(err);
-    //         });
-    // }), [Departs]);
     return (
         <div>
             <div style={{ backgroundColor: "#ADD8E6", marginRight: 20, padding: 10, borderRadius: 10, minWidth: "30%", maxWidth: "60%", height: "100%" }}>
