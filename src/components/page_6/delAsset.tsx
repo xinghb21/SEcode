@@ -11,6 +11,7 @@ import {
     QueryFilter,
 } from "@ant-design/pro-components";
 import DisplayModel from "./displayModel";
+import MoveAsset from "./moveAsset";
 
 interface Asset {
 
@@ -29,11 +30,11 @@ interface Asset {
 
 }
 
-type customfeature = {
-    //自定义属性的格式
-    name: string;//名称
-    content: string;//具体内容
+type AssetMoveType = {
+    key: React.Key;//资产的编号
+    assetname: string;//资产的名称
 }
+
 
 type AssetDisplayType = {
     //table数据的格式
@@ -65,6 +66,8 @@ const DelAsset = (() => {
     const [customfeatureList, setcustomFeature] = useState<string[]>();
     const [assetclasslist, setac] = useState<string[]>([]);
     const [displaydata, setDisplay] = useState<AssetDisplayType>(ddata);
+    const [isMoveOpen, setIsMoveOpen] = useState(false);
+    const [selectedAssets, setSelectedAssets] = useState<AssetMoveType[]>([]);
 
     useEffect(() => {
         //获取当下部门所有的资产
@@ -99,19 +102,12 @@ const DelAsset = (() => {
     //给后端发请求转移对应的asset
     const change_asset = (() => {
 
-        const selectedNames = selectedRowKeys.map(key => {
+        setSelectedAssets(selectedRowKeys.map(key => {
             const item = assets.find(data => data.key === key);
-            return item ? item.name : "";
-        });
+            return item ? { key: item.key, assetname: item.name } : { key: 0, assetname: "" };
+        }));
 
-        // request("/api/user/ep/transfer", "POST", selectedNames)
-        //     .then(() => {
-        //         message.success("转移成功");
-        //         setSelectedRowKeys([]);
-        //     })
-        //     .catch((err) => {
-        //         message.warning(err.message);
-        //     });
+        setIsMoveOpen(true);
 
     });
 
@@ -283,12 +279,13 @@ const DelAsset = (() => {
                 toolBarRender={() => {
                     return [
                         <Button key="2" type="primary" onClick={change_asset} disabled={!hasSelected}>
-                            转移选中资产
+                            调拨选中资产
                         </Button>
                     ];
                 }}
             />
             <DisplayModel isOpen={isDetailOpen} onClose={() => { setIsDetailOpen(false); }} content={displaydata} />
+            <MoveAsset isOpen={isMoveOpen} onClose={() => { setIsMoveOpen(false); }} content={selectedAssets}></MoveAsset>
         </>
     );
 }
