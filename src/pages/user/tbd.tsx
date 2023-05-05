@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Drawer, Space, Button, Table, Tag, message, Modal, Input } from "antd";
+import { Drawer, Space, Button, Table, Tag, message, Modal, Input, Select } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { request } from "../../utils/network";
 import {
@@ -16,6 +16,7 @@ interface DialogProps {
     subtitle: string;
 }
 
+
 type DataType = {
     //table数据的格式
     key: React.Key;//id
@@ -25,11 +26,11 @@ type DataType = {
 }
 
 type AssetDisplayType = {
-    //table数据的格式
+    //详细table数据的格式
     key: React.Key;//id
-    assetname: string;//申请人的名字
-    assetclass: string,//对该资产进行什么操作：1领用，2转移，3维保，4退库
-    assetcount: number;//申请数量
+    assetname: string;//资产名称
+    assetclass: string,//资产类别
+    assetcount: number;//申请资产的数量
 }
 
 const Assetcolumns: ColumnsType<AssetDisplayType> = [
@@ -58,8 +59,14 @@ const TbdDrawer = () => {
 
     const [chosenkey, setck] = useState<React.Key>();
     const [isDialogOpenSR, setIsDialogOpenSR] = useState(false);
+    const [isDialogOpenCD, setIsDialogOpenCD] = useState(false);
     const [isTBD, setTBD] = useState(false);//true即有待办任务，false相反
     const [dopen, setDOpen] = useState(false);
+    //资产类别列表，用于资产调拨选择相应的类别
+    const [assetclasslist, setac] = useState([]);
+    //资产调拨处理的资产ID
+    const [cdID, setCDID] = useState<React.Key>();
+
     const showDrawer = () => {
         setDOpen(true);
     };
@@ -69,6 +76,17 @@ const TbdDrawer = () => {
     useEffect((() => {
         fetchtbdData();
         fetchtbd();
+        //获取部门下的资产类别
+        request("/api/asset/assetclass", "GET")
+            .then((res) => {
+                setac(res.data.map((item) => {
+                    return {
+                        value: item, label: item
+                    };
+                }));
+            }).catch((err) => {
+                message.warning(err.message);
+            });
     }), []);
 
     const showModal = () => {
@@ -104,13 +122,37 @@ const TbdDrawer = () => {
         });
         setIsDialogOpenSR(false);
     };
+    //处理资产调拨时需要选择资产类别
+    const handleChooseD = (depart: string) => {
+        request("/api/user/ep/setcat", "POST", {
+            id: cdID,
+            label: depart
+        })
+            .then(() => {
+                request("/user/ep/reapply", "POST", {
+                    id: cdID,
+                    status: 0,
+                    reason: "Success!"
+                })
+                    .then(() => {
+                        fetchtbdData();
+                        fetchtbd();
+                    })
+                    .catch((err) => {
+                        message.warning(err.detail);
+                    });
+            })
+            .catch((err) => {
+                message.warning(err.detail);
+            });
+        setIsDialogOpenCD(false);
+    };
 
     const handleCancel = () => {
         setOpen(false);
     };
 
-
-
+    //拒绝时输入理由的弹窗
     const SendR = (props: DialogProps) => {
         const [reason, setR] = useState("");
         const handleSendR = () => {
@@ -122,6 +164,25 @@ const TbdDrawer = () => {
                 <div>
                     <label>{props.subtitle}</label>
                     <Input type="reason" value={reason} onChange={(e) => setR(e.target.value)} />
+                </div>
+            </Modal>
+        );
+    };
+    //处理资产调拨时选择同意的弹窗
+    const ChooseD = (props: DialogProps) => {
+        const [depart, setDepart] = useState("");
+        const handleChooseD = () => {
+            props.onSendR(depart);
+            setDepart("");
+        };
+        return (
+            <Modal title={props.title} open={props.isOpen} onOk={handleChooseD} onCancel={props.onClose} >
+                <div>
+                    <label>{props.subtitle}</label>
+                    <Select
+                        style={{ width: 120 }}
+                        onChange={(e) => setDepart(e.value)}
+                        options={assetclasslist} />
                 </div>
             </Modal>
         );
@@ -169,10 +230,17 @@ const TbdDrawer = () => {
                     </Tag>
                     );
                 }
-                else if (text === 4){
+                else if (text === 4) {
                     return (
                         <Tag color="volcano">
                             资产退库
+                        </Tag>
+                    );
+                }
+                else if (text == 6) {
+                    return (
+                        <Tag color="cyan">
+                            资产调拨
                         </Tag>
                     );
                 }
@@ -210,16 +278,22 @@ const TbdDrawer = () => {
                         拒绝
                     </Button>
                     <Button type="primary" onClick={() => {
-                        request("/api/user/ep/reapply", "POST", {
-                            id: record.key,
-                            status: 0,
-                            reason: "Success!"
-                        }).then(() => {
-                            fetchtbdData();
-                            fetchtbd();
-                        }).catch((err) => {
-                            message.warning(err.detail);
-                        });
+                        if (record.oper != 6) {
+                            request("/api/user/ep/reapply", "POST", {
+                                id: record.key,
+                                status: 0,
+                                reason: "Success!"
+                            }).then(() => {
+                                fetchtbdData();
+                                fetchtbd();
+                            }).catch((err) => {
+                                message.warning(err.detail);
+                            });
+                        }
+                        else {
+                            setCDID(record.key);
+                            setIsDialogOpenCD(true);
+                        }
                     }}>
                         同意
                     </Button>
@@ -258,6 +332,7 @@ const TbdDrawer = () => {
                     <Table columns={Assetcolumns} dataSource={assetdisdata} />
                 </Modal>
                 <SendR title={"请输入拒绝原因"} subtitle={"具体原因为："} isOpen={isDialogOpenSR} onClose={() => setIsDialogOpenSR(false)} onSendR={handleSendR} />
+                <ChooseD title={"请为调拨的资产选择类别"} subtitle={"选择资产类别为:"} isOpen={isDialogOpenCD} onClose={() => setIsDialogOpenCD(false)} onSendR={handleChooseD} />
             </Drawer>
         </>
     );

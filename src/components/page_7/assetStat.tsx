@@ -6,6 +6,7 @@ import { Typography } from "antd";
 import moment from "moment";
 
 const { Title } = Typography;
+const { Text } = Typography;
 
 
 
@@ -217,6 +218,7 @@ const AssetStat = () => {
             <div style={{ width: "100%", height: "40%" }}>
                 <Title level={4}>资产净值统计</Title>
                 <Statistic title="当前资产总净值 单位：元" value={totalNV} />
+                <Text type="secondary">{ "更新时间："+moment(Date.parse(new Date().toString())).format("YYYY-MM-DD HH:mm:ss")+" GMT+0800 (中国标准时间)"}</Text>
                 <ReactECharts option={optionforNV} />
             </div>
         </>
