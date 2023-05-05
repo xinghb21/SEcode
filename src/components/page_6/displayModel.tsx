@@ -30,10 +30,10 @@ const columns: ProColumns<AdditionalDataType>[] = [
         valueType: "text",
         formItemProps: {
             rules: [
-              {
-                required: true,
-                message: '此项为必填项',
-              },
+                {
+                    required: true,
+                    message: "此项为必填项",
+                },
             ],
         },
     },
@@ -67,12 +67,12 @@ const DisplayModel = (props: ModelProps) => {
     );
     const [dataSource, setDataSource] = useState<readonly AdditionalDataType[]>( () =>
         Object.entries(props.content.additional).map((item) => {
-        return {
-            id: item[0],
-            label: item[0],
-            value: item[1],
-        }
-    }));
+            return {
+                id: item[0],
+                label: item[0],
+                value: item[1],
+            };
+        }));
     const [form] = Form.useForm();
 
     let assetDisplay: AssetDisplayType = props.content;
@@ -86,12 +86,12 @@ const DisplayModel = (props: ModelProps) => {
             });
             if(assetDisplay.parent == null || assetDisplay.parent == "暂无上级资产") {
                 request("/api/user/ep/modifyasset", "POST", 
-                {
-                    name: assetDisplay.name,
-                    number: assetDisplay.number_idle,
-                    description: assetDisplay.description,
-                    additional: addition,
-                })
+                    {
+                        name: assetDisplay.name,
+                        number: assetDisplay.number_idle,
+                        description: assetDisplay.description,
+                        additional: addition,
+                    })
                     .then((res) => {
                         message.success("修改成功");
                         props.onClose();
@@ -100,13 +100,13 @@ const DisplayModel = (props: ModelProps) => {
                     });
             } else {
                 request("/api/user/ep/modifyasset", "POST",
-                {
-                    name: assetDisplay.name,
-                    number: assetDisplay.number_idle,
-                    description: assetDisplay.description,
-                    additional: addition,
-                    parent: assetDisplay.parent,
-                })
+                    {
+                        name: assetDisplay.name,
+                        number: assetDisplay.number_idle,
+                        description: assetDisplay.description,
+                        additional: addition,
+                        parent: assetDisplay.parent,
+                    })
                     .then((res) => {
                         message.success("修改成功");
                         props.onClose();
@@ -234,7 +234,7 @@ const DisplayModel = (props: ModelProps) => {
                 onChange={setDataSource}
                 recordCreatorProps={false}
                 editable={{
-                    type: 'multiple',
+                    type: "multiple",
                     editableKeys,
                     actionRender: (row, config, defaultDoms) => {
                         return [defaultDoms.delete];

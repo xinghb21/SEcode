@@ -39,11 +39,11 @@ const MoveAsset = (props: DialogProps) => {
 
     const handleOk = () => {
         request("/api/user/ep/transfer", "POST", 
-        {
-            transfer: assetTypes,
-            reason: reason,
-            department: department, 
-        }).then((res) => {
+            {
+                transfer: assetTypes,
+                reason: reason,
+                department: department, 
+            }).then((res) => {
             message.success("调拨成功");
             props.onClose();
         }).catch((err) => {
