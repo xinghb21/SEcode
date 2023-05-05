@@ -1,6 +1,6 @@
 import { Button, Descriptions, message, Modal } from "antd";
 import React from "react";
-import { ProFormDateRangePicker, ProFormDigitRange, ProList } from "@ant-design/pro-components";
+import { ProColumns, ProFormDateRangePicker, ProFormDigitRange, ProList } from "@ant-design/pro-components";
 import { useState } from "react";
 import { useEffect } from "react";
 import { request } from "../../utils/network";
@@ -44,17 +44,17 @@ type AssetDisplayType = {
     username: string[];//使用者的名字
     category: string;//资产的类型
     description: string;//资产描述
-    create_time: string;//创建时间
+    create_time: number;//创建时间
     price: number;//资产原始价值
     life: number;//资产使用年限
     belonging: string;//挂账人
-    additional: string;//附加信息
     number_idle: number;//闲置数量
+    additional: Record<string, string>;//附加信息
 }
 
 const ddata: AssetDisplayType = {
-    key: 0, name: "", username: [], category: "", number_idle: 0, description: "", additional: "{}", create_time: "", price: 0,
-    life: 0,
+    key: 0, name: "", username: [], category: "", number_idle: 0, description: "", create_time: 0, price: 0,
+    life: 0, additional: {},
     belonging: ""
 };
 
@@ -260,6 +260,7 @@ const DelAsset = (() => {
                                     request("/api/asset/getdetail", "GET", {
                                         id: row.key
                                     }).then((res) => {
+                                        res.data.create_time *= 1000;
                                         setDisplay(res.data);
                                         setIsDetailOpen(true);
                                     }).catch((err) => {
