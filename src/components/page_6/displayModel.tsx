@@ -63,9 +63,8 @@ const DisplayModel = (props: ModelProps) => {
         return Object.entries(props.content.additional).map((item) => {
             return (item[0]);
         });
-    }
-    );
-    const [dataSource, setDataSource] = useState<readonly AdditionalDataType[]>( () =>
+    });
+    const [dataSource, setDataSource] = useState<readonly AdditionalDataType[]>(() =>
         Object.entries(props.content.additional).map((item) => {
             return {
                 id: item[0],
@@ -76,6 +75,19 @@ const DisplayModel = (props: ModelProps) => {
     const [form] = Form.useForm();
 
     let assetDisplay: AssetDisplayType = props.content;
+
+    useEffect(() => {
+        setDataSource(Object.entries(props.content.additional).map((item) => {
+            return {
+                id: item[0],
+                label: item[0],
+                value: item[1],
+            };
+        }));
+        setEditableRowKeys(Object.entries(props.content.additional).map((item) => {
+            return (item[0]);
+        }));
+    }, [props.content]);
 
     const handleOk = () => {
         
@@ -227,7 +239,7 @@ const DisplayModel = (props: ModelProps) => {
                 ]}
             />
             <EditableProTable<AdditionalDataType>
-                headerTitle="可编辑表格"
+                headerTitle="自定义属性"
                 columns={columns}
                 rowKey="id"
                 value={dataSource}
