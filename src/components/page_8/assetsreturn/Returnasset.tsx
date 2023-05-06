@@ -1,64 +1,59 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
+import type { MenuProps } from "antd";
 import { Button, Input, Menu, Space, Tag, message, Table } from "antd";
 import { request } from "../../../utils/network";
 import { ProList } from "@ant-design/pro-components";
-import Exchangesubmit from "./Exchangesubmit";
-import Exchangedetail from "./Exchangedetail";
-
-interface asset{
-    key: React.Key;
-    id:number;
-    name: string;
-    type: number;
-    count: number;
-    applycount: number;
-    state:string;
-}
-
-interface applys{
-    key: React.Key;
-    id:number;
-    reason: string;
-    message: string;
-    state: number;
-}
-
-const Exchangeasset=()=>{
+import Applysubmit from "./Applysubmit";
+import { ColumnsType } from "antd/es/table";
+import Applydetail from "./Applydetail";
+    interface asset{
+        key:React.Key;
+        id:number;
+        name:string;
+        type:number;
+        count:number;
+        applycount:number;
+        state:string;
+    }
+    interface applys{
+        key : React.Key;
+        id:number;
+        reason:string;
+        message:string;
+        state:number;
+    }
+    
+const Returnasset=()=>{
 
     const [useable_assetslist,setuseable_assetlist]=useState<asset[]>([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [IsDialogOpen1,setIsDialogOpen1]=useState<boolean>(false);
     const [assetselected,setassetselected]= useState<asset[]>([]);
-    const [applylist,setapplylist]=useState<applys[]>([]);
+    const [applylist,setapplylsit]=useState<applys[]>([]);
     const [isdetalopen,setisdetailopen]=useState<boolean>(false);
-    const [detailreason,setdetailreason] = useState<string>("");
+    const [detailreason,setdetailreason] =useState<string>("");
     const [datailmessage,setdetailmessage] = useState<string>("");
-    const [datailid,setdetailid] = useState<number>(-1);
-
+    const [datailid,setdetailid] =useState<number>(-1);
     useEffect((()=>{
         fetchlist();
         fetchapply();
     }),[]);
-
     const fetchapply=()=>{
-        request("api/user/ns/getallapply", "GET")
+        request("/api/user/ns/getallapply","GET")
             .then((res)=>{
-                let tmp = res.info.filter(item => (item.type == 2));
-                setapplylist(tmp.map((val) => {
-                    return{
-                        id:val.id,
-                        reason:val.reason,
-                        state:val.status,
-                        message:val.message
-                    };
-                }));
+                let tmp = res.info.filter(item => (item.type == 4));
+                setapplylsit(tmp.map((val)=>{return{
+                    id:val.id,
+                    reason:val.reason,
+                    state:val.status,
+                    message:val.message
+                };}));
             })
             .catch((err)=>{
                 message.warning(err.message);
             });
     };
-
     const fetchlist=()=>{
         request("/api/user/ns/possess","GET")
             .then((res)=>{
@@ -98,7 +93,7 @@ const Exchangeasset=()=>{
             message.warning("数量超额，请重新输入");
         }
         useable_assetslist[index].applycount= + inputvalue;
-        
+            
     };
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>,name:string) => {
         const { value: inputValue } = e.target;
@@ -128,7 +123,7 @@ const Exchangeasset=()=>{
             }
             );
     };
-    //检查一遍申请的资产数量
+        //检查一遍申请的资产数量
     const checksubmit=()=>{
         let selectasset=useable_assetslist.filter((obj)=>{return selectedRowKeys.find((key)=>{return key==obj.key;}) != null; });
         let i = 0;
@@ -149,21 +144,21 @@ const Exchangeasset=()=>{
     const handlesubclick=()=>{
         if(checksubmit()){
             setIsDialogOpen1(true);
-            setassetselected(useable_assetslist.filter((obj)=>{return selectedRowKeys.find((key)=>{return key == obj.key;}) != null; }));
+            setassetselected(useable_assetslist.filter((obj)=>{return selectedRowKeys.find((key)=>{return key==obj.key;}) != null; }));
         }else{
-            message.warning("转移的资产数量超额或为0");
+            message.warning("申请的资产数量超额或为0");
         }
     };
-
+    
     return (
         <div>
-            <Exchangesubmit isOpen={IsDialogOpen1} onClose={()=>{setIsDialogOpen1(false);}} proassetlist={assetselected} onSuccess={handlesubmitsuccess} ></Exchangesubmit>
-            <Exchangedetail isOpen={isdetalopen} onClose={()=>{setisdetailopen(false);}} id={datailid} reason={detailreason} message={datailmessage} > </Exchangedetail>
+            <Applysubmit isOpen={IsDialogOpen1} onClose={()=>{setIsDialogOpen1(false);}} proassetlist={assetselected} onSuccess={handlesubmitsuccess} ></Applysubmit>
+            <Applydetail isOpen={isdetalopen} onClose={()=>{setisdetailopen(false);}} id={datailid} reason={detailreason} message={datailmessage} > </Applydetail>
             <ProList<asset>
                 toolBarRender={() => {
                     return [
                         <Button key="1" type="primary" disabled={!hasSelected} onClick={()=>{handlesubclick();}}>
-                                申请资产转移
+                                    申请资产退库
                         </Button>,                      
                     ];
                 }}
@@ -189,31 +184,40 @@ const Exchangeasset=()=>{
                     subTitle: {
                         render: (_, row) => {
                             return (
-                                <Space size={0}>
-                                    {(row.type===1)?<Tag color="blue" key={row.name}>{"数量型"}</Tag>
-                                        :<Tag color="blue" key={row.name}>{"条目型"}</Tag>  
-                                    }
-                                </Space>
+                                <div>
+                                    <Space size={0} key={1}>
+                                        {(row.type===1)?<Tag color="blue" key={row.name}>{"数量型"}</Tag>
+                                            :<Tag color="blue" key={row.name}>{"条目型"}</Tag>  
+                                        }
+                                    </Space>
+                                    <Space size={0} key={2}>
+                                        {(row.state==="1")?<Tag color="blue" key={row.name}>{"使用中"}</Tag>
+                                            :((row.state==="2")?<Tag color="blue" key={row.name}>{"维保中"}</Tag>
+                                                :(((row.state==="3")?<Tag color="blue" key={row.name}>{"报废"}</Tag>
+                                                    :<Tag color="blue" key={row.name}>{"正在处理"}</Tag>)))  
+                                        }
+                                    </Space>
+                                </div>                                    
                             );
                         },
                         search: false,
                     },
-                    actions: {
-                        render: (_,row) => {
-                            return (
-                                <div >
-                                    <Input
-                                        onChange={(e)=>{handleChange(e,row.name);}}
-                                        placeholder="Input a number"
-                                        maxLength={16}
-                                    />
-                                </div>
-                            );
-                        },
-                    },
+                    // actions: {
+                    //     render: (_,row) => {
+                    //         return (
+                    //             <div >
+                    //                 <Input
+                    //                     onChange={(e)=>{handleChange(e,row.name);}}
+                    //                     placeholder="Input a number"
+                    //                     maxLength={16}
+                    //                 />
+                    //             </div>
+                    //         );
+                    //     },
+                    // },
                 }}
                 rowKey="key"
-                headerTitle="正在使用的资产列表"
+                headerTitle="您拥有的资产列表"
                 rowSelection={rowSelection}
                 dataSource={useable_assetslist}
             />
@@ -258,11 +262,11 @@ const Exchangeasset=()=>{
                     },
                 }}
                 rowKey="key"
-                headerTitle="你的转移列表"
+                headerTitle="您的退库申请列表"
                 dataSource={applylist}
             />
         </div>
     );
 };
-
-export default Exchangeasset;
+    
+export default Returnasset;

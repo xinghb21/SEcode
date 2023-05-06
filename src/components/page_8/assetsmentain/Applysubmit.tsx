@@ -1,11 +1,11 @@
 import { Avatar, List, Space, Button, Tag, message, Modal, Input } from "antd";
 import React from "react";
-import { ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProList, QueryFilter } from "@ant-design/pro-components";
+import { ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProList, QueryFilter, hrHRIntl } from "@ant-design/pro-components";
 import { Progress } from "antd";
 import type { ReactText } from "react";
 import { useState } from "react";
 import {useEffect} from "react";
-import { request } from "../../utils/network";
+import { request } from "../../../utils/network";
 interface DialogProps{
 
     isOpen: boolean;
@@ -28,7 +28,7 @@ const Applysubmit=(props:DialogProps)=>{
     const handlesubmit=()=>{
         setloading(true);
         if(reason!==""){
-            request("api/user/ns/userapply","POST",{assetsapply:props.proassetlist.map((val)=>{return{id:val.id,assetname:val.name,assetcount:val.applycount};}),reason:reason})
+            request("api/user/ns/applymainten","POST",{assets:props.proassetlist.map((val)=>{return{id:val.id,assetname:val.name,assetnumber:val.applycount};}),reason:reason})
                 .then((res)=>{
                     message.success("提交成功，请等待审批");
                     props.onClose();
@@ -47,7 +47,7 @@ const Applysubmit=(props:DialogProps)=>{
         }
     };
     return (
-        <Modal  title="资产领用申请" onOk={()=>{handlesubmit();}} okText={"提交申请"} confirmLoading={loading} onCancel={props.onClose} open={props.isOpen}  >
+        <Modal  title="资产维保申请" onOk={()=>{handlesubmit();}} okText={"提交申请"} confirmLoading={loading} onCancel={props.onClose} open={props.isOpen}  >
             <label>请填写申请原因：</label>
             <Input type='text' onChange={(e)=>{setreason(e.target.value);}} maxLength={200}></Input>
             <ProList<asset>
@@ -62,13 +62,10 @@ const Applysubmit=(props:DialogProps)=>{
                                 return (
                                     <div>
                                         <div>
-                                            {"现有数量: "+row.count}
+                                            {"维保数量: "+row.count}
                                         </div>
                                         <div>
                                             {"资产编号："+row.id}
-                                        </div>
-                                        <div>
-                                            {"申请数量："+row.applycount}
                                         </div>
                                     </div>
                                 );
@@ -89,7 +86,7 @@ const Applysubmit=(props:DialogProps)=>{
                     }
                 }
                 rowKey="key"
-                headerTitle="本次领用的所有资产"
+                headerTitle="本次维保的所有资产"
                 dataSource={props.proassetlist}
             />
         </Modal>

@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import type { MenuProps } from "antd";
 import { Menu } from "antd";
 import Applyasset from "./Applyasset";
-import Returnasset from "./Returnasset";
+import Returnasset from "./assetsreturn/Returnasset";
 import Exchangeasset from "./exchange/Exchangeasset";
-
+import Mentainasset from "./assetsmentain/Mentain";
+import Lookup from "./assetslookup/Lookup";
 const items: MenuProps["items"] = [
     {
         label: "资产领用",
@@ -18,10 +19,18 @@ const items: MenuProps["items"] = [
         label: "资产转移",
         key: 2,
     },
+    {
+        label:"资产维保",
+        key:3,
+    },
+    {
+        label:"资产查看",
+        key:4,
+    }
 ];
 
 const PageList: any[] = [
-    <div key={0}> <Applyasset /></div>, <div key={1}><Returnasset /></div> , <div key={2}><Exchangeasset/></div>
+    <div key={0}> <Applyasset /></div>, <div key={1}><Returnasset /></div> , <div key={2}><Exchangeasset/></div>,<div key={3}><Mentainasset/></div>,<div key={4}><Lookup/></div> 
 ];
 
 const Page_8:React.FC = () => {
