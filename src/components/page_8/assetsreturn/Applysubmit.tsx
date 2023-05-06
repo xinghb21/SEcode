@@ -1,10 +1,7 @@
 import { Avatar, List, Space, Button, Tag, message, Modal, Input } from "antd";
 import React from "react";
-import { ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProList, QueryFilter, hrHRIntl } from "@ant-design/pro-components";
-import { Progress } from "antd";
-import type { ReactText } from "react";
+import { ProList } from "@ant-design/pro-components";
 import { useState } from "react";
-import {useEffect} from "react";
 import { request } from "../../../utils/network";
 interface DialogProps{
 
