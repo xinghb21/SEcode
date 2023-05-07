@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import type { MenuProps } from "antd";
 import { Menu } from "antd";
 import AssetStat from "./assetStat";
+import AssetHistory from "./assetHistory";
 
 
 const items: MenuProps["items"] = [
@@ -20,7 +21,7 @@ const items: MenuProps["items"] = [
 ];
 
 const PageList: any[] = [
-    <div key={0}><AssetStat/></div>, <div key={1}>资产告警</div>, <div key={1}>资产历史</div>,
+    <div key={0}><AssetStat/></div>, <div key={1}>资产告警</div>, <div key={1}><AssetHistory /></div>,
 ];
 
 const App: React.FC = () => {
