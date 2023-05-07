@@ -11,6 +11,7 @@ interface History {
     content: string;
     time: number;
     type: number;
+    asset: string;
 }
 
 const AssetHistory = () => {
@@ -33,6 +34,7 @@ const AssetHistory = () => {
                         content: val.content,
                         type: val.type,
                         time: val.time,
+                        asset: val.asset,
                     };
                 }));
                 setpagenation({
@@ -59,6 +61,7 @@ const AssetHistory = () => {
                         content: val.content,
                         type: val.type,
                         time: val.time,
+                        asset: val.asset,
                     };
                 }));
                 setpagenation({
@@ -83,7 +86,7 @@ const AssetHistory = () => {
                     total: pagenation.total
                 }}
                 metas={{
-                    title: { dataIndex:"id" },
+                    title: { dataIndex:"asset" },
                     description: {
                         render: (_,row) => {
                             return (

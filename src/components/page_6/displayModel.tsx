@@ -146,8 +146,8 @@ const DisplayModel = (props: ModelProps) => {
             .catch((error) => {
                 message.warning(error.message);
             });
-        setText("http://Aplus-backend-Aplus.app.secoder.net/asset/fulldetail" + props.content.key.toString());
-        setText("http://127.0.0.1:8000/asset/fulldetail" + props.content.key.toString());
+        setText("http://Aplus-backend-Aplus.app.secoder.net/asset/fulldetail/" + props.content.key.toString());
+        setText("http://127.0.0.1:8000/asset/fulldetail/" + props.content.key.toString());
         request("/api/asset/usedlabel", "GET")
             .then((res) => {
                 setUsed(res.info);
