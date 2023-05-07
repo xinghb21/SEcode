@@ -21,9 +21,13 @@ WORKDIR $HOME
 ENV NODE_ENV production
 
 COPY --from=build /opt/frontend/public ./public
+RUN true
 COPY --from=build /opt/frontend/.next ./.next
+RUN true
 COPY --from=build /opt/frontend/node_modules ./node_modules
+RUN true
 COPY --from=build /opt/frontend/package.json ./package.json
+RUN true
 
 CMD ["yarn", "start", "-p", "80"]
 

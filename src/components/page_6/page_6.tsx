@@ -12,12 +12,8 @@ const items: MenuProps["items"] = [
         key: 0,
     },
     {
-        label: "资产查看",
+        label: "资产变更",
         key: 1,
-    },
-    {
-        label: "资产调拨",
-        key: 2,
     },
     {
         label: "资产清退",
@@ -26,7 +22,7 @@ const items: MenuProps["items"] = [
 ];
 
 const PageList: any[] = [
-    <div key={0}> <AddAsset /></div>, <div key={1}><DelAsset /></div>, <div key={1}>资产调拨</div>, <div key={1}><ClearAsset/></div>, 
+    <div key={0}> <AddAsset /></div>, <div key={1}><DelAsset /></div>, <div key={1}><ClearAsset/></div>, 
 ];
 
 const App: React.FC = () => {

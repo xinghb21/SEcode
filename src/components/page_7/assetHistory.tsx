@@ -1,26 +1,22 @@
-import React from "react";
-import { Avatar, List, Space, Button, Tag, message } from "antd";
-import { ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProList, QueryFilter } from "@ant-design/pro-components";
-import { Progress } from "antd";
-import type { ReactText } from "react";
-import { useState } from "react";
-import { BUILD_ID_FILE } from "next/dist/shared/lib/constants";
-import {useEffect} from "react";
+import React, { useEffect, useState } from "react";
 import { request } from "../../utils/network";
-import { Md5 } from "ts-md5";
-import Column from "antd/es/table/Column";
-import Pagination from "antd";
-import moment from "moment";
+import { Space, Tag, message } from "antd";
+import { ProList } from "@ant-design/pro-components";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
-interface log{
-    key:React.Key,
-    id:number,
-    content:string,
-    time:string,
-    type:number
+import moment from "moment";
+
+interface History {
+    key: React.Key;
+    id: number;
+    content: string;
+    time: number;
+    type: number;
+    asset: string;
 }
-const Page_3 = () => {
-    const [loglist,setloglist]=useState<log[]>([]);
+
+const AssetHistory = () => {
+
+    const [historylist,sethistorylist] = useState<History[]>([]);    
     const [pagenation,setpagenation] = useState({
         current: 1, // 当前页码
         pageSize: 10, // 每页显示条数
@@ -28,16 +24,17 @@ const Page_3 = () => {
     });
 
     useEffect((()=>{
-        request("/api/user/es/getlogs","GET",{page:1})
+        request("/api/asset/allhistory", "GET", {page: 1})
             .then((res) => {
             // 更新表格数据源和分页器状态
-                setloglist(res.info.map((val)=>{
+                sethistorylist(res.info.map((val)=>{
                     return {
-                        key:val.id,
-                        id:val.id,
-                        content:val.content,
-                        type:val.type,
-                        time:val.time,
+                        key: val.id,
+                        id: val.id,
+                        content: val.content,
+                        type: val.type,
+                        time: val.time,
+                        asset: val.asset,
                     };
                 }));
                 setpagenation({
@@ -51,20 +48,20 @@ const Page_3 = () => {
             });
     }),[]);
 
-    //这个函数用于每次切换页码之后向后端请求数据，page和pageSize这两个参数的名字不能变
-    const handleFetch = (page:number,pageSize:number) => {
+    const handleFetch = (page:number, pageSize:number) => {
         // 构造请求参数
         // 发送请求获取数据
-        request("/api/user/es/getlogs","GET",{page:page})
+        request("/api/asset/allhistory","GET", {page: page})
             .then((res) => {
             // 更新表格数据源和分页器状态
-                setloglist(res.info.map((val)=>{
+                sethistorylist(res.info.map((val)=>{
                     return {
-                        key:val.id,
-                        id:val.id,
-                        content:val.content,
-                        type:val.type,
-                        time:val.time,
+                        key: val.id,
+                        id: val.id,
+                        content: val.content,
+                        type: val.type,
+                        time: val.time,
+                        asset: val.asset,
                     };
                 }));
                 setpagenation({
@@ -77,13 +74,19 @@ const Page_3 = () => {
                 message.warning(error.message);
             });
     };
+
     return (
         <div>
-            <ProList<log,Params>
+            <ProList<History, Params>
                 //切换页面的实现在于pagination的配置，如下
-                pagination={{current:pagenation.current,pageSize:pagenation.pageSize,onChange:handleFetch,total:pagenation.total}}
+                pagination={{
+                    current: pagenation.current,
+                    pageSize: pagenation.pageSize,
+                    onChange: handleFetch,
+                    total: pagenation.total
+                }}
                 metas={{
-                    title: {dataIndex:"id",},
+                    title: { dataIndex:"asset" },
                     description: {
                         render: (_,row) => {
                             return (
@@ -97,8 +100,12 @@ const Page_3 = () => {
                         render: (_, row) => {
                             return (
                                 <Space size={0}>
-                                    {(row.type===1)?<Tag color="blue" key={row.id}>{"员工登录"}</Tag>
-                                        :((row.type===2)?<Tag color="green" key={row.id}>{"部门结构变化"}</Tag>:<Tag color="yellow" key={row.id}>{"员工信息变化"}</Tag>)  
+                                    {(row.type === 1) ? <Tag color="blue" key={row.id}>资产创建</Tag> :
+                                        ((row.type===2) ? <Tag color="green" key={row.id}>资产领用</Tag> :  
+                                            ((row.type===3) ? <Tag color="orange" key={row.id}>资产转移</Tag> :
+                                                ((row.type===4) ? <Tag color="red" key={row.id}>资产维保</Tag> :
+                                                    ((row.type===5) ? <Tag color="purple" key={row.id}>资产退库</Tag> :
+                                                        <Tag color="cyan" key={row.id}>资产数量变动</Tag>))))
                                     }
                                 </Space>
                             );
@@ -109,18 +116,18 @@ const Page_3 = () => {
                         render: (_,row) =>{
                             return(
                                 <div style={{display:"flex",flexDirection:"column"}}>
-                                    <p>Happen at:{moment(row.time,"X").format("YYYY-MM-DD-HH:mm:ss")}</p>
+                                    <p>Happen at: {moment(row.time,"X").format("YYYY-MM-DD-HH:mm:ss")}</p>
                                 </div>
                             );
                         },
                     },
                 }}
                 rowKey="key"
-                headerTitle="业务实体操作日志"
-                dataSource={loglist}
+                headerTitle="资产历史查看"
+                dataSource={historylist}
             />
         </div>
     );
 };
 
-export default Page_3;
+export default AssetHistory;

@@ -1,16 +1,9 @@
-import { Avatar, List, Space, Button, Tag, message, Modal } from "antd";
+import {  Button, message, Modal } from "antd";
 import React from "react";
-import { ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProList, QueryFilter, hrHRIntl } from "@ant-design/pro-components";
-import { Progress } from "antd";
-import type { ReactText } from "react";
+import { ProList} from "@ant-design/pro-components";
 import { useState } from "react";
-import { BUILD_ID_FILE } from "next/dist/shared/lib/constants";
-import CreateUser from "./CreateUser";
 import {useEffect} from "react";
 import { request } from "../../utils/network";
-import Resetpassword from "./resetpassword";
-import { Md5 } from "ts-md5";
-import Column from "antd/es/table/Column";
 import Addapp from "../applists/Addapp";
 interface DialogProps{
     children:string;

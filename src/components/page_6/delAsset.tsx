@@ -1,6 +1,6 @@
 import { Button, Descriptions, message, Modal } from "antd";
 import React from "react";
-import { ProFormDateRangePicker, ProFormDigitRange, ProList } from "@ant-design/pro-components";
+import { ProColumns, ProFormDateRangePicker, ProFormDigitRange, ProList } from "@ant-design/pro-components";
 import { useState } from "react";
 import { useEffect } from "react";
 import { request } from "../../utils/network";
@@ -11,6 +11,11 @@ import {
     QueryFilter,
 } from "@ant-design/pro-components";
 import DisplayModel from "./displayModel";
+import MoveAsset from "./moveAsset";
+import OSS from "ali-oss";
+import CryptoJS from "crypto-js";
+import Base64 from "base-64";
+import moment from "moment";
 
 interface Asset {
 
@@ -29,27 +34,68 @@ interface Asset {
 
 }
 
-type customfeature = {
-    //自定义属性的格式
-    name: string;//名称
-    content: string;//具体内容
+type AssetMoveType = {
+    key: React.Key;//资产的编号
+    assetname: string;//资产的名称
+}
+
+type Userlist = {
+    key: React.Key;
+    name: string;
+    number: number;
 }
 
 type AssetDisplayType = {
     //table数据的格式
     key: React.Key;//资产的编号
+    parent?: string;//父资产的名称
+    department: string;//资产所属部门
+    entity: string;//资产所属实体
+    category: string;//资产的类型
     name: string;//资产的名称
-    username: string[];//使用者的名字
-    assetclass: string;//资产的类型
-    assetcount: number[];//资产数量
+    type: boolean;//条目型或数量型
     description: string;//资产描述
-    type: boolean;
-    custom: customfeature[];//自定义属性
-    date: string;//创建时间
-    oriprice: number;//资产原始价值
+    create_time: number;//创建时间
+    price: number;//资产原始价值
+    life: number;//资产使用年限
+    belonging: string;//挂账人
+    number_idle?: number;//闲置数量
+    additional: Record<string, string>;//附加信息
+    user?: string;//条目型当前使用人
+    usage?: Object[];//数量型当前使用情况
+    status?: number;//条目型资产状态
+    mantain?: string;//数量型维保情况
+    number_expire?: number;//数量型过期数量
+    number?: number;//总数数量
+    haspic: boolean;//是否有图片
+    userlist: Userlist[]; //使用人列表
+    additionalinfo: string;//附加信息
+    imageurl?: string;//图片url
 }
 
-const ddata: AssetDisplayType = { key: 0, name: "", username: [], assetclass: "", assetcount: [], description: "", type: true, custom: [], date: "", oriprice: 0 };
+const ddata: AssetDisplayType = {
+    key: 0, name: "", category: "", number_idle: 0, description: "", create_time: 0, price: 0,
+    life: 0, additional: {}, number: 0, haspic: false, userlist: [], additionalinfo: "", 
+    belonging: "", department: "", entity: "", parent: "", type: false, user: "", usage: [], status: 0,
+};
+
+const accessKeyId = "LTAI5t7ktfdDQPrsaDua9HaG";
+const accessSecret = "z6KJp2mQNXioRZYF0jkIvNKL5w8fIz";
+const policyText = {
+    "expiration": "2028-01-01T12:00:00.000Z", // 设置该Policy的失效时间，
+    "conditions": [
+        ["content-length-range", 0, 1048576000] // 设置上传文件的大小限制
+    ]
+};
+const policyBase64 = Base64.encode(JSON.stringify(policyText));
+const bytes = CryptoJS.HmacSHA1(policyBase64, accessSecret, { asBytes: true });
+const signature = bytes.toString(CryptoJS.enc.Base64); 
+const client = new OSS({
+    region: "oss-cn-beijing",
+    accessKeyId: accessKeyId,
+    accessKeySecret: accessSecret,
+    bucket: "aplus-secoder",
+});
 
 const DelAsset = (() => {
 
@@ -57,9 +103,10 @@ const DelAsset = (() => {
     const [assets, setAssets] = useState<Asset[]>([]);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [customfeatureList, setcustomFeature] = useState<string[]>();
-    const [chosenname, setCname] = useState<string>();
     const [assetclasslist, setac] = useState<string[]>([]);
     const [displaydata, setDisplay] = useState<AssetDisplayType>(ddata);
+    const [isMoveOpen, setIsMoveOpen] = useState(false);
+    const [selectedAssets, setSelectedAssets] = useState<AssetMoveType[]>([]);
 
     useEffect(() => {
         //获取当下部门所有的资产
@@ -86,38 +133,21 @@ const DelAsset = (() => {
             });
     }, []);
 
-    const showModal = () => {
-        setIsDetailOpen(true);
-    };
-
     const rowSelection = {
         selectedRowKeys,
         onChange: (keys: React.Key[]) => setSelectedRowKeys(keys),
     };
 
-    const handleCancel = () => {
-        setIsDetailOpen(false);
-    };
+    //给后端发请求转移对应的asset
+    const change_asset = (() => {
 
-    //给后端发请求删除对应的asset
-    const delete_asset = (() => {
-
-        const newAssets = assets.filter(item => !selectedRowKeys.includes(item.key));
-
-        const selectedNames = selectedRowKeys.map(key => {
+        setSelectedAssets(selectedRowKeys.map(key => {
             const item = assets.find(data => data.key === key);
-            return item ? item.name : "";
-        });
+            return item ? { key: item.key, assetname: item.name } : { key: 0, assetname: "" };
+        }));
 
-        request("/api/asset/delete", "DELETE", selectedNames)
-            .then(() => {
-                setAssets(newAssets);
-                message.success("删除成功");
-                setSelectedRowKeys([]);
-            })
-            .catch((err) => {
-                message.warning(err.message);
-            });
+        setIsMoveOpen(true);
+
     });
 
     const hasSelected = selectedRowKeys.length > 0;
@@ -266,15 +296,29 @@ const DelAsset = (() => {
                         render: (_, row) => {
                             return (
                                 <Button type="link" onClick={() => {
-                                    // setCname(row.name);
-                                    // request("/api/asset/getdetail", "GET", {
-                                    //     id: chosenname
-                                    // }).then((res) => {
-                                    // });
-                                    // showModal();
-                                    // setIsDetailOpen(true);
+                                    request("/api/asset/getdetail", "GET", {
+                                        id: row.key
+                                    }).then((res) => {
+                                        res.data.create_time *= 1000;
+                                        res.data.key = row.key;
+                                        if(res.data.type == false) {
+                                            res.data.number_idle = res.data.status == 0 ? 1 : 0;
+                                            if(res.data.user != null) res.data.userlist = [{key: res.data.user, name: res.data.user, number: 1}];
+                                        } else {
+                                            res.data.userlist = [];
+                                            res.data.userlist.push(Object.entries(res.data.usage).forEach(([key, value]) => {
+                                                return {key: key, name: key, number: value};
+                                            }));
+                                        }
+                                        if(res.data.haspic == true) 
+                                            res.data.imageurl = client.signatureUrl(res.data.entity + "/" + res.data.department + "/" + res.data.name);
+                                        setDisplay(res.data);
+                                        setIsDetailOpen(true);
+                                    }).catch((err) => {
+                                        message.warning(err.message);
+                                    });
                                 }}>
-                                    查看详情
+                                    查看及修改资产信息
                                 </Button>
                             );
                         },
@@ -286,13 +330,14 @@ const DelAsset = (() => {
                 dataSource={assets}
                 toolBarRender={() => {
                     return [
-                        <Button key="2" type="default" danger={true} onClick={delete_asset} disabled={!hasSelected}>
-                            删除选中资产
+                        <Button key="2" type="primary" onClick={change_asset} disabled={!hasSelected}>
+                            调拨选中资产
                         </Button>
                     ];
                 }}
             />
             <DisplayModel isOpen={isDetailOpen} onClose={() => { setIsDetailOpen(false); }} content={displaydata} />
+            <MoveAsset isOpen={isMoveOpen} onClose={() => { setIsMoveOpen(false); }} content={selectedAssets}></MoveAsset>
         </>
     );
 }

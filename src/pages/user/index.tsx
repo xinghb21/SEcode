@@ -27,7 +27,6 @@ import Applists from "../../components/applists/Applist";
 import MenuItem from "antd/es/menu/MenuItem";
 import TbdDrawer from "./tbd";
 import { Typography } from "antd";
-import NSTbdDrawer from "./ns_tbd";
 const { Text } = Typography;
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -156,17 +155,13 @@ const User: React.FC = () => {
                                 appsingle.push(getItem(tempapplist[i].name,"url"+tempapplist[i].urlvalue));    
                             }
                             setapplist(tempapplist);
+                            items.push(getItem("应用列表", "apps", <PieChartOutlined />, appsingle));
                         })
                         .catch((err)=>{
                             message.warning(err.message);
                         });
                     
-                    if(appsingle.length==0){
-                        items.push(getItem("应用列表", "apps",<AppstoreAddOutlined />));
-                    }
-                    else{
-                        items.push(getItem("应用列表", "apps",<AppstoreAddOutlined />, appsingle));
-                    }
+                    
                 }
                 else {
                     if (funclist[8] === "1") {
@@ -186,16 +181,12 @@ const User: React.FC = () => {
                                 appsingle.push(getItem(tempapplist[i].name,"url"+tempapplist[i].urlvalue));    
                             }
                             setapplist(tempapplist);
+                            items.push(getItem("应用列表", "apps", <PieChartOutlined />, appsingle));
                         })
                         .catch((err)=>{
                             message.warning(err.message);
                         });
-                    if(appsingle.length==0){
-                        items.push(getItem("应用列表", "apps",<AppstoreAddOutlined />));
-                    }
-                    else{
-                        items.push(getItem("应用列表", "apps",<AppstoreAddOutlined />, appsingle));
-                    }
+                    
                     
                 }
                 items.push(getItem("用户", "/User", <UserOutlined />, [
@@ -301,7 +292,6 @@ const User: React.FC = () => {
                     <Layout className="site-layout">
                         <Content style={{ margin: "0 16px" }}>
                             <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
-                                {identity === 4? <NSTbdDrawer/> : <></>}
                                 <Space align="center">
                                     <Avatar icon={<UserOutlined />} />
                                     <Text strong>
