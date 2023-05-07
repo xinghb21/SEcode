@@ -329,13 +329,13 @@ const DisplayModel = (props: ModelProps) => {
                 ]}
             />
             {(assetDisplay.additionalinfo == "" || assetDisplay.additionalinfo == undefined)? <></> : 
-            <>
-                <Descriptions>
-                    <Descriptions.Item label="资产附加信息">
-                        <div dangerouslySetInnerHTML={{__html: assetDisplay.additionalinfo}}></div>
-                    </Descriptions.Item>
-                </Descriptions>                
-            </>
+                <>
+                    <Descriptions>
+                        <Descriptions.Item label="资产附加信息">
+                            <div dangerouslySetInnerHTML={{__html: assetDisplay.additionalinfo}}></div>
+                        </Descriptions.Item>
+                    </Descriptions>                
+                </>
             }
             <Divider></Divider>
             <ProCard title="资产自定义属性" headerBordered>
