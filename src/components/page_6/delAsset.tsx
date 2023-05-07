@@ -303,7 +303,7 @@ const DelAsset = (() => {
                                         res.data.key = row.key;
                                         if(res.data.type == false) {
                                             res.data.number_idle = res.data.status == 0 ? 1 : 0;
-                                            if(res.data.user != "") res.data.userlist = [{key: res.data.user, name: res.data.user, number: 1}];
+                                            if(res.data.user != null) res.data.userlist = [{key: res.data.user, name: res.data.user, number: 1}];
                                         } else {
                                             res.data.userlist = [];
                                             res.data.userlist.push(Object.entries(res.data.usage).forEach(([key, value]) => {
