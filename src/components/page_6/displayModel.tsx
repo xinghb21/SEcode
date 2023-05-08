@@ -4,6 +4,7 @@ import { request } from "../../utils/network";
 import { useEffect, useState } from "react";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import moment from "moment";
+import html2canvas from "html2canvas"
 
 interface History {
     key: React.Key;
@@ -225,7 +226,28 @@ const DisplayModel = (props: ModelProps) => {
             message.warning("请确认修改");
         }
     };
-
+    const handleprint=()=>{
+        const canvas = document.getElementById("labeltoprint");
+        if(canvas){
+            html2canvas(canvas).then(
+                (canvas) =>{
+                const type = "image/png";
+                let imgData = canvas.toDataURL(type);
+                    // 图片格式处理
+                var eleLink = document.createElement('a');
+                eleLink.download = imgData;
+                eleLink.style.display = 'none';
+                //字符内容转变成blob地址
+                eleLink.href = imgData;
+                //触发点击
+                document.body.appendChild(eleLink);
+                eleLink.click();
+                //然后移除
+                document.body.removeChild(eleLink);
+            }
+        )
+        }
+    }
     return (
         <Drawer
             open={props.isOpen}
@@ -423,7 +445,7 @@ const DisplayModel = (props: ModelProps) => {
                     dataSource={historylist}
                 />
             </ProCard>
-            <ProCard title="资产标签" headerBordered>
+            <ProCard title="资产标签" headerBordered >
                 <div
                     style={{
                         margin: 24,
@@ -433,6 +455,7 @@ const DisplayModel = (props: ModelProps) => {
                         borderStyle: "solid",
                         borderRadius: 20
                     }}
+                    id = "labeltoprint"
                 >
                     <Row>
                         <Col span={20}>
@@ -457,7 +480,7 @@ const DisplayModel = (props: ModelProps) => {
                         </Col>
                     </Row>
                 </div>
-                <Button style={{marginLeft: "90%"}}>打印标签</Button>
+                <Button style={{marginLeft: "90%"}} onClick={handleprint} >打印标签</Button>
             </ProCard>
         </Drawer>
     );

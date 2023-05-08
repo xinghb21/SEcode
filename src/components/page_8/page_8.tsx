@@ -8,11 +8,11 @@ import Mentainasset from "./assetsmentain/Mentain";
 import Lookup from "./assetslookup/Lookup";
 const items: MenuProps["items"] = [
     {
-        label: "资产领用",
+        label: "资产查看",
         key: 0,
     },
     {
-        label: "资产退库",
+        label: "资产领用",
         key: 1,
     },
     {
@@ -24,13 +24,13 @@ const items: MenuProps["items"] = [
         key:3,
     },
     {
-        label:"资产查看",
+        label:"资产退库",
         key:4,
     }
 ];
 
 const PageList: any[] = [
-    <div key={0}> <Applyasset /></div>, <div key={1}><Returnasset /></div> , <div key={2}><Exchangeasset/></div>,<div key={3}><Mentainasset/></div>,<div key={4}><Lookup/></div> 
+    <div key={0}><Lookup/></div>,<div key={1}> <Applyasset /></div>, <div key={2}><Exchangeasset/></div>,<div key={3}><Mentainasset/></div>,<div key={4}><Returnasset /></div>  
 ];
 
 const Page_8:React.FC = () => {

@@ -144,7 +144,7 @@ const Lookup = () => {
                     },
                 }}
                 rowKey="key"
-                headerTitle="业务实体操作日志"
+                headerTitle="您拥有的资产列表"
                 dataSource={assetlist}
             />
         </div>
