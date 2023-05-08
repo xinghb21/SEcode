@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
-import type { MenuProps } from "antd";
+import type { MenuProps, RadioChangeEvent } from "antd";
 import { Button, Input, Menu, Space, Tag, message, Table, List, Modal } from 'antd';
 import { request } from "../../utils/network";
 import { ProList } from "@ant-design/pro-components";
 import { time } from "console";
-
+import { Radio } from "antd"
+import Checkboxhqf from "./checkbox"
 interface Asset{
     id:number,
     name:string,
@@ -19,6 +20,21 @@ interface Assetsimple{
 interface Apply{
     id:number,
     assets:Assetsimple[],
+}
+
+interface checkprops{
+    value:number,
+    index:number,
+}
+
+
+const checkbox=(props:checkprops)=>{
+    const [value,setvalue] = useState<Apply[]>([]);
+    return (
+        <div>
+
+        </div>
+    );  
 }
 
 const MatainAssets = ()=>{
@@ -66,13 +82,18 @@ const MatainAssets = ()=>{
             message.warning(err.message);
         });
     }
+
+    const onchangestate = (value:number,index:number)=>{
+        nowassetslist[index].state = value; 
+    }
     return (
         <div style={{display:"flex",flexDirection:"row",width:"100%",height:"100%"}} >
-            <div style={{ width: "40%" , marginRight: 20, padding: 10, borderRadius: 10, minWidth: "30%", maxWidth: "50%", height: "100%" }} >
+            <div style={{ width: "50%" , marginRight: 20, padding: 10, borderRadius: 10, height: "100%" }} >
                 <List
                     pagination={{
                     pageSize: 10,
                     }}
+                    bordered = {true}
                     dataSource={applylist}
                     renderItem={(item) => (
                     <List.Item
@@ -90,7 +111,7 @@ const MatainAssets = ()=>{
                     )}
                 />
             </div>
-            <div style={{ width: "40%" , marginRight: 20, padding: 10, borderRadius: 10, minWidth: "30%", maxWidth: "50%", height: "100%" }} >
+            <div style={{ width: "50%" , marginRight: 20, padding: 10, borderRadius: 10, height: "100%" }} >
                 <List
                     pagination={{
                     pageSize: 10,
@@ -98,14 +119,14 @@ const MatainAssets = ()=>{
                     footer = {
                         <Button onClick={handlesubmit} > 完成 </Button>
                     }
+                    bordered = {true} 
                     dataSource={nowassetslist}
                     renderItem={(item,index) => (
                     <List.Item
                         key={item.id}
                         extra={
-                            <div>   
-                                <Button key={1} onClick={()=>{let assetlist = nowassetslist;assetlist[index].state=1;setnowassetslist(assetlist)}} color = { item.state==1?"yellow":"white"} >  {"维保成功"} </Button>
-                                <Button key={0} onClick={()=>{let assetlist = nowassetslist;assetlist[index].state=0;setnowassetslist(assetlist)}} color = {item.state==0?"red":"white"} > {"维保失败"}    </Button>
+                            <div> 
+                                <Checkboxhqf key={item.id} onover={onchangestate} index={index} ></Checkboxhqf>
                             </div>
                         }
                     >
