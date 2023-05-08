@@ -14,17 +14,18 @@ type WarningType = {
 
 
 const AssetWarn = () => {
-    const [isMopen, setIsModalOpen] = useState(false);
-    const [inputAN, setAN] = useState<string>("");
-    const [choseV, setCV] = useState(0);
-    const [inputWC, setWC] = useState<number>(0);
-    const [allwarning, setwarning] = useState<WarningType[]>([]);
-    const [changeV, setCGV] = useState(0);
-    const [choseK, setCK] = useState<React.Key>();
-    const [isMCopen, setIsMCOpen] = useState(false);
-    const [inputCGWC, setCGWC] = useState<number>(0);
 
+    const [isMopen, setIsModalOpen] = useState(false);//增加model
+    const [inputAN, setAN] = useState<string>("");//输入的资产名称
+    const [choseV, setCV] = useState(0);//选中的策略类型
+    const [inputWC, setWC] = useState<number>(0);//输入的告警条件
+    const [allwarning, setwarning] = useState<WarningType[]>([]);//所有的告警策略
+    const [changeV, setCGV] = useState(0);//要修改的策略的类型
+    const [choseK, setCK] = useState<React.Key>();//要修改的策略的编号
+    const [isMCopen, setIsMCOpen] = useState(false);//修改model
+    const [inputCGWC, setCGWC] = useState<number>(0);//更改后的告警条件
 
+    //表格的规范
     const Assetcolumns: ColumnsType<WarningType> = [
         {
             title: "资产名称",
@@ -88,6 +89,7 @@ const AssetWarn = () => {
         fetchWarning();
     }), []);
 
+    //获得当下部门所有的告警策略
     const fetchWarning = () => {
         request("/api/user/ep/aw/getw", "GET")
             .then((res) => {
@@ -97,7 +99,7 @@ const AssetWarn = () => {
                 message.warning(err.message);
             });
     };
-    //
+    //确定增加
     const handleOk = () => {
         request("/api/user/ep/aw/newaw", "POST", {
             assetname: inputAN,
@@ -121,7 +123,7 @@ const AssetWarn = () => {
     const handleCancel = () => {
         setIsModalOpen(false);
     };
-    //
+    //确定修改
     const handleMCOk = () => {
         request("/api/user/ep/aw/cgcondition", "POST", {
             key: choseK,
@@ -140,7 +142,7 @@ const AssetWarn = () => {
     const handleMCCancel = () => {
         setIsMCOpen(false);
     };
-    //
+
     const handleSChange = (value: number) => {
         setCV(value);
     };
