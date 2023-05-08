@@ -77,6 +77,13 @@ const TbdDrawer = () => {
         fetchtbdData();
         fetchtbd();
         //获取部门下的资产类别
+        fetchDepart();
+    }), []);
+
+    const showModal = () => {
+        setOpen(true);
+    };
+    const fetchDepart=()=>{
         request("/api/asset/assetclass", "GET")
             .then((res) => {
                 setac(res.data.map((item) => {
@@ -87,12 +94,7 @@ const TbdDrawer = () => {
             }).catch((err) => {
                 message.warning(err.message);
             });
-    }), []);
-
-    const showModal = () => {
-        setOpen(true);
     };
-
     const fetchtbd = () => {
         //资产管理员界面需要设置tbd的状态
         request("/api/user/ep/istbd", "GET").then((res) => {
@@ -175,13 +177,17 @@ const TbdDrawer = () => {
             props.onSendR(depart);
             setDepart("");
         };
+        const handleSChange = (value: string) => {
+            setDepart(value);
+        };
         return (
             <Modal title={props.title} open={props.isOpen} onOk={handleChooseD} onCancel={props.onClose} >
                 <div>
                     <label>{props.subtitle}</label>
                     <Select
+                        value={depart}
                         style={{ width: 120 }}
-                        onChange={(e) => setDepart(e.value)}
+                        onChange={handleSChange}
                         options={assetclasslist} />
                 </div>
             </Modal>
@@ -293,6 +299,7 @@ const TbdDrawer = () => {
                         else {
                             setCDID(record.key);
                             setIsDialogOpenCD(true);
+                            fetchDepart();
                         }
                     }}>
                         同意
@@ -332,7 +339,7 @@ const TbdDrawer = () => {
                     <Table columns={Assetcolumns} dataSource={assetdisdata} />
                 </Modal>
                 <SendR title={"请输入拒绝原因"} subtitle={"具体原因为："} isOpen={isDialogOpenSR} onClose={() => setIsDialogOpenSR(false)} onSendR={handleSendR} />
-                <ChooseD title={"请为调拨的资产选择类别"} subtitle={"选择资产类别为:"} isOpen={isDialogOpenCD} onClose={() => setIsDialogOpenCD(false)} onSendR={handleChooseD} />
+                <ChooseD title={"请为调拨的资产选择类别"} subtitle={"选择资产类别为："} isOpen={isDialogOpenCD} onClose={() => setIsDialogOpenCD(false)} onSendR={handleChooseD} />
             </Drawer>
         </>
     );

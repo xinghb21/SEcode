@@ -78,7 +78,8 @@ const AssetWarn = () => {
                         setCK(record.key);
                         setCGV(record.warning);
                         setIsMCOpen(true);
-                    }}>修改条件</Button>
+                    }}
+                    style={{ marginLeft: 10 }}>修改条件</Button>
                 </>
             ),
 
@@ -107,7 +108,7 @@ const AssetWarn = () => {
             condition: inputWC
         })
             .then(() => {
-
+                fetchWarning();
             })
             .catch((err) => {
                 message.warning(err.message);
@@ -192,7 +193,10 @@ const AssetWarn = () => {
                                     value={inputWC}
                                     onChange={(value) => {
                                         if (value == null) {
-                                        } else { setWC(value); }
+                                        }
+                                        else {
+                                            setWC(value);
+                                        }
                                     }}
                                 />
                                 <label> 年，则开始告警</label>
@@ -202,7 +206,9 @@ const AssetWarn = () => {
                                     value={inputWC}
                                     onChange={(value) => {
                                         if (value == null) {
-                                        } else { setWC(value); }
+                                        } else {
+                                            setWC(value);
+                                        }
                                     }}
                                 />
                                 <label> ，则开始告警</label>
