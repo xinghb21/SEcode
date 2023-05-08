@@ -71,7 +71,7 @@ type AssetDisplayType = {
     userlist: Userlist[]; //使用人列表
     additionalinfo: string;//附加信息
     imageurl?: string;//图片url
-    old_price?: number;//资产原始价值
+    new_price?: number;//资产现价值
 }
 
 const ddata: AssetDisplayType = {
