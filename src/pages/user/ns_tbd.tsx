@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Drawer, Space, Button, Table, Tag, message, Modal, Input, Select } from "antd";
+import { Drawer, Space, Button, Table, Tag, message, Modal, Select } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { request } from "../../utils/network";
-import {
-    MessageOutlined, MessageTwoTone,
-} from "@ant-design/icons";
+import { MessageTwoTone} from "@ant-design/icons";
 
 import { Badge, Tooltip } from "antd";
 
@@ -149,7 +147,7 @@ const NSTbdDrawer = () => {
             request("/api/user/ns/read", "POST", {
                 id: assetdisdata?.id,
             }).catch((err) => {
-                message.warning(err.detail);
+                message.warning(err.message);
             });
             fetchtbdData();
             fetchtbd();
@@ -169,10 +167,10 @@ const NSTbdDrawer = () => {
                 request("/api/user/ns/read", "POST", {
                     id: assetdisdata?.id,
                 }).catch((err) => {
-                    message.warning(err.detail);
+                    message.warning(err.message);
                 });
             }).catch((err) => {
-                message.warning(err.detail);
+                message.warning(err.message);
             });
         });
         fetchtbdData();

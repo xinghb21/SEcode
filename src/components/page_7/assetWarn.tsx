@@ -69,6 +69,7 @@ const AssetWarn = () => {
                         request("/api/user/ep/aw/deleteaw", "DELETE", {
                             key: record.key
                         }).then(() => {
+                            message.success("成功删除该资产告警策略");
                             fetchWarning();
                         }).catch((err) => {
                             message.warning(err.message);
@@ -108,6 +109,7 @@ const AssetWarn = () => {
             condition: inputWC
         })
             .then(() => {
+                message.success("成功创建新的资产告警策略");
                 fetchWarning();
             })
             .catch((err) => {
@@ -131,6 +133,7 @@ const AssetWarn = () => {
             newcondition: inputCGWC
         })
             .then(() => {
+                message.success("成功修改资产告警策略");
                 fetchWarning();
             })
             .catch((err) => {
