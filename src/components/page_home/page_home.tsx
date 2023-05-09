@@ -5,8 +5,8 @@ const { Title } = Typography;
 
 const Page_home = () => {
     return (
-        <div>
-            <Title level={4}>☕️Welcome Back, {localStorage.getItem("username")} !</Title>
+        <div style={{margin:30}}>
+            <Title>☕️Welcome Back, {localStorage.getItem("username")} !</Title>
         </div>
     );
 };
