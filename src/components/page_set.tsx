@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { request } from "../utils/network";
-import { Space, message } from "antd";
-import { Typography } from "antd";
+import { Divider, message, Typography } from "antd";
 
 const { Title } = Typography;
-const { Text, Link } = Typography;
+const { Text } = Typography;
 
 type user = {
     identity: string;
@@ -70,6 +69,7 @@ const Page_set = () => {
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <Title style={{ marginTop: 130 }}>{user?.username}</Title>
             </div>
+            <Divider />
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <Text style={{ marginRight: 40 }}>业务实体：{user?.entity == "" ? "暂无" : user?.entity}</Text>
                 <Text>部门：{user?.department == "" ? "暂无" : user?.department}</Text>
