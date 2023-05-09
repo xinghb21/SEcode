@@ -3,7 +3,7 @@ import { Drawer, Space, Button, Table, Tag, message, Modal, Input, Select } from
 import type { ColumnsType } from "antd/es/table";
 import { request } from "../../utils/network";
 import {
-    MessageOutlined,
+    MessageOutlined, MessageTwoTone,
 } from "@ant-design/icons";
 
 import { Badge, Tooltip } from "antd";
@@ -271,7 +271,7 @@ const NSTbdDrawer = () => {
             <Tooltip placement="bottomLeft" title={<span>通知消息</span>}>
                 <Button type="text" size="large" style={{ margin: 5 }} onClick={showDrawer}>
                     <Badge dot style={{ visibility: (!isTBD) ? "hidden" : "visible" }}>
-                        <MessageOutlined twoToneColor={(!isTBD) ? "#a8a8a8" : "#f82212"} style={{ fontSize: "25px" }} />
+                        <MessageTwoTone twoToneColor={(!isTBD) ? "#a8a8a8" : "#f82212"} style={{ fontSize: "25px" }} />
                     </Badge>
                 </Button>
             </Tooltip>

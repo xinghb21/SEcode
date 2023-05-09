@@ -27,6 +27,8 @@ import Applists from "../../components/applists/Applist";
 import MenuItem from "antd/es/menu/MenuItem";
 import TbdDrawer from "./tbd";
 import { Typography } from "antd";
+import Ep_Message from "./ep_mg";
+import NSTbdDrawer from "./ns_tbd";
 const { Text } = Typography;
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -252,7 +254,7 @@ const User: React.FC = () => {
                 });
         }
     };
-    if (identity === 3) {
+    if (identity === 3 || identity == 4) {
         return (
             <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
                 <Layout style={{ minHeight: "100vh" }}>
@@ -263,7 +265,8 @@ const User: React.FC = () => {
                     <Layout className="site-layout">
                         <Content style={{ margin: "0 16px" }}>
                             <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
-                                <TbdDrawer />
+                                
+                                {identity == 3 ? <><Ep_Message /><TbdDrawer /></> : <NSTbdDrawer />}
                                 <Space align="center">
                                     <Avatar icon={<UserOutlined />} />
                                     <Text strong>
