@@ -27,6 +27,7 @@ import Applists from "../../components/applists/Applist";
 import MenuItem from "antd/es/menu/MenuItem";
 import TbdDrawer from "./tbd";
 import { Typography } from "antd";
+import Ep_Message from "./ep_mg";
 import NSTbdDrawer from "./ns_tbd";
 const { Text } = Typography;
 
@@ -264,7 +265,8 @@ const User: React.FC = () => {
                     <Layout className="site-layout">
                         <Content style={{ margin: "0 16px" }}>
                             <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
-                                {identity == 3 ? <TbdDrawer /> : <NSTbdDrawer />}
+                                
+                                {identity == 3 ? <><Ep_Message /><TbdDrawer /></> : <NSTbdDrawer />}
                                 <Space align="center">
                                     <Avatar icon={<UserOutlined />} />
                                     <Text strong>
