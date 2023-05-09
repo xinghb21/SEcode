@@ -79,26 +79,26 @@ const Asyncbd = () => {
             setoutputsuccess(true);
             request("/api/async/getsuccess","POST")
                 .then((res)=>{
-                    message.success("导出成功，请前往任务中心下载文件");
+                    message.success("开始导出，请前往任务中心查看进度");
                     setoutputsuccess(false);
                 })
                 .catch((err)=>{
                     message.warning("导出失败");
                     setoutputsuccess(false);
                 });
-            message.success("开始导出，请前往任务中心查看进度");
+
         }else{
             setoutputfail(true);
             request("/api/async/getfailed","POST")
                 .then((res)=>{
-                    message.success("导出成功，请前往任务中心下载文件");
+                    message.success("开始导出，请前往任务中心查看进度");
                     setoutputfail(false);
                 })
                 .catch((err)=>{
                     message.warning("导出失败");
                     setoutputfail(false);
                 });
-            message.success("开始导出，请前往任务中心查看进度");
+
         }
     };
 
@@ -115,20 +115,6 @@ const Asyncbd = () => {
         //然后移除
         document.body.removeChild(eleLink);
     };
-    const handleredo =  (taskid:number)=>{
-        setoutputsuccess(true);
-        request("/api/async/getsuccess","POST")
-            .then((res)=>{
-                message.success("导出成功，请前往任务中心下载文件");
-                setoutputsuccess(false);
-            })
-            .catch((err)=>{
-                message.warning("导出失败");
-                setoutputsuccess(false);
-            });
-        message.success("开始导出，请前往任务中心查看进度");
-    };
-
     return (
         <>
             <ProList<AsyncTask>
@@ -169,7 +155,7 @@ const Asyncbd = () => {
                     extra :{
                         render:(_, row )=>{
                             return (
-                                (row.state==2||row.state==3)?<Button color="yellow">正在导出</Button>:(row.state==1?<Button color="green" onClick={()=>{handledownload(row.fileurl);}} >下载文件</Button>:<Redobutton taskid={row.taskid}/>)
+                                (row.state==2||row.state==3)?<Button color="yellow">正在导出</Button>:(row.state==1?<Button color="green" onClick={()=>{handledownload(row.fileurl);}} >下载文件</Button>:<Redobutton taskid={row.id}/>)
                             );
                         }
                     },    

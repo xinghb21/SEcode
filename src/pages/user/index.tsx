@@ -141,8 +141,9 @@ const User: React.FC = () => {
                         if (element) {
                             child.push(getItem(AppList[index], index));
                         }
-                        child.push(getItem(AppList[10],13));
+                        
                     }
+                    child.push(getItem(AppList[10],13));
                     items.push(getItem("企业管理", "corp", <HomeOutlined />, child));
                     items.push(getItem("用户", "/User", <UserOutlined />, [
                         getItem("信息", 10),

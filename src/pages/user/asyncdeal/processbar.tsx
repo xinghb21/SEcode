@@ -30,7 +30,7 @@ const Processbar = (props:barprops)=>{
             clearInterval(timer);
             props.onover();
         });
-    },200);  
+    },2000);  
     return (
         <div>
             <Progress type="circle" percent={percent}/>

@@ -24,14 +24,14 @@ const Redobutton = (props:buttonprop)=>{
         setloading(true);
         request("/api/async/restarttask","POST",{taskid:props.taskid})
             .then((res)=>{
-                message.success("执行成功，请前往任务中心下载文件");
+                message.success("开始执行导出任务，请前往任务中心查看进度");
                 setloading(false);
             })
             .catch((err)=>{
                 message.warning(err.message);
                 setloading(false);
             });
-        message.success("开始执行导出任务，请前往任务中心查看进度");
+
     };
     return (
         <div>
