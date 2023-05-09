@@ -13,7 +13,7 @@ import Processbar from "../../pages/user/asyncdeal/processbar";
 import OSS from "ali-oss";
 import CryptoJS from "crypto-js";
 import Base64 from "base-64";
-
+import Redobutton from  "./redobutton";
 
 interface DialogProps {
     isOpen: boolean;
@@ -52,26 +52,17 @@ const client = new OSS({
 
 const Asyncbd = () => {
     const [clicktime,setclicktime] = useState<number>(0);
-    const [isTBD, setTBD] = useState(false);//true即有待办任务，false相反
-    const [dopen, setDOpen] = useState(false);//是否打开任务中心
     const [tasklist,settasklist] = useState<AsyncTask[]>([]);
-    const showDrawer = () => {
-        setclicktime(clicktime+1);
-        setDOpen(true);
-    };
-    const onClose = () => {
-        setDOpen(false);
-    };
+    const [outputsuccess,setoutputsuccess] = useState<boolean>(false);
+    const [outputfail,setoutputfail] = useState<boolean>(false);
     useEffect((() => {
         //获取任务
-        request("/api/async/getalivetasks", "GET")
+        request("/api/async/esgetalltask", "GET")
             .then((res) => {
                 let tasks:AsyncTask[] = res.info;
                 if(tasks){
-                    tasks = tasks.filter((obj)=>{return obj.state != 4;});
                     if(tasks){
                         settasklist(tasks);
-                        setTBD(true);
                     }
                 }
             }).catch((err) => {
@@ -81,6 +72,36 @@ const Asyncbd = () => {
     const handleover=()=>{
         setclicktime(clicktime+1);
     };
+
+    //发送任务导出命令
+    const handleoutput = (success:boolean )=>{
+        if(success){
+            setoutputsuccess(true);
+            request("/api/async/getsuccess","POST")
+                .then((res)=>{
+                    message.success("导出成功，请前往任务中心下载文件");
+                    setoutputsuccess(false);
+                })
+                .catch((err)=>{
+                    message.warning("导出失败");
+                    setoutputsuccess(false);
+                });
+            message.success("开始导出，请前往任务中心查看进度");
+        }else{
+            setoutputfail(true);
+            request("/api/async/getfailed","POST")
+                .then((res)=>{
+                    message.success("导出成功，请前往任务中心下载文件");
+                    setoutputfail(false);
+                })
+                .catch((err)=>{
+                    message.warning("导出失败");
+                    setoutputfail(false);
+                });
+            message.success("开始导出，请前往任务中心查看进度");
+        }
+    };
+
     const handledownload=(fileroot:string)=>{
         let url = client.signatureUrl(fileroot);
         var eleLink = document.createElement("a");
@@ -94,11 +115,37 @@ const Asyncbd = () => {
         //然后移除
         document.body.removeChild(eleLink);
     };
+    const handleredo =  (taskid:number)=>{
+        setoutputsuccess(true);
+        request("/api/async/getsuccess","POST")
+            .then((res)=>{
+                message.success("导出成功，请前往任务中心下载文件");
+                setoutputsuccess(false);
+            })
+            .catch((err)=>{
+                message.warning("导出失败");
+                setoutputsuccess(false);
+            });
+        message.success("开始导出，请前往任务中心查看进度");
+    };
+
     return (
         <>
             <ProList<AsyncTask>
                 pagination={{
-                    pageSize: 8,
+                    pageSize: 10,
+                }}
+                toolBarRender={() => {
+                    return [
+                        <div key={"tool"}>
+                            <Button key="2" type="primary" onClick={()=>{handleoutput(false);}} loading={outputfail}>
+                                导出所有失败任务
+                            </Button>
+                            <Button key="1" onClick={()=>{handleoutput(true);}} loading={outputsuccess} >
+                                导出所有成功任务
+                            </Button>
+                        </div>
+                    ];
                 }}
                 metas={{
                     title: {dataIndex:"id",},
@@ -115,14 +162,14 @@ const Asyncbd = () => {
                     actions: {
                         render: (_, row) => {
                             return (
-                                (row.state==2||row.state==3)?<Processbar taskid={row.id}onover={handleover} ></Processbar>:( row.state==1?<Progress percent={100} type="circle" />:<Progress percent={10} type="circle" status="exception" />)
+                                (row.state==2||row.state==3)?<Processbar taskid={row.id}onover={handleover} ></Processbar>:( row.state==1?<Progress percent={100} type="circle" />:<Progress percent={0} type="circle" status="exception" />)
                             );
                         },
                     },
                     extra :{
-                        render:(_,row)=>{
+                        render:(_, row )=>{
                             return (
-                                (row.state==2||row.state==3)?<Button color="yellow">正在导出</Button>:(row.state==1?<Button color="green" onClick={()=>{handledownload(row.fileurl);}} >下载</Button>:<Button color="red">失败</Button>)
+                                (row.state==2||row.state==3)?<Button color="yellow">正在导出</Button>:(row.state==1?<Button color="green" onClick={()=>{handledownload(row.fileurl);}} >下载文件</Button>:<Redobutton taskid={row.taskid}/>)
                             );
                         }
                     },    
