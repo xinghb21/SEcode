@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import type { MenuProps, RadioChangeEvent } from "antd";
-import { Button, Input, Menu, Space, Tag, message, Table, List, Modal } from 'antd';
+import { Button, Input, Menu, Space, Tag, message, Table, List, Modal } from "antd";
 import { request } from "../../utils/network";
 import { ProList } from "@ant-design/pro-components";
 import { time } from "console";
-import { Radio } from "antd"
+import { Radio } from "antd";
 
 interface checkprops{
     index:number,
@@ -22,6 +22,6 @@ const Checkboxhqf=(props:checkprops)=>{
             </Radio.Group>
         </div>
     );  
-}
+};
 
 export default Checkboxhqf;

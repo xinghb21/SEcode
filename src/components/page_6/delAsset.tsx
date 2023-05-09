@@ -107,7 +107,7 @@ const DelAsset = (() => {
     const [displaydata, setDisplay] = useState<AssetDisplayType>(ddata);
     const [isMoveOpen, setIsMoveOpen] = useState(false);
     const [selectedAssets, setSelectedAssets] = useState<AssetMoveType[]>([]);
-
+    const [outputloading,setoupputloading] = useState<boolean>(false);
     useEffect(() => {
         //获取当下部门所有的资产
         request("/api/asset/get", "GET")
@@ -152,6 +152,18 @@ const DelAsset = (() => {
 
     const hasSelected = selectedRowKeys.length > 0;
 
+    const handleoutput= ()=>{
+        setoupputloading(true);
+        request("/api/async/newouttask","POST")
+            .then((res)=>{
+                setoupputloading(false);
+                message.success("导出成功，请前往任务中心下载");
+            })
+            .catch((err)=>{
+                message.warning(err.message);
+            });
+        message.info("导出开始，请前往任务中心查看进度");
+    };
     return (
         <>
             <div
@@ -330,9 +342,14 @@ const DelAsset = (() => {
                 dataSource={assets}
                 toolBarRender={() => {
                     return [
-                        <Button key="2" type="primary" onClick={change_asset} disabled={!hasSelected}>
-                            调拨选中资产
-                        </Button>
+                        <div key={"tool"}>
+                            <Button key="2" type="primary" onClick={change_asset} disabled={!hasSelected}>
+                                调拨选中资产
+                            </Button>
+                            <Button key="1" onClick={handleoutput} loading={outputloading} >
+                                导出部门内所有资产
+                            </Button>
+                        </div>
                     ];
                 }}
             />

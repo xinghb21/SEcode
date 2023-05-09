@@ -27,6 +27,8 @@ import Applists from "../../components/applists/Applist";
 import MenuItem from "antd/es/menu/MenuItem";
 import TbdDrawer from "./tbd";
 import { Typography } from "antd";
+import Asyncbd from "./asyncdeal/async";
+
 const { Text } = Typography;
 
 const { Header, Content, Footer, Sider } = Layout;

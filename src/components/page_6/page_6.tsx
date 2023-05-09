@@ -4,7 +4,7 @@ import { Menu } from "antd";
 import AddAsset from "./addAsset";
 import DelAsset from "./delAsset";
 import ClearAsset from "./clearAsset";
-import MatainAssets from "./matianAsset"
+import MatainAssets from "./matianAsset";
 
 const items: MenuProps["items"] = [
     {

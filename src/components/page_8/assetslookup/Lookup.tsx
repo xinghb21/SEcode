@@ -22,7 +22,7 @@ interface asset{
     haspic:boolean;
     imageurl:string;
 }
-const host = "/image";
+
 const accessKeyId = "LTAI5t7ktfdDQPrsaDua9HaG";
 const accessSecret = "z6KJp2mQNXioRZYF0jkIvNKL5w8fIz";
 const policyText = {
@@ -33,7 +33,7 @@ const policyText = {
 };
 const policyBase64 = Base64.encode(JSON.stringify(policyText));
 const bytes = CryptoJS.HmacSHA1(policyBase64, accessSecret, { asBytes: true });
-const signature = bytes.toString(CryptoJS.enc.Base64); 
+
 const client = new OSS({
     region: "oss-cn-beijing",
     accessKeyId: accessKeyId,

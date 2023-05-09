@@ -4,7 +4,7 @@ import { request } from "../../utils/network";
 import { useEffect, useState } from "react";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import moment from "moment";
-import html2canvas from "html2canvas"
+import html2canvas from "html2canvas";
 
 interface History {
     key: React.Key;
@@ -231,23 +231,23 @@ const DisplayModel = (props: ModelProps) => {
         if(canvas){
             html2canvas(canvas).then(
                 (canvas) =>{
-                const type = "image/png";
-                let imgData = canvas.toDataURL(type);
+                    const type = "image/png";
+                    let imgData = canvas.toDataURL(type);
                     // 图片格式处理
-                var eleLink = document.createElement('a');
-                eleLink.download = imgData;
-                eleLink.style.display = 'none';
-                //字符内容转变成blob地址
-                eleLink.href = imgData;
-                //触发点击
-                document.body.appendChild(eleLink);
-                eleLink.click();
-                //然后移除
-                document.body.removeChild(eleLink);
-            }
-        )
+                    var eleLink = document.createElement("a");
+                    eleLink.download = imgData;
+                    eleLink.style.display = "none";
+                    //字符内容转变成blob地址
+                    eleLink.href = imgData;
+                    //触发点击
+                    document.body.appendChild(eleLink);
+                    eleLink.click();
+                    //然后移除
+                    document.body.removeChild(eleLink);
+                }
+            );
         }
-    }
+    };
     return (
         <Drawer
             open={props.isOpen}
