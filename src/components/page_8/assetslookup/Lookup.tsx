@@ -22,7 +22,7 @@ interface asset{
     haspic:boolean;
     imageurl:string;
 }
-const host = "/image";
+
 const accessKeyId = "LTAI5t7ktfdDQPrsaDua9HaG";
 const accessSecret = "z6KJp2mQNXioRZYF0jkIvNKL5w8fIz";
 const policyText = {
@@ -33,7 +33,7 @@ const policyText = {
 };
 const policyBase64 = Base64.encode(JSON.stringify(policyText));
 const bytes = CryptoJS.HmacSHA1(policyBase64, accessSecret, { asBytes: true });
-const signature = bytes.toString(CryptoJS.enc.Base64); 
+
 const client = new OSS({
     region: "oss-cn-beijing",
     accessKeyId: accessKeyId,
@@ -102,16 +102,16 @@ const Lookup = () => {
                                 if(v!==0){
                                     switch (stnum){
                                     case 1:
-                                        statelist.push(<div><Tag color="green" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
+                                        statelist.push(<div style={{display:"flex",flexDirection:"row"}}><Tag color="green" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
                                         break;
                                     case 2:
-                                        statelist.push(<div><Tag color="green" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
+                                        statelist.push(<div style={{display:"flex",flexDirection:"row"}}><Tag color="blue" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
                                         break;
                                     case 3:
-                                        statelist.push(<div><Tag color="red" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
+                                        statelist.push(<div style={{display:"flex",flexDirection:"row"}} ><Tag color="red" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
                                         break;
                                     case 5:
-                                        statelist.push(<div><Tag color="yellow" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
+                                        statelist.push(<div style={{display:"flex",flexDirection:"row"}} ><Tag color="yellow" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
                                         break;
                                     }
                                 }
@@ -144,7 +144,7 @@ const Lookup = () => {
                     },
                 }}
                 rowKey="key"
-                headerTitle="业务实体操作日志"
+                headerTitle="您拥有的资产列表"
                 dataSource={assetlist}
             />
         </div>
