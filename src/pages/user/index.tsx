@@ -29,6 +29,10 @@ import TbdDrawer from "./tbd";
 import { Typography } from "antd";
 import Ep_Message from "./ep_mg";
 import NSTbdDrawer from "./ns_tbd";
+import Asyncbd from "./asyncdeal/async";
+import Tasklist from "../../components/page_9/Tasklist";
+
+
 const { Text } = Typography;
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -55,7 +59,7 @@ interface app{
     urlvalue:string;
 }
 const AppList: any[] = [
-    "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产定义", "资产管理", "资产分析", "资产申请", "应用列表"
+    "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产定义", "资产管理", "资产分析", "资产申请", "应用列表","异步任务管理"
 ];
 
 //xhb_begin
@@ -63,7 +67,7 @@ const PageList: any[] = [
     <div key={0}><Page_0 /></div>, <div key={1}><EStable /></div>, <div key={2}><Page_2 /></div>,
     <div key={3}><Page_3 /></div>, <div key={4}><Page_4 /></div>, <div key={5}><Page_5 /></div>,
     <div key={6}><App /></div>, <div key={7}><Page_7 /></div>, <div key={8}><Page_8 /></div>,
-    <div key={9}><Page_home /></div>, <div key={10}><Page_set /></div>, <div key={11}><Page_info /></div>, <div key={12}><Applists /> </div>
+    <div key={9}><Page_home /></div>, <div key={10}><Page_set /></div>, <div key={11}><Page_info /></div>, <div key={12}><Applists /> </div>,<div key={13}><Tasklist/></div>
 ];
 //xhb_end
 
@@ -126,6 +130,11 @@ const User: React.FC = () => {
                         }
                     }
                     items.push(getItem("实体管理", "entity", <DesktopOutlined />, child));
+                    items.push(getItem("用户", "/User", <UserOutlined />, [
+                        getItem("信息", 10),
+                        getItem("设置", 11),
+                        getItem("登出", "logout"),
+                    ]));
                 }
                 else if (res.identity === 2) {
                     const child: MenuItem[] = [];
@@ -134,8 +143,15 @@ const User: React.FC = () => {
                         if (element) {
                             child.push(getItem(AppList[index], index));
                         }
+                        
                     }
+                    child.push(getItem(AppList[10],13));
                     items.push(getItem("企业管理", "corp", <HomeOutlined />, child));
+                    items.push(getItem("用户", "/User", <UserOutlined />, [
+                        getItem("信息", 10),
+                        getItem("设置", 11),
+                        getItem("登出", "logout"),
+                    ]));
                 }
                 else if (res.identity === 3) {
                     const child: MenuItem[] = [];
@@ -157,10 +173,20 @@ const User: React.FC = () => {
                                 appsingle.push(getItem(tempapplist[i].name,"url"+tempapplist[i].urlvalue));    
                             }
                             setapplist(tempapplist);
-                            items.push(getItem("应用列表", "apps", <PieChartOutlined />, appsingle));
+                            items.push(getItem("应用列表", "apps", <AppstoreAddOutlined />, appsingle));
+                            items.push(getItem("用户", "/User", <UserOutlined />, [
+                                getItem("信息", 10),
+                                getItem("设置", 11),
+                                getItem("登出", "logout"),
+                            ]));
                         })
                         .catch((err)=>{
                             message.warning(err.message);
+                            items.push(getItem("用户", "/User", <UserOutlined />, [
+                                getItem("信息", 10),
+                                getItem("设置", 11),
+                                getItem("登出", "logout"),
+                            ]));
                         });
                     
                     
@@ -168,7 +194,7 @@ const User: React.FC = () => {
                 else {
                     if (funclist[8] === "1") {
                         items.push(getItem("员工操作", "oper", <PieChartOutlined />, [
-                            getItem("资产申请", 8),
+                            getItem("资产操作", 8),
                         ]));
                     }
                     else items.push(getItem("员工操作", "oper", <PieChartOutlined />));
@@ -183,19 +209,29 @@ const User: React.FC = () => {
                                 appsingle.push(getItem(tempapplist[i].name,"url"+tempapplist[i].urlvalue));    
                             }
                             setapplist(tempapplist);
-                            items.push(getItem("应用列表", "apps", <PieChartOutlined />, appsingle));
+                            items.push(getItem("应用列表", "apps", <AppstoreAddOutlined />, appsingle));
+                            items.push(getItem("用户", "/User", <UserOutlined />, [
+                                getItem("信息", 10),
+                                getItem("设置", 11),
+                                getItem("登出", "logout"),
+                            ]));
                         })
                         .catch((err)=>{
                             message.warning(err.message);
+                            items.push(getItem("用户", "/User", <UserOutlined />, [
+                                getItem("信息", 10),
+                                getItem("设置", 11),
+                                getItem("登出", "logout"),
+                            ]));
                         });
                     
                     
                 }
-                items.push(getItem("用户", "/User", <UserOutlined />, [
-                    getItem("信息", 10),
-                    getItem("设置", 11),
-                    getItem("登出", "logout"),
-                ]));
+                // items.push(getItem("用户", "/User", <UserOutlined />, [
+                //     getItem("信息", 10),
+                //     getItem("设置", 11),
+                //     getItem("登出", "logout"),
+                // ]));
             })
             .catch((err) => {
                 message.warning(err.message);
@@ -266,7 +302,8 @@ const User: React.FC = () => {
                         <Content style={{ margin: "0 16px" }}>
                             <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
                                 
-                                {identity == 3 ? <><Ep_Message /><TbdDrawer /></> : <NSTbdDrawer />}
+                                {identity == 3 ? <><Ep_Message /><TbdDrawer /><Asyncbd/></> : <NSTbdDrawer />}
+                                
                                 <Space align="center">
                                     <Avatar icon={<UserOutlined />} />
                                     <Text strong>
@@ -285,6 +322,35 @@ const User: React.FC = () => {
         );
     }
     else {
+        if(identity==2){
+            return (
+                <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
+                    <Layout style={{ minHeight: "100vh" }}>
+                        <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+                            <Menu theme="dark" mode="inline" items={items}
+                                onClick={handleClick} />
+                        </Sider>
+                        <Layout className="site-layout">
+                            <Content style={{ margin: "0 16px" }}>
+                                <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
+                                    <Asyncbd/>
+                                    <Space align="center">
+                                        <Avatar icon={<UserOutlined />} />
+                                        <Text strong>
+                                            {name}
+                                        </Text>
+                                    </Space>
+                                </Space>
+                                <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer, borderRadius: 10 }}>
+                                    {PageList[page]}
+                                </div>
+                            </Content>
+                            <Footer style={{ textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
+                        </Layout>
+                    </Layout>
+                </Skeleton>
+            );
+        }
         return (
             <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
                 <Layout style={{ minHeight: "100vh" }}>

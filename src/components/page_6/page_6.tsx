@@ -4,7 +4,7 @@ import { Menu } from "antd";
 import AddAsset from "./addAsset";
 import DelAsset from "./delAsset";
 import ClearAsset from "./clearAsset";
-
+import MatainAssets from "./matianAsset";
 
 const items: MenuProps["items"] = [
     {
@@ -17,12 +17,16 @@ const items: MenuProps["items"] = [
     },
     {
         label: "资产清退",
-        key: 3,
+        key: 2,
     },
+    {
+        label:"资产维保",
+        key:3,
+    }
 ];
 
 const PageList: any[] = [
-    <div key={0}> <AddAsset /></div>, <div key={1}><DelAsset /></div>, <div key={1}><ClearAsset/></div>, 
+    <div key={0}> <AddAsset /></div>, <div key={1}><DelAsset /></div>, <div key={2}><ClearAsset/></div>, <div key={3}><MatainAssets/></div>
 ];
 
 const App: React.FC = () => {

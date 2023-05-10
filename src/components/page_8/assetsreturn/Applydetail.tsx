@@ -58,8 +58,8 @@ const Applydetail=(props:DialogProps)=>{
         }
     }),[props.id]);
     return (
-        <Modal  title="该维保申请的信息" onOk={props.onClose} onCancel={props.onClose} open={props.isOpen}  >
-            <label>维保原因：</label>
+        <Modal  title="该资产退库的信息" onOk={props.onClose} onCancel={props.onClose} open={props.isOpen}  >
+            <label>退库原因：</label>
             <p>{props.reason}</p>
             <label> 批复意见：</label>    
             <p>{props.message}</p>
