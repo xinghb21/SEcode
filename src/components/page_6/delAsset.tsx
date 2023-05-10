@@ -307,9 +307,9 @@ const DelAsset = (() => {
                                             if(res.data.user != null) res.data.userlist = [{key: res.data.user, name: res.data.user, number: 1}];
                                         } else {
                                             res.data.userlist = [];
-                                            res.data.userlist.push(Object.entries(res.data.usage).forEach(([key, value]) => {
+                                            res.data.userlist = Object.entries(res.data.usage).map(([key, value]) => {
                                                 return {key: key, name: key, number: value};
-                                            }));
+                                            });
                                         }
                                         if(res.data.haspic == true) 
                                             res.data.imageurl = client.signatureUrl(res.data.entity + "/" + res.data.department + "/" + res.data.name);

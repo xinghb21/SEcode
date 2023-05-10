@@ -161,7 +161,7 @@ const DisplayModel = (props: ModelProps) => {
     const handleFetch = (page:number, pageSize:number) => {
         // 构造请求参数
         // 发送请求获取数据
-        request("/api/asset/history","GET", {page: page})
+        request(`/api/asset/history?id=${props.content.key}&page=${page}`,"GET")
             .then((res) => {
             // 更新表格数据源和分页器状态
                 sethistorylist(res.info.map((val)=>{
@@ -297,6 +297,13 @@ const DisplayModel = (props: ModelProps) => {
                         dataIndex: "category",
                         key: "category",
                         valueType: "text",
+                        editable: false,
+                    },
+                    {
+                        title: "资产总数",
+                        dataIndex: "number",
+                        key: "number",
+                        valueType: "digit",
                         editable: false,
                     },
                     {

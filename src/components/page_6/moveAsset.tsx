@@ -44,7 +44,7 @@ const MoveAsset = (props: DialogProps) => {
                 reason: reason,
                 department: department, 
             }).then((res) => {
-            message.success("调拨成功");
+            message.success("提交成功，请等待审批");
             props.onClose();
         }).catch((err) => {
             message.error(err.message);
