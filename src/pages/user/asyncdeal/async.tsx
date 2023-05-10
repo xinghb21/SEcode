@@ -3,7 +3,7 @@ import { Drawer, Space, Button, Table, Tag, message, Modal, Input, Select, Progr
 import type { ColumnsType } from "antd/es/table";
 import { request } from "../../../utils/network";
 import {
-    CarryOutTwoTone, CloudDownloadOutlined,
+    CarryOutTwoTone, CloudDownloadOutlined,CloudTwoTone
 } from "@ant-design/icons";
 
 import { Badge, Tooltip } from "antd";
@@ -102,7 +102,7 @@ const Asyncbd = () => {
             <Tooltip placement="bottomLeft" title={<span>任务中心</span>}>
                 <Button type="text" size="large" style={{ margin: 5 }} onClick={showDrawer}>
                     <Badge dot style={{ visibility: (!isTBD) ? "hidden" : "visible" }}>
-                        <CloudDownloadOutlined color={(!isTBD) ? "#a8a8a8" : "#f82212"} style={{ fontSize: "25px" }} />
+                        <CloudTwoTone  twoToneColor={(!isTBD) ? "#a8a8a8" : "#f82212"} style={{ fontSize: "25px" }} />
                     </Badge>
                 </Button>
             </Tooltip>
