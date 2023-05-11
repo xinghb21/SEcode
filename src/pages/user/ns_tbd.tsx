@@ -283,7 +283,6 @@ const NSTbdDrawer = () => {
                 <Modal
                     open={open}
                     title="详细信息"
-                    onClose={() => {setOpen(false);}}
                     footer={[
                         <Button key="back" onClick={handleCancel}>
                             确认
