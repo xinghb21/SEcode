@@ -35,7 +35,7 @@ const DisplayModel = () => {
             })
             .catch((err) => {
                 message.error(err.message);
-            })
+            });
     }, [router, query]);
 
     return (
