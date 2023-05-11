@@ -247,7 +247,7 @@ const NSTbdDrawer = () => {
             dataIndex: "status",
             render: (text) => {
                 return (
-                    text == 1 ? <Tag color="green">通过</Tag> : <Tag color="red">未通过</Tag>
+                    text == 1 ? <Tag color="green">通过</Tag> : (text == 2 ? <Tag color="red">未通过</Tag> : <Tag color="blue">维保结束</Tag>) 
                 );
             },
         },
@@ -283,7 +283,7 @@ const NSTbdDrawer = () => {
                 <Modal
                     open={open}
                     title="详细信息"
-                    closable={false}
+                    onClose={() => setOpen(false)}
                     footer={[
                         <Button key="back" onClick={handleCancel}>
                             确认
