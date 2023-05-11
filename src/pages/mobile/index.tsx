@@ -44,97 +44,97 @@ const DisplayModel = () => {
 
     return (
         loading ? <Spin tip="Loading..."></Spin> :
-        <ProDescriptions<AssetDisplayType>
-            column={2}
-            dataSource={assetDisplay}
+            <ProDescriptions<AssetDisplayType>
+                column={2}
+                dataSource={assetDisplay}
             
-            columns={[
-                {
-                    title: "资产编号",
-                    dataIndex: "id",
-                    key: "id",
-                    valueType: "text",
-                    editable: false,
-                },
-                {
-                    title: "资产名称",
-                    dataIndex: "name",
-                    key: "name",
-                    valueType: "text",
-                    editable: false,
-                },
-                {
-                    title: "父资产",
-                    dataIndex: "parent",
-                    key: "parent",
-                    valueType: "text",
-                    editable: false,
-                },
-                {
-                    title: "挂账人",
-                    dataIndex: "belonging",
-                    key: "belonging",
-                    valueType: "text",
-                    editable: false,
-                },
-                {
-                    title: "资产使用年限",
-                    dataIndex: "life",
-                    key: "life",
-                    valueType: "digit",
-                    editable: false,
-                },
-                {
-                    title: "资产类型",
-                    dataIndex: "category",
-                    key: "category",
-                    valueType: "text",
-                    editable: false,
-                },
-                {
-                    title: "资产总数",
-                    dataIndex: "number",
-                    key: "number",
-                    valueType: "digit",
-                    editable: false,
-                },
-                {
-                    title: "可用资产数量",
-                    dataIndex: "number_idle",
-                    key: "number_idle",
-                    valueType: "digit",
-                    editable: false,
-                },
-                {
-                    title: "资产描述",
-                    dataIndex: "description",
-                    key: "description",
-                    valueType: "text",
-                    editable: false,
-                },
-                {
-                    title: "创建时间",
-                    dataIndex: "create_time",
-                    key: "create_time",
-                    valueType: "dateTime",
-                    editable: false,
-                },
-                {
-                    title: "资产原始价值",
-                    dataIndex: "price",
-                    key: "price",
-                    valueType: "money",
-                    editable: false,
-                },
-                {
-                    title: "资产现价值",
-                    dataIndex: "new_price",
-                    key: "new_price",
-                    valueType: "money",
-                    editable: false,
-                },
-            ]}
-        />
+                columns={[
+                    {
+                        title: "资产编号",
+                        dataIndex: "id",
+                        key: "id",
+                        valueType: "text",
+                        editable: false,
+                    },
+                    {
+                        title: "资产名称",
+                        dataIndex: "name",
+                        key: "name",
+                        valueType: "text",
+                        editable: false,
+                    },
+                    {
+                        title: "父资产",
+                        dataIndex: "parent",
+                        key: "parent",
+                        valueType: "text",
+                        editable: false,
+                    },
+                    {
+                        title: "挂账人",
+                        dataIndex: "belonging",
+                        key: "belonging",
+                        valueType: "text",
+                        editable: false,
+                    },
+                    {
+                        title: "资产使用年限",
+                        dataIndex: "life",
+                        key: "life",
+                        valueType: "digit",
+                        editable: false,
+                    },
+                    {
+                        title: "资产类型",
+                        dataIndex: "category",
+                        key: "category",
+                        valueType: "text",
+                        editable: false,
+                    },
+                    {
+                        title: "资产总数",
+                        dataIndex: "number",
+                        key: "number",
+                        valueType: "digit",
+                        editable: false,
+                    },
+                    {
+                        title: "可用资产数量",
+                        dataIndex: "number_idle",
+                        key: "number_idle",
+                        valueType: "digit",
+                        editable: false,
+                    },
+                    {
+                        title: "资产描述",
+                        dataIndex: "description",
+                        key: "description",
+                        valueType: "text",
+                        editable: false,
+                    },
+                    {
+                        title: "创建时间",
+                        dataIndex: "create_time",
+                        key: "create_time",
+                        valueType: "dateTime",
+                        editable: false,
+                    },
+                    {
+                        title: "资产原始价值",
+                        dataIndex: "price",
+                        key: "price",
+                        valueType: "money",
+                        editable: false,
+                    },
+                    {
+                        title: "资产现价值",
+                        dataIndex: "new_price",
+                        key: "new_price",
+                        valueType: "money",
+                        editable: false,
+                    },
+                ]}
+            />
     );
 };
 export default DisplayModel;
