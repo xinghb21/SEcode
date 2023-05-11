@@ -148,7 +148,7 @@ const DisplayModel = (props: ModelProps) => {
             .catch((error) => {
                 message.warning(error.message);
             });
-        setText("http://Aplus-backend-Aplus.app.secoder.net/asset/fulldetail/" + props.content.key.toString());
+        setText("https://frontend-feature-aplus.app.secoder.net/mobile?id=" + assetDisplay.key.toString());
         request("/api/asset/usedlabel", "GET")
             .then((res) => {
                 setUsed(res.info);
