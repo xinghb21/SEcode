@@ -3,11 +3,12 @@ import { useEffect, useState } from "react";
 import React from "react";
 import { useRouter } from "next/router";
 import { request } from "../../utils/network";
-import { message } from "antd";
+import { Spin, message } from "antd";
 
 type AssetDisplayType = {
     //table数据的格式
     key: React.Key;//资产的编号
+    id: number;//资产的id
     parent?: string;//父资产的名称
     category: string;//资产的类型
     name: string;//资产的名称
@@ -26,12 +27,15 @@ const DisplayModel = () => {
 
     const router = useRouter();
     const query = router.query;
+    const [loading, setLoading] = useState<boolean>(true);//是否加载中
     const [assetDisplay, setassetDisplay] = useState<AssetDisplayType>();
 
     useEffect(() => {
+        if(router.isReady === false) return;
         request("/api/asset/fulldetail/" + query.id, "GET")
             .then((res) => {
                 setassetDisplay(res.data);
+                setLoading(false);
             })
             .catch((err) => {
                 message.error(err.message);
@@ -39,16 +43,16 @@ const DisplayModel = () => {
     }, [router, query]);
 
     return (
+        loading ? <Spin tip="Loading..."></Spin> :
         <ProDescriptions<AssetDisplayType>
             column={2}
-            title={assetDisplay?.name}
             dataSource={assetDisplay}
             
             columns={[
                 {
                     title: "资产编号",
-                    dataIndex: "key",
-                    key: "key",
+                    dataIndex: "id",
+                    key: "id",
                     valueType: "text",
                     editable: false,
                 },
