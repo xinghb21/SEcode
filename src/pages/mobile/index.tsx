@@ -47,7 +47,7 @@ const DisplayModel = () => {
             <ProDescriptions<AssetDisplayType>
                 column={2}
                 dataSource={assetDisplay}
-            
+                bordered
                 columns={[
                     {
                         title: "资产编号",
