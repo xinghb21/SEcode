@@ -1,6 +1,6 @@
 import React from "react";
 import { Avatar, List, Space, Button, Tag, message } from "antd";
-import { ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProList, QueryFilter } from "@ant-design/pro-components";
+import { ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProList, QueryFilter, ProTable } from "@ant-design/pro-components";
 import { Progress } from "antd";
 import type { ReactText } from "react";
 import { useState } from "react";
