@@ -146,7 +146,7 @@ const Userlist =( () => {
     }),[castnum]);
     const columns: ProColumns<TableListItem>[] = [
         {
-            title: "姓名",
+            title: "用户名",
             width: 80,
             dataIndex: "name",
             copyable: true,

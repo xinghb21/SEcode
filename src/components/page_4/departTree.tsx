@@ -12,6 +12,7 @@ import {
     ExclamationCircleFilled,
     CaretDownOutlined,
 } from "@ant-design/icons";
+import { ProColumns, ProTable } from "@ant-design/pro-components";
 
 //树组件的item
 type TreeData = {
@@ -23,20 +24,34 @@ type TreeData = {
 const { confirm } = Modal;
 
 //定义table的column
-const columns: ColumnsType<Depuser> = [
+const columns: ProColumns<Depuser>[] = [
     {
         title: "用户名",
+        width: 80,
         dataIndex: "username",
+        copyable: true,
+        ellipsis: true,
     },
     {
         title: "部门",
         dataIndex: "department",
+        width: 80,
+        copyable: true,
+        ellipsis: true,
     },
     {
         title: "职位",
+        width: 80,
         dataIndex: "identity",
-    }
-
+        hideInSearch: true,
+        filters: true,
+        onFilter: true,
+        // align: 'center',
+        valueEnum: {
+            4: { text: "普通员工"},
+            3: { text: "资产管理员"},
+        },
+    },
 ];
 
 //定义table里的每个item
@@ -44,7 +59,7 @@ type Depuser = {
     key: React.Key;
     username: string;
     department: string;
-    identity: string;
+    identity: number;
 }
 //定义page_4的核心组件：一个树组件和相应的table
 const Dtree = () => {
@@ -272,7 +287,7 @@ const Dtree = () => {
                     key: val.name,
                     username: val.name,
                     department: val.department,
-                    identity: (val.identity == 3) ? "资产管理员" : "员工",
+                    identity: (val.identity == 3) ? "💼资产管理员" : "👨‍🔧员工",
                 }));
                 let newUser: Depuser[] = [];
                 let len = res.data.length;
@@ -309,7 +324,7 @@ const Dtree = () => {
                     />
                 </Spin>
             </div>
-            <Table columns={columns} dataSource={Depusers} style={{ height: "100%", width: "70%" }} />
+            <ProTable<Depuser> columns={columns} dataSource={Depusers} search={false} style={{ height: "100%", width: "70%" }} />
             <CtCeDT title={"创建下属部门"} subtitle={"部门名称："} isOpen={isDialogOpenCT} onClose={() => setIsDialogOpenCT(false)} onCreateDt={handleCreateDt} />
             <CtCeDT title={"修改部门名称"} subtitle={"新名称："} isOpen={isDialogOpenCE} onClose={() => setIsDialogOpenCE(false)} onCreateDt={handleChangeDt} />
         </div>
