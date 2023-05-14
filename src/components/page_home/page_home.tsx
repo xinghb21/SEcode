@@ -1,14 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Descriptions, Divider, Space, Typography, Upload, message } from "antd";
+import { Avatar, Card, Col, Descriptions, Divider, Row, Space, Typography, Upload, message } from "antd";
 import { request } from "../../utils/network";
 import { LoadingOutlined, PlusOutlined, UserOutlined } from "@ant-design/icons";
 import { UploadChangeParam } from "antd/es/upload";
-import type { RcFile, UploadProps } from 'antd/es/upload';
-import type { UploadFile } from 'antd/es/upload/interface';
+import type { RcFile, UploadProps } from "antd/es/upload";
+import type { UploadFile } from "antd/es/upload/interface";
 import OSS from "ali-oss";
 import CryptoJS from "crypto-js";
 import Base64 from "base-64";
-import ImgCrop from 'antd-img-crop';
+import ImgCrop from "antd-img-crop";
+import pic1 from "./../../styles/资产查看.jpg";
+import pic2 from "./../../styles/资产分析.jpg";
+import pic3 from "./../../styles/资产管理.jpg";
+import pic4 from "./../../styles/资产申请.jpg";
+import pic5 from "./../../styles/资产退库.jpg";
+import pic6 from "./../../styles/资产维保.jpg";
+import pic7 from "./../../styles/资产转移.jpg";
+import pic8 from "./../../styles/部门管理.jpg";
+import pic9 from "./../../styles/操作日志.jpg";
+import pic10 from "./../../styles/人员管理.jpg";
+import pic11 from "./../../styles/异步任务.jpg";
+
+const { Meta } = Card;
 
 const { Title } = Typography;
 
@@ -17,6 +30,7 @@ interface Props {
     username: string;
     department: string;
     entity: string;
+    head: boolean;
 }
 
 const accessKeyId = "LTAI5t7ktfdDQPrsaDua9HaG";
@@ -48,27 +62,35 @@ const Page_home = () => {
         username: "",
         department: "",
         entity: "",
+        head: false,
     });
 
     const beforeUpload = (file: RcFile) => {
-        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+        const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
         if (!isJpgOrPng) {
-          message.error('You can only upload JPG/PNG file!');
+            message.error("You can only upload JPG/PNG file!");
         }
         const isLt2M = file.size / 1024 / 1024 < 2;
         if (!isLt2M) {
-          message.error('Image must smaller than 2MB!');
+            message.error("Image must smaller than 2MB!");
         }
         return isJpgOrPng && isLt2M;
     };
 
-    const handleChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
-        if (info.file.status === 'uploading') {
+    const handleChange: UploadProps["onChange"] = (info: UploadChangeParam<UploadFile>) => {
+        if (info.file.status === "uploading") {
             setLoading(true);
             return;
         }
-        if (info.file.status === 'done') {
-          // Get this url from response in real world.
+        if (info.file.status === "done") {
+            // Get this url from response in real world.
+            request("/api/user/changehead", "POST")
+                .then((res) => {
+                    message.success("头像上传成功！");
+                })
+                .catch((err) => {
+                    message.error(err.message);
+                });
             let url = client.signatureUrl(user.entity + "/" + user.department + "/" + user.username);
             setImageUrl(url);
             setLoading(false);
@@ -98,7 +120,9 @@ const Page_home = () => {
                 else if(res.identity === 3) res.identity = "资产管理员";
                 else res.identity = "员工";
                 setUser(res);
-                let url = client.signatureUrl(res.entity + "/" + res.department + "/" + res.username);
+                let url = undefined;
+                if(res.head === true)
+                    url = client.signatureUrl(res.entity + "/" + res.department + "/" + res.username);
                 setImageUrl(url);
             })
             .catch((err) => {
@@ -115,7 +139,7 @@ const Page_home = () => {
 
     return (
         <>
-            <div style={{ display: "flex"}}>
+            <div style={{ display: "flex", marginBottom: "1%"}}>
                 <div style={{ width: "80%"}} key={0}>
                     <Title>☕️Welcome Back, {localStorage.getItem("username")} !</Title>
                     <Divider></Divider>
@@ -144,12 +168,161 @@ const Page_home = () => {
                                 signature: signature,
                             }}
                         >
-                            {imageUrl ? <Avatar src={imageUrl} alt="avatar" style={{ width: '100%', height: "100%" }} /> : uploadButton}
+                            {imageUrl ? <Avatar src={imageUrl} alt="avatar" style={{ width: "100%", height: "100%" }} /> : uploadButton}
                         </Upload>
                     </ImgCrop>
                 </div>
             </div>
-            <Divider></Divider>
+            <Card title="应用导航">
+                <Row gutter={[16, 16]}>
+                    {
+                        user.identity === "员工" ?
+                            <>
+                                <Col span={6}>
+                                    <Card
+                                        hoverable
+                                        style={{ width: 240 }}
+                                        cover={<img alt="example" src={pic1.src} />}
+                                    >
+                                        <Meta title="资产查看" description="查看拥有的资产列表" />
+                                    </Card>
+                                </Col>
+                                <Col span={6}>
+                                    <Card
+                                        hoverable
+                                        style={{ width: 240 }}
+                                        cover={<img alt="example" src={pic4.src} />}
+                                    >
+                                        <Meta title="资产领用" description="查看可领用的资产及申请列表" />
+                                    </Card>
+                                </Col>
+                                <Col span={6}>
+                                    <Card
+                                        hoverable
+                                        style={{ width: 240 }}
+                                        cover={<img alt="example" src={pic7.src} />}
+                                    >
+                                        <Meta title="资产转移" description="查看可转移的资产及申请列表" />
+                                    </Card>
+                                </Col>
+                                <Col span={6}>
+                                    <Card
+                                        hoverable
+                                        style={{ width: 240 }}
+                                        cover={<img alt="example" src={pic6.src} />}
+                                    >
+                                        <Meta title="资产维保" description="查看可维保的资产及申请列表" />
+                                    </Card>
+                                </Col>
+                                <Col span={6}>
+                                    <Card
+                                        hoverable
+                                        style={{ width: 240 }}
+                                        cover={<img alt="example" src={pic5.src} />}
+                                    >
+                                        <Meta title="资产退库" description="查看可退库的资产及申请列表" />
+                                    </Card>
+                                </Col>
+                            </> : null
+                    }
+                    {
+                        user.identity === "资产管理员" ?
+                            <>
+                                <Col span={6}>
+                                    <Card
+                                        hoverable
+                                        style={{ width: 240 }}
+                                        cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                                    >
+                                        <Meta title="资产管理" description="资产管理系统" />
+                                    </Card>
+                                </Col>
+                                <Col span={6}>
+                                    <Card
+                                        hoverable
+                                        style={{ width: 240 }}
+                                        cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                                    >
+                                        <Meta title="资产管理" description="资产管理系统" />
+                                    </Card>
+                                </Col>
+                                <Col span={6}>
+                                    <Card
+                                        hoverable
+                                        style={{ width: 240 }}
+                                        cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                                    >
+                                        <Meta title="资产管理" description="资产管理系统" />
+                                    </Card>
+                                </Col>
+                            </> : null
+                    }
+                    {
+                        user.identity === "系统管理员" ?
+                            <>
+                                <Col span={6}>
+                                    <Card
+                                        hoverable
+                                        style={{ width: 240 }}
+                                        cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                                    >
+                                        <Meta title="资产管理" description="资产管理系统" />
+                                    </Card>
+                                </Col>
+                                <Col span={6}>
+                                    <Card
+                                        hoverable
+                                        style={{ width: 240 }}
+                                        cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                                    >
+                                        <Meta title="资产管理" description="资产管理系统" />
+                                    </Card>
+                                </Col>
+                                <Col span={6}>
+                                    <Card
+                                        hoverable
+                                        style={{ width: 240 }}
+                                        cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                                    >
+                                        <Meta title="资产管理" description="资产管理系统" />
+                                    </Card>
+                                </Col>
+                                <Col span={6}>
+                                    <Card
+                                        hoverable
+                                        style={{ width: 240 }}
+                                        cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                                    >
+                                        <Meta title="资产管理" description="资产管理系统" />
+                                    </Card>
+                                </Col>
+                            </> : null
+                    }
+                    {
+                        user.identity === "超级系统管理员" ?
+                            <>
+                                <Col span={6}>
+                                    <Card
+                                        hoverable
+                                        style={{ width: 240 }}
+                                        cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                                    >
+                                        <Meta title="业务实体管理" description="资产管理系统" />
+                                    </Card>
+                                </Col>
+                                <Col span={6}>
+                                    <Card
+                                        hoverable
+                                        style={{ width: 240 }}
+                                        cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                                    >
+                                        <Meta title="系统人员管理" description="资产管理系统" />
+                                    </Card>
+                                </Col>
+                            </> : null
+                    }
+                </Row>
+            </Card>
         </>
         
     );

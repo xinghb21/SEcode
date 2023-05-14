@@ -312,6 +312,7 @@ const AddAsset = () => {
                                     message.error("上传失败");
                                 }
                             );
+                            setImgList([]);
                         }
 
                         const asset : Asset = {
@@ -331,9 +332,7 @@ const AddAsset = () => {
                             
                         };
                         setAsset([...assets, asset]);
-
-                        
-
+                        setValue("");
                         return true;
                     }}
                 >
