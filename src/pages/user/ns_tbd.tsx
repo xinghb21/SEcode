@@ -233,10 +233,16 @@ const NSTbdDrawer = () => {
                             资产退库
                         </Tag>
                     );
-                } else {
+                } else if(text === 5){
                     return (
                         <Tag color="purple">
                             待确认资产
+                        </Tag>
+                    );
+                } else{
+                    return (
+                        <Tag color="red">
+                            维保结束
                         </Tag>
                     );
                 }
@@ -247,7 +253,7 @@ const NSTbdDrawer = () => {
             dataIndex: "status",
             render: (text) => {
                 return (
-                    text == 1 ? <Tag color="green">通过</Tag> : (text == 2 ? <Tag color="red">未通过</Tag> : <Tag color="blue">维保结束</Tag>) 
+                    text == 2 ? <Tag color="red">未通过</Tag> : <Tag color="green">通过</Tag>
                 );
             },
         },
@@ -291,10 +297,10 @@ const NSTbdDrawer = () => {
                 >   
                     <p>消息编号：{assetdisdata?.id}</p>
                     <p>操作类型：{assetdisdata?.type === 1 ? "资产领用" : assetdisdata?.type === 2 ? "资产转移" : assetdisdata?.type === 3 ? "资产维保" : assetdisdata?.type === 4 ? "资产退库" : "待确认资产"}</p>
-                    <p>审批结果：{assetdisdata?.status === 1 ? "通过" : "未通过"}</p>
+                    <p>审批结果：{assetdisdata?.status === 2 ? "未通过" : "通过"}</p>
                     <p>审批意见：{assetdisdata?.message}</p>
                     {
-                        assetdisdata?.type === 5 ? <Table columns={column} dataSource={assetdisdata?.info} /> : <Table columns={Assetcolumns} dataSource={assetdisdata?.info} />      
+                        assetdisdata?.type === 5 ? <Table columns={column} dataSource={assetdisdata?.info} /> : <Table columns={Assetcolumns} dataSource={assetdisdata?.info} />
                     }
                 </Modal>
             </Drawer>
