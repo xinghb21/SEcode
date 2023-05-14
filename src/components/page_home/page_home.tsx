@@ -187,7 +187,7 @@ const Page_home = (prop: ClickProps) => {
                                         hoverable
                                         style={{ width: 240 }}
                                         cover={<img alt="example" src={pic1.src} />}
-                                        onClick={() => prop.onChange(1)}
+                                        onClick={() => prop.onChange(14)}
                                     >
                                         <Meta title="资产查看" description="查看拥有的资产列表" />
                                     </Card>
@@ -197,6 +197,7 @@ const Page_home = (prop: ClickProps) => {
                                         hoverable
                                         style={{ width: 240 }}
                                         cover={<img alt="example" src={pic4.src} />}
+                                        onClick={() => prop.onChange(15)}
                                     >
                                         <Meta title="资产领用" description="查看可领用的资产及申请列表" />
                                     </Card>
@@ -206,6 +207,7 @@ const Page_home = (prop: ClickProps) => {
                                         hoverable
                                         style={{ width: 240 }}
                                         cover={<img alt="example" src={pic7.src} />}
+                                        onClick={() => prop.onChange(16)}
                                     >
                                         <Meta title="资产转移" description="查看可转移的资产及申请列表" />
                                     </Card>
@@ -215,6 +217,7 @@ const Page_home = (prop: ClickProps) => {
                                         hoverable
                                         style={{ width: 240 }}
                                         cover={<img alt="example" src={pic6.src} />}
+                                        onClick={() => prop.onChange(17)}
                                     >
                                         <Meta title="资产维保" description="查看可维保的资产及申请列表" />
                                     </Card>
@@ -224,6 +227,7 @@ const Page_home = (prop: ClickProps) => {
                                         hoverable
                                         style={{ width: 240 }}
                                         cover={<img alt="example" src={pic5.src} />}
+                                        onClick={() => prop.onChange(18)}
                                     >
                                         <Meta title="资产退库" description="查看可退库的资产及申请列表" />
                                     </Card>
