@@ -52,7 +52,11 @@ const client = new OSS({
     bucket: "aplus-avatar",
 });
 
-const Page_home = () => {
+interface ClickProps {
+    onChange : (e: number) => void;
+}
+
+const Page_home = (prop: ClickProps) => {
 
     const [loading, setLoading] = useState(false);
     const [imageUrl, setImageUrl] = useState<string>();
@@ -183,6 +187,7 @@ const Page_home = () => {
                                         hoverable
                                         style={{ width: 240 }}
                                         cover={<img alt="example" src={pic1.src} />}
+                                        onClick={() => prop.onChange(1)}
                                     >
                                         <Meta title="资产查看" description="查看拥有的资产列表" />
                                     </Card>
@@ -232,27 +237,30 @@ const Page_home = () => {
                                     <Card
                                         hoverable
                                         style={{ width: 240 }}
-                                        cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                                        cover={<img alt="example" src={pic1.src} />}
+                                        onClick={() => prop.onChange(5)}
                                     >
-                                        <Meta title="资产管理" description="资产管理系统" />
+                                        <Meta title="资产定义" description="定义资产类别、自定义属性以及资产标签格式" />
                                     </Card>
                                 </Col>
                                 <Col span={6}>
                                     <Card
                                         hoverable
                                         style={{ width: 240 }}
-                                        cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                                        cover={<img alt="example" src={pic3.src} />}
+                                        onClick={() => prop.onChange(6)}
                                     >
-                                        <Meta title="资产管理" description="资产管理系统" />
+                                        <Meta title="资产管理" description="进行资产录入、变更、清退和维保" />
                                     </Card>
                                 </Col>
                                 <Col span={6}>
                                     <Card
                                         hoverable
                                         style={{ width: 240 }}
-                                        cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                                        cover={<img alt="example" src={pic2.src} />}
+                                        onClick={() => prop.onChange(7)}
                                     >
-                                        <Meta title="资产管理" description="资产管理系统" />
+                                        <Meta title="资产分析" description="查看资产统计、资产告警和历史" />
                                     </Card>
                                 </Col>
                             </> : null
@@ -264,36 +272,40 @@ const Page_home = () => {
                                     <Card
                                         hoverable
                                         style={{ width: 240 }}
-                                        cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                                        cover={<img alt="example" src={pic8.src} />}
+                                        onClick={() => prop.onChange(4)}
                                     >
-                                        <Meta title="资产管理" description="资产管理系统" />
+                                        <Meta title="企业部门管理" description="部门树及员工查看" />
                                     </Card>
                                 </Col>
                                 <Col span={6}>
                                     <Card
                                         hoverable
                                         style={{ width: 240 }}
-                                        cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                                        cover={<img alt="example" src={pic10.src} />}
+                                        onClick={() => prop.onChange(2)}
                                     >
-                                        <Meta title="资产管理" description="资产管理系统" />
+                                        <Meta title="企业人员管理" description="员工创建、查询与删除" />
                                     </Card>
                                 </Col>
                                 <Col span={6}>
                                     <Card
                                         hoverable
                                         style={{ width: 240 }}
-                                        cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                                        cover={<img alt="example" src={pic9.src} />}
+                                        onClick={() => prop.onChange(3)}
                                     >
-                                        <Meta title="资产管理" description="资产管理系统" />
+                                        <Meta title="操作日志查询" description="查看本业务实体下的操作日志" />
                                     </Card>
                                 </Col>
                                 <Col span={6}>
                                     <Card
                                         hoverable
                                         style={{ width: 240 }}
-                                        cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                                        cover={<img alt="example" src={pic11.src} />}
+                                        onClick={() => prop.onChange(13)}
                                     >
-                                        <Meta title="资产管理" description="资产管理系统" />
+                                        <Meta title="异步任务管理" description="管理业务实体内异步导入导出任务" />
                                     </Card>
                                 </Col>
                             </> : null
@@ -305,18 +317,20 @@ const Page_home = () => {
                                     <Card
                                         hoverable
                                         style={{ width: 240 }}
-                                        cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                                        cover={<img alt="example" src={pic8.src} />}
+                                        onClick={() => prop.onChange(0)}
                                     >
-                                        <Meta title="业务实体管理" description="资产管理系统" />
+                                        <Meta title="业务实体管理" description="业务实体的查看、创建及删除" />
                                     </Card>
                                 </Col>
                                 <Col span={6}>
                                     <Card
                                         hoverable
                                         style={{ width: 240 }}
-                                        cover={<img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png" />}
+                                        cover={<img alt="example" src={pic10.src} />}
+                                        onClick={() => prop.onChange(1)}
                                     >
-                                        <Meta title="系统人员管理" description="资产管理系统" />
+                                        <Meta title="系统人员管理" description="系统管理员的任命与解雇" />
                                     </Card>
                                 </Col>
                             </> : null

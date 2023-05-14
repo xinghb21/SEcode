@@ -62,14 +62,6 @@ const AppList: any[] = [
     "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产定义", "资产管理", "资产分析", "资产申请", "应用列表","异步任务管理"
 ];
 
-//xhb_begin
-const PageList: any[] = [
-    <div key={0}><Page_0 /></div>, <div key={1}><EStable /></div>, <div key={2}><Page_2 /></div>,
-    <div key={3}><Page_3 /></div>, <div key={4}><Page_4 /></div>, <div key={5}><Page_5 /></div>,
-    <div key={6}><App /></div>, <div key={7}><Page_7 /></div>, <div key={8}><Page_8 /></div>,
-    <div key={9}><Page_home /></div>, <div key={10}><Page_set /></div>, <div key={11}><Page_info /></div>, <div key={12}><Applists /> </div>,<div key={13}><Tasklist/></div>
-];
-//xhb_end
 
 //这里的item从后端获取数据后形成
 const items: MenuItem[] = [];
@@ -99,6 +91,17 @@ const User: React.FC = () => {
                 fetchList(res.name);
             });
     }, [router]);
+
+    const onChange = (key: number) => {
+        setPage(key);
+    };
+
+    const PageList: any[] = [
+        <div key={0}><Page_0 /></div>, <div key={1}><EStable /></div>, <div key={2}><Page_2 /></div>,
+        <div key={3}><Page_3 /></div>, <div key={4}><Page_4 /></div>, <div key={5}><Page_5 /></div>,
+        <div key={6}><App /></div>, <div key={7}><Page_7 /></div>, <div key={8}><Page_8 /></div>,
+        <div key={9}><Page_home onChange={onChange}/></div>, <div key={10}><Page_set /></div>, <div key={11}><Page_info /></div>, <div key={12}><Applists /> </div>,<div key={13}><Tasklist/></div>
+    ];
 
     //通过后端获取的funlist以及用户对应的identity实现侧边栏应用
     //具体的key还需要完善
