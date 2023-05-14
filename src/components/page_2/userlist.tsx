@@ -1,4 +1,4 @@
-import { Avatar, List, Space, Button, Tag, message } from "antd";
+import { Avatar, List, Space, Button, Tag, message, Tooltip } from "antd";
 import React from "react";
 import { ProColumns, ProForm, ProFormSelect, ProFormText, ProList, ProTable, QueryFilter, TableDropdown } from "@ant-design/pro-components";
 import { Progress } from "antd";
@@ -15,7 +15,7 @@ import CreateUser2 from "./CreateUser2";
 import CreateDE from "./CreateDE";
 import Manageapp from "./Manageapp";
 import Appmanage from "./Appmanage";
-import { DownOutlined } from "@ant-design/icons";
+import { ArrowDownOutlined, ArrowUpOutlined, DownOutlined, LockOutlined, PlusSquareOutlined, UnlockOutlined } from "@ant-design/icons";
 
 export type TableListItem = {
   key: string;
@@ -171,9 +171,28 @@ const Userlist =( () => {
             onFilter: true,
             // align: 'center',
             valueEnum: {
-                unlocked: { text: "正常", status: "Success" },
+                unlocked: { text:"正常", status: "Success" },
                 locked: { text: "被锁定", status: "Error" },
             },
+            render: (text, row) => [
+                (row.status === "unlocked")?
+                (<div>
+                    <Tag color="green" key={row.status}>正常</Tag>
+                    <span>
+                        <Tooltip placement="bottom" title={<span>点击锁定</span>}>
+                            <UnlockOutlined style={{ marginLeft: 10 }} onClick={() => lock(row.name)} />
+                        </Tooltip>
+                    </span>
+                </div>):
+                (<div>
+                    <Tag color="red" key={row.status}>被锁定</Tag>
+                    <span>
+                        <Tooltip placement="bottom" title={<span>点击解锁</span>}>
+                            <LockOutlined style={{ marginLeft: 10 }} onClick={() => unlock(row.name)} />
+                        </Tooltip>
+                    </span>
+                </div>)
+            ]
         },
         {
             title: "职位",
@@ -187,6 +206,25 @@ const Userlist =( () => {
                 em: { text: "👨‍🔧普通员工"},
                 ep: { text: "💼资产管理员"},
             },
+            render: (text, row) => [
+                (row.job === "em")?
+                (<div>
+                    <span>👨‍🔧普通员工</span>
+                    <span>
+                        <Tooltip placement="bottom" title={<span>升职为资产管理员</span>}>
+                            <ArrowUpOutlined  style={{ marginLeft: 10 }} onClick={() => changepos(row)} />
+                        </Tooltip>
+                    </span>
+                </div>):
+                (<div>
+                    <span>💼资产管理员</span>
+                    <span>
+                        <Tooltip placement="bottom" title={<span>降职为普通员工</span>}>
+                            <ArrowDownOutlined style={{ marginLeft: 10 }} onClick={() => changepos(row)} />
+                        </Tooltip>
+                    </span>
+                </div>)
+            ]
         },
         {
             title: "操作",
