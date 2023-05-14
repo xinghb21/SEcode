@@ -146,82 +146,82 @@ const Userlist =( () => {
     }),[castnum]);
     const columns: ProColumns<TableListItem>[] = [
         {
-        title: '姓名',
-        width: 80,
-        dataIndex: 'name',
-        copyable: true,
-        ellipsis: true,
+            title: "姓名",
+            width: 80,
+            dataIndex: "name",
+            copyable: true,
+            ellipsis: true,
         },
         {
-        title: '部门',
-        dataIndex: 'department',
-        width: 80,
-        copyable: true,
-        ellipsis: true,
+            title: "部门",
+            dataIndex: "department",
+            width: 80,
+            copyable: true,
+            ellipsis: true,
         // valueEnum: departmentlsit.map((item)=>{return {text:item.label,value:item.value};}),
         // align: 'center',
         // sorter: (a, b) => a.containers - b.containers,
         },
         {
-        title: '状态',
-        width: 80,
-        dataIndex: 'status',
-        hideInSearch: true,
-        filters: true,
-        onFilter: true,
-        // align: 'center',
-        valueEnum: {
-            unlocked: { text: '正常', status: 'Success' },
-            locked: { text: '被锁定', status: 'Error' },
-        },
-        },
-        {
-        title: '职位',
-        width: 80,
-        dataIndex: 'job',
-        hideInSearch: true,
-        filters: true,
-        onFilter: true,
-        // align: 'center',
-        valueEnum: {
-            em: { text: '👨‍🔧普通员工'},
-            ep: { text: '💼资产管理员'},
-        },
+            title: "状态",
+            width: 80,
+            dataIndex: "status",
+            hideInSearch: true,
+            filters: true,
+            onFilter: true,
+            // align: 'center',
+            valueEnum: {
+                unlocked: { text: "正常", status: "Success" },
+                locked: { text: "被锁定", status: "Error" },
+            },
         },
         {
-        title: '操作',
-        valueType: 'option',
-        width: 80,
-        key: 'option',
-        render: (text, row, _) => [
-            <Button onClick={()=>{assign({key:row.name,username: row.name , Department:row.department});}} >调整部门</Button>,
-            <TableDropdown
-            key="actionGroup"
-            onSelect={(key) => {
-                if(key === 'app'){
-                    setmanagename(row.name);
-                    setmanage(true);
-                }else if(key === 'reset'){
-                    setresetname(row.name);
-                    setisreset(true);
-                }else if(key === 'lock'){
-                    lock(row.name);
-                }else if(key === 'unlock'){
-                    unlock(row.name);
-                }else if(key === 'down'){
-                    changepos(row);
-                }else if(key === 'up'){
-                    changepos(row);
-                }
-            }}
-            menus={[
-                { key: 'app', name: '管理应用' },
-                { key: 'reset', name: '重置密码' },
-                (row.status === "unlocked")?{ key: 'lock', name: '锁定' }:{ key: 'unlock', name: '解锁' },
-                (row.job === "ep")?{ key: 'down', name: '降职' }:{ key: 'up', name: '升职' },
-                ]}
-            />,
-        ],
+            title: "职位",
+            width: 80,
+            dataIndex: "job",
+            hideInSearch: true,
+            filters: true,
+            onFilter: true,
+            // align: 'center',
+            valueEnum: {
+                em: { text: "👨‍🔧普通员工"},
+                ep: { text: "💼资产管理员"},
+            },
+        },
+        {
+            title: "操作",
+            valueType: "option",
+            width: 80,
+            key: "option",
+            render: (text, row, _) => [
+                <Button key="outer" onClick={()=>{assign({key:row.name,username: row.name , Department:row.department});}} >调整部门</Button>,
+                <TableDropdown
+                    key="actionGroup"
+                    onSelect={(key) => {
+                        if(key === "app"){
+                            setmanagename(row.name);
+                            setmanage(true);
+                        }else if(key === "reset"){
+                            setresetname(row.name);
+                            setisreset(true);
+                        }else if(key === "lock"){
+                            lock(row.name);
+                        }else if(key === "unlock"){
+                            unlock(row.name);
+                        }else if(key === "down"){
+                            changepos(row);
+                        }else if(key === "up"){
+                            changepos(row);
+                        }
+                    }}
+                    menus={[
+                        { key: "app", name: "管理应用" },
+                        { key: "reset", name: "重置密码" },
+                        (row.status === "unlocked")?{ key: "lock", name: "锁定" }:{ key: "unlock", name: "解锁" },
+                        (row.job === "ep")?{ key: "down", name: "降职" }:{ key: "up", name: "升职" },
+                    ]}
+                />,
+            ],
         },
     ];
 
@@ -368,36 +368,37 @@ const Userlist =( () => {
                 columns={columns}
                 request={(params, sorter, filter) => {
                     // 表单搜索项会从 params 传入，传递给后端接口。
-                    console.log("hello world")
-                    // console.log(params, sorter, filter);
+                    console.log("hello world");
+                    console.log(params);
                     let tableListDataSource: TableListItem[] = [];
                     let success:boolean = true;
                     request("api/user/es/searchuser","POST",{username:params.name,department:params.department,identity:(params.job)?((params.job === "ep")?3:4):undefined})
-                    .then((res)=>{
-                        let size1:number=(res.data).length;
-                        let i=0;
-                        let temptable : TableListItem[] = [];
+                        .then((res)=>{
+                            let size1:number=(res.data).length;
+                            let i=0;
+                            let temptable : TableListItem[] = [];
 
-                        for (i;i<size1;i++){
-                            temptable.push({key:res.data[i].name,
-                                name:res.data[i].name,
-                                department:res.data[i].department,
-                                job:(res.data[i].identity === 3)?"ep":"em",
-                                status:(res.data[i].locked)?"locked":"unlocked"
-                            });
-                        }
-                        console.log(temptable);
-                        setusertable(temptable);
-                        success = true;
+                            for (i;i<size1;i++){
+                                temptable.push({key:res.data[i].name,
+                                    name:res.data[i].name,
+                                    department:res.data[i].department,
+                                    job:(res.data[i].identity === 3)?"ep":"em",
+                                    status:(res.data[i].locked)?"locked":"unlocked",
+                                    lockedapp:res.data[i].lockedapp,
+                                    entity:res.data[i].entity
+                                });
+                            }
+                            setusertable(temptable);
+                            success = true;
                         // message.success("查询成功");
-                    })
-                    .catch((err)=>{
-                        success = false;
-                        message.warning(err.message);
-                    });
+                        })
+                        .catch((err)=>{
+                            success = false;
+                            message.warning(err.message);
+                        });
                     return Promise.resolve({
-                    data: [],
-                    success: success,
+                        data: [],
+                        success: success,
                     });
                 }}
                 rowKey="key"
@@ -405,21 +406,21 @@ const Userlist =( () => {
                     showQuickJumper: true,
                 }}
                 search={{
-                    labelWidth: 'auto',
+                    labelWidth: "auto",
                 }}
                 dateFormatter="string"
                 dataSource={usertable}
                 headerTitle="员工列表"
                 toolBarRender={() => [
-                <Button key="1" type="primary" onClick={()=>{setIsDialogOpen1(true);}}>
+                    <Button key="1" type="primary" onClick={()=>{setIsDialogOpen1(true);}}>
                     创建资产管理员
-                </Button>,
-                <Button key="3" type="primary" onClick={()=>{setIsDialogOpen2(true);}}>
+                    </Button>,
+                    <Button key="3" type="primary" onClick={()=>{setIsDialogOpen2(true);}}>
                     创建企业员工
-                </Button>,
-                <Button key="2" type="default" danger={true} onClick={delete_users} disabled={!hasSelected}> 删除选中人员</Button>,                        
-            ]}
-                />
+                    </Button>,
+                    <Button key="2" type="default" danger={true} onClick={delete_users} disabled={!hasSelected}> 删除选中人员</Button>,                        
+                ]}
+            />
         </div>
     );
 }
