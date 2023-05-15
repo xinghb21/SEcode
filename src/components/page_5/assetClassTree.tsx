@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Spin, Tag } from "antd";
 import { request } from "../../utils/network";
-import { Modal, Tree, Tooltip, Table,message } from "antd";
+import { Modal, Tree, Tooltip, Table, message, Button, Spin, Tag, Typography, Divider } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import { ColumnsType } from "antd/es/table";
+import { ModalForm, ProForm, ProFormText } from "@ant-design/pro-components";
+const { Title } = Typography;
 // import type { ColumnsType } from "antd/es/table";
 import {
     FormOutlined,
@@ -20,6 +23,18 @@ type TreeData = {
     key: string;
     children?: TreeData[];
 };
+// 属性
+interface Type {
+    key: React.Key,
+    info: string,
+}
+const columns: ColumnsType<Type> = [
+    {
+        title: "已定义属性",
+        dataIndex: "info",
+    },
+];
+//属性
 
 const { confirm } = Modal;
 
@@ -35,6 +50,30 @@ const ACtree = () => {
     const [parent, setParent] = useState("");
     const [OldName, setOldName] = useState("");
     const router = useRouter();
+
+    //属性
+    const [types, setType] = useState<Type[]>([]);
+
+    //从后端获取部门对应的所有自定义属性
+    useEffect(() => {
+        request("/api/asset/attributes", "GET")
+            .then((res) => {
+                let typelist: Type[] = [];
+                for (let i = 0; i < res.info.length; i++) {
+                    let tmp_type: Type = {
+                        key: res.info[i],
+                        info: res.info[i],
+                    };
+                    typelist.push(tmp_type);
+                }
+                setType(typelist);
+            })
+            .catch((err) => {
+                message.warning(err.message);
+            });
+    }, []);
+    //属性
+
     useEffect(() => {
         if (!router.isReady) {
             return;
@@ -185,7 +224,7 @@ const ACtree = () => {
     //创建新的资产类型
     const handleCreateAC = (assetClassName: string, assetClass: string) => {
         //不允许空输入
-        if (!assetClassName.trim()  || assetClassName.length == 0) {
+        if (!assetClassName.trim() || assetClassName.length == 0) {
             message.warning("请输入资产类型名称");
             return;
         }
@@ -234,7 +273,7 @@ const ACtree = () => {
     //更改部门的名称
     const handleChangeAC = (assetClassName: string) => {
         //不允许空输入
-        if (!assetClassName.trim()  || assetClassName.length == 0) {
+        if (!assetClassName.trim() || assetClassName.length == 0) {
             message.warning("请输入资产类型名称");
             return;
         }
@@ -253,24 +292,105 @@ const ACtree = () => {
         setIsDialogOpenCE(false);
     };
     return (
-        <div>
-            <div style={{ backgroundColor: "#ADD8E6", marginRight: 20, padding: 10, borderRadius: 10, minWidth: "30%", maxWidth: "60%", height: "100%" }}>
-                <Spin spinning={isSpinning}>
-                    <Tree
-                        showLine
-                        switcherIcon={<CaretDownOutlined />}
-                        // checkStrictly={true}
-                        style={{ backgroundColor: "#fdfdfd", padding: 10, borderRadius: 20 }}
-                        // checkable
-                        treeData={parseTreeData(json)}
-                    // onCheck={handleCheck}
-                    />
-                </Spin>
-                {/* <Table columns={columns} dataSource={Depusers} style={{ height: "100%", width: "70%" }} /> */}
-                <CreateAC title={"创建下属资产类型"} subtitle={"资产类别名称："} isOpen={isDialogOpenCT} onClose={() => setIsDialogOpenCT(false)} onCreateDt={handleCreateAC} />
-                <ChangeAC title={"修改资产类型名称"} subtitle={"新名称："} isOpen={isDialogOpenCE} onClose={() => setIsDialogOpenCE(false)} onCreateDt={handleChangeAC} />
+        <div style={{ display: "flex", flexDirection: "row" }}>
+            <div style={{ width: "50%", height: "100%" }}>
+                <Title level={4} style={{ marginTop: 10 }}>资产类别定义</Title>
+                <div style={{ backgroundColor: "#f7f7f7", marginRight: 20, padding: 10, borderRadius: 10 }}>
+                    <Spin spinning={isSpinning}>
+                        <Tree
+                            showLine
+                            switcherIcon={<CaretDownOutlined />}
+                            // checkStrictly={true}
+                            style={{ backgroundColor: "#ffffff", padding: 10, borderRadius: 20 }}
+                            // checkable
+                            treeData={parseTreeData(json)}
+                        // onCheck={handleCheck}
+                        />
+                    </Spin>
+                    {/* <Table columns={columns} dataSource={Depusers} style={{ height: "100%", width: "70%" }} /> */}
+                    <CreateAC title={"创建下属资产类型"} subtitle={"资产类别名称："} isOpen={isDialogOpenCT} onClose={() => setIsDialogOpenCT(false)} onCreateDt={handleCreateAC} />
+                    <ChangeAC title={"修改资产类型名称"} subtitle={"新名称："} isOpen={isDialogOpenCE} onClose={() => setIsDialogOpenCE(false)} onCreateDt={handleChangeAC} />
+                </div>
             </div>
-            <div style={{ width: "40%" }}></div>
+            <div style={{ width: "50%", height: "100%" }}>
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                    <Title level={4} style={{ marginTop: 10, width: "80%" }}>资产属性定义</Title>
+                    <ModalForm
+                        style={{ width: "20%" }}
+                        autoFocusFirstInput
+                        modalProps={{
+                            destroyOnClose: true,
+                        }}
+                        trigger={
+                            <Button type="primary"
+                                style={{ margin: 10 }}>
+                                <PlusOutlined />
+                                添加资产属性
+                            </Button>
+                        }
+                        onFinish={async (values: any) => {
+                            const label: Type = {
+                                key: values.info,
+                                info: values.info,
+                            };
+                            if (values.info == "资产类别") {
+                                message.warning("不能使用默认属性");
+                            }
+                            else if (values.info == "资产描述") {
+                                message.warning("不能使用默认属性");
+                            }
+                            else if (values.info == "资产名称") {
+                                message.warning("不能使用默认属性");
+                            }
+                            else if (values.info == "上级资产名称") {
+                                message.warning("不能使用默认属性");
+                            }
+                            else if (values.info == "资产数量") {
+                                message.warning("不能使用默认属性");
+                            }
+                            else if (values.info == "资产价值") {
+                                message.warning("不能使用默认属性");
+                            }
+                            else if (values.info == "挂账人") {
+                                message.warning("不能使用默认属性");
+                            }
+                            else if (!(values.info).trim() || (values.info).length == 0) {
+                                message.warning("请输入自定义属性");
+                            }
+                            else if ((values.info).includes(" ") || (values.info).includes(",") || (values.info).includes("，")) {
+                                message.warning("非法字符，请重新输入");
+                            }
+                            else {
+                                //与后端实现添加属性
+                                request("/api/asset/createattributes", "POST", {
+                                    name: values.info
+                                })
+                                    .then((res) => {
+                                        setType([...types, label]);
+                                        message.success("创建成功");
+                                    })
+                                    .catch((err) => {
+                                        message.warning(err.message);
+                                    });
+                                return true;
+                            }
+                        }}
+                    >
+                        <ProForm.Group>
+                            <ProFormText
+                                width="md"
+                                name="info"
+                                label="属性名称"
+                                placeholder="请输入名称"
+                                required
+                            />
+                        </ProForm.Group>
+                    </ModalForm>
+                </div>
+                <div style={{ marginBottom: 24 }}>
+                    <Table columns={columns} dataSource={types} bordered={true} />
+                </div>
+            </div>
         </div>
     );
 };
