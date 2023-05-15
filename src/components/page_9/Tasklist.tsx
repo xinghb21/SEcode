@@ -140,7 +140,7 @@ const Asyncbd = () => {
                             return (
                                 <div>
                                     <Tag color={row.type==0?"green":"blue"}>{row.type==0?"异步导入":"异步导出"}</Tag>
-                                    <p>    Happen at:{moment(row.time,"X").format("YYYY-MM-DD-HH:mm:ss")}</p>
+                                    <p>    {moment(row.time,"X").format("YYYY-MM-DD-HH:mm:ss")}</p>
                                 </div>    
                             );
                         },

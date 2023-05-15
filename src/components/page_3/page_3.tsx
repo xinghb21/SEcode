@@ -83,6 +83,7 @@ const Page_3 = () => {
             width: 30,
             dataIndex: "id",
             hideInSearch: true,
+            ellipsis: true,
         },
         {
             title: "内容",
@@ -98,6 +99,7 @@ const Page_3 = () => {
             hideInSearch: true,
             filters: true,
             onFilter: true,
+            ellipsis: true,
             // align: 'center',
             valueEnum: {
                 1: { text: <Tag color="blue" key={1}>{"员工登录"}</Tag>},
@@ -111,6 +113,7 @@ const Page_3 = () => {
             key: "showTime",
             dataIndex: "time",
             valueType: "date",
+            ellipsis: true,
             sorter: (a, b) => a.time - b.time,
             hideInSearch: true,
             render: (_,row) =>{

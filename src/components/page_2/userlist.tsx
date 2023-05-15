@@ -176,22 +176,22 @@ const Userlist =( () => {
             },
             render: (text, row) => [
                 (row.status === "unlocked")?
-                (<div>
-                    <Tag color="green" key={row.status}>正常</Tag>
-                    <span>
-                        <Tooltip placement="bottom" title={<span>点击锁定</span>}>
-                            <UnlockOutlined style={{ marginLeft: 10 }} onClick={() => lock(row.name)} />
-                        </Tooltip>
-                    </span>
-                </div>):
-                (<div>
-                    <Tag color="red" key={row.status}>被锁定</Tag>
-                    <span>
-                        <Tooltip placement="bottom" title={<span>点击解锁</span>}>
-                            <LockOutlined style={{ marginLeft: 10 }} onClick={() => unlock(row.name)} />
-                        </Tooltip>
-                    </span>
-                </div>)
+                    (<div>
+                        <Tag color="green" key={row.status}>正常</Tag>
+                        <span>
+                            <Tooltip placement="bottom" title={<span>点击锁定</span>}>
+                                <UnlockOutlined style={{ marginLeft: 10 }} onClick={() => lock(row.name)} />
+                            </Tooltip>
+                        </span>
+                    </div>):
+                    (<div>
+                        <Tag color="red" key={row.status}>被锁定</Tag>
+                        <span>
+                            <Tooltip placement="bottom" title={<span>点击解锁</span>}>
+                                <LockOutlined style={{ marginLeft: 10 }} onClick={() => unlock(row.name)} />
+                            </Tooltip>
+                        </span>
+                    </div>)
             ]
         },
         {
@@ -208,22 +208,22 @@ const Userlist =( () => {
             },
             render: (text, row) => [
                 (row.job === "em")?
-                (<div>
-                    <span>👨‍🔧普通员工</span>
-                    <span>
-                        <Tooltip placement="bottom" title={<span>升职为资产管理员</span>}>
-                            <ArrowUpOutlined  style={{ marginLeft: 10 }} onClick={() => changepos(row)} />
-                        </Tooltip>
-                    </span>
-                </div>):
-                (<div>
-                    <span>💼资产管理员</span>
-                    <span>
-                        <Tooltip placement="bottom" title={<span>降职为普通员工</span>}>
-                            <ArrowDownOutlined style={{ marginLeft: 10 }} onClick={() => changepos(row)} />
-                        </Tooltip>
-                    </span>
-                </div>)
+                    (<div>
+                        <span>👨‍🔧普通员工</span>
+                        <span>
+                            <Tooltip placement="bottom" title={<span>升职为资产管理员</span>}>
+                                <ArrowUpOutlined  style={{ marginLeft: 10 }} onClick={() => changepos(row)} />
+                            </Tooltip>
+                        </span>
+                    </div>):
+                    (<div>
+                        <span>💼资产管理员</span>
+                        <span>
+                            <Tooltip placement="bottom" title={<span>降职为普通员工</span>}>
+                                <ArrowDownOutlined style={{ marginLeft: 10 }} onClick={() => changepos(row)} />
+                            </Tooltip>
+                        </span>
+                    </div>)
             ]
         },
         {
