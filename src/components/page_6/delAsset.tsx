@@ -319,8 +319,10 @@ const DelAsset = (() => {
                                             if(res.data.user != null) res.data.userlist = [{key: res.data.user, name: res.data.user, number: 1}];
                                         } else {
                                             res.data.userlist = [];
-                                            res.data.userlist = Object.entries(res.data.usage).map(([key, value]) => {
-                                                return {key: key, name: key, number: value};
+                                            res.data.userlist = res.data.usage.map((item) => {
+                                                return Object.entries(item).map(([key, value]) => {
+                                                    return {key: key, name: key, number: value};
+                                                })[0];
                                             });
                                         }
                                         if(res.data.haspic == true) 

@@ -1,10 +1,22 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
     HomeOutlined,
-    DesktopOutlined,
-    PieChartOutlined,
     UserOutlined,
     AppstoreAddOutlined,
+    DollarCircleOutlined,
+    AreaChartOutlined,
+    ControlOutlined,
+    TeamOutlined,
+    DeploymentUnitOutlined,
+    FileSearchOutlined,
+    ForkOutlined,
+    ShareAltOutlined,
+    SearchOutlined,
+    AuditOutlined,
+    InteractionOutlined,
+    ToolOutlined,
+    ExceptionOutlined,
+    LogoutOutlined,
 } from "@ant-design/icons";
 import { MenuProps, Skeleton, Space, Avatar, message } from "antd";
 import { useRouter } from "next/router";
@@ -31,6 +43,11 @@ import Ep_Message from "./ep_mg";
 import NSTbdDrawer from "./ns_tbd";
 import Asyncbd from "./asyncdeal/async";
 import Tasklist from "../../components/page_9/Tasklist";
+import Applyasset from "../../components/page_8/Applyasset";
+import Lookup from "../../components/page_8/assetslookup/Lookup";
+import Mentainasset from "../../components/page_8/assetsmentain/Mentain";
+import Returnasset from "../../components/page_8/assetsreturn/Returnasset";
+import Exchangeasset from "../../components/page_8/exchange/Exchangeasset";
 
 
 const { Text } = Typography;
@@ -62,14 +79,6 @@ const AppList: any[] = [
     "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产定义", "资产管理", "资产分析", "资产申请", "应用列表","异步任务管理"
 ];
 
-//xhb_begin
-const PageList: any[] = [
-    <div key={0}><Page_0 /></div>, <div key={1}><EStable /></div>, <div key={2}><Page_2 /></div>,
-    <div key={3}><Page_3 /></div>, <div key={4}><Page_4 /></div>, <div key={5}><Page_5 /></div>,
-    <div key={6}><App /></div>, <div key={7}><Page_7 /></div>, <div key={8}><Page_8 /></div>,
-    <div key={9}><Page_home /></div>, <div key={10}><Page_set /></div>, <div key={11}><Page_info /></div>, <div key={12}><Applists /> </div>,<div key={13}><Tasklist/></div>
-];
-//xhb_end
 
 //这里的item从后端获取数据后形成
 const items: MenuItem[] = [];
@@ -100,6 +109,19 @@ const User: React.FC = () => {
             });
     }, [router]);
 
+    const onChange = (key: number) => {
+        setPage(key);
+    };
+
+    const PageList: any[] = [
+        <div key={0}><Page_0 /></div>, <div key={1}><EStable /></div>, <div key={2}><Page_2 /></div>,
+        <div key={3}><Page_3 /></div>, <div key={4}><Page_4 /></div>, <div key={5}><Page_5 /></div>,
+        <div key={6}><App /></div>, <div key={7}><Page_7 /></div>, <div key={8}><Page_8 /></div>,
+        <div key={9}><Page_home onChange={onChange}/></div>, <div key={10}><Page_set /></div>, 
+        <div key={11}><Page_info /></div>, <div key={12}><Applists /> </div>,<div key={13}><Tasklist/></div>,
+        <div key={14}><Lookup/></div>,<div key={15}> <Applyasset /></div>, <div key={16}><Exchangeasset/></div>,<div key={17}><Mentainasset/></div>,<div key={18}><Returnasset /></div> 
+    ];
+
     //通过后端获取的funlist以及用户对应的identity实现侧边栏应用
     //具体的key还需要完善
     const fetchList = (name: string) => {
@@ -115,7 +137,7 @@ const User: React.FC = () => {
                     localStorage.setItem("department", res.department);
                 }
                 setID(res.identity);
-                items.push(getItem("业务首页", 9, <HomeOutlined />));
+                items.push(getItem("首页", 9, <HomeOutlined />));
                 if (res.identity === 1) {
                 }
                 else {
@@ -129,39 +151,22 @@ const User: React.FC = () => {
                             child.push(getItem(AppList[index], index));
                         }
                     }
-                    items.push(getItem("实体管理", "entity", <DesktopOutlined />, child));
-                    items.push(getItem("用户", "/User", <UserOutlined />, [
-                        getItem("信息", 10),
-                        getItem("设置", 11),
-                        getItem("登出", "logout"),
-                    ]));
+                    items.push(getItem(AppList[0], 0, <ShareAltOutlined />));
+                    items.push(getItem(AppList[1], 1, <TeamOutlined />));
+                    items.push(getItem("登出", "logout", <LogoutOutlined />));
+
                 }
                 else if (res.identity === 2) {
-                    const child: MenuItem[] = [];
-                    for (let index = 2; index < 5; index++) {
-                        const element = funclist[index];
-                        if (element) {
-                            child.push(getItem(AppList[index], index));
-                        }
-                        
-                    }
-                    child.push(getItem(AppList[10],13));
-                    items.push(getItem("企业管理", "corp", <HomeOutlined />, child));
-                    items.push(getItem("用户", "/User", <UserOutlined />, [
-                        getItem("信息", 10),
-                        getItem("设置", 11),
-                        getItem("登出", "logout"),
-                    ]));
+                    items.push(getItem(AppList[4], 4, <TeamOutlined />));
+                    items.push(getItem(AppList[2], 2, <DeploymentUnitOutlined />));
+                    items.push(getItem(AppList[3], 3, <FileSearchOutlined />));
+                    items.push(getItem(AppList[10],13, <ForkOutlined />));
+                    items.push(getItem("登出", "logout", <LogoutOutlined />));
                 }
                 else if (res.identity === 3) {
-                    const child: MenuItem[] = [];
-                    for (let index = 5; index < 8; index++) {
-                        const element = funclist[index];
-                        if (element === "1") {
-                            child.push(getItem(AppList[index], index));
-                        }
-                    }
-                    items.push(getItem("资产管理", "asset", <PieChartOutlined />, child));
+                    items.push(getItem(AppList[5], 5, <DollarCircleOutlined />));
+                    items.push(getItem(AppList[6], 6, <ControlOutlined />));
+                    items.push(getItem(AppList[7], 7, <AreaChartOutlined />));
                     let appsingle: MenuItem[] = [];
                     request("api/user/getapplists","GET")
                         .then((res)=>{
@@ -174,30 +179,19 @@ const User: React.FC = () => {
                             }
                             setapplist(tempapplist);
                             items.push(getItem("应用列表", "apps", <AppstoreAddOutlined />, appsingle));
-                            items.push(getItem("用户", "/User", <UserOutlined />, [
-                                getItem("信息", 10),
-                                getItem("设置", 11),
-                                getItem("登出", "logout"),
-                            ]));
+                            items.push(getItem("登出", "logout", <LogoutOutlined />));
                         })
                         .catch((err)=>{
                             message.warning(err.message);
-                            items.push(getItem("用户", "/User", <UserOutlined />, [
-                                getItem("信息", 10),
-                                getItem("设置", 11),
-                                getItem("登出", "logout"),
-                            ]));
+                            items.push(getItem("登出", "logout", <LogoutOutlined />));
                         });
-                    
-                    
                 }
                 else {
-                    if (funclist[8] === "1") {
-                        items.push(getItem("员工操作", "oper", <PieChartOutlined />, [
-                            getItem("资产操作", 8),
-                        ]));
-                    }
-                    else items.push(getItem("员工操作", "oper", <PieChartOutlined />));
+                    items.push(getItem("资产查看", 14, <SearchOutlined />));
+                    items.push(getItem("资产领用", 15, <AuditOutlined />));
+                    items.push(getItem("资产转移", 16, <InteractionOutlined />));
+                    items.push(getItem("资产维保", 17, <ToolOutlined />));
+                    items.push(getItem("资产退库", 18, <ExceptionOutlined />));
                     let appsingle: MenuItem[] = [];
                     request("api/user/getapplists","GET")
                         .then((res)=>{
@@ -210,28 +204,14 @@ const User: React.FC = () => {
                             }
                             setapplist(tempapplist);
                             items.push(getItem("应用列表", "apps", <AppstoreAddOutlined />, appsingle));
-                            items.push(getItem("用户", "/User", <UserOutlined />, [
-                                getItem("信息", 10),
-                                getItem("设置", 11),
-                                getItem("登出", "logout"),
-                            ]));
+                            items.push(getItem("登出", "logout", <LogoutOutlined />));
+
                         })
                         .catch((err)=>{
                             message.warning(err.message);
-                            items.push(getItem("用户", "/User", <UserOutlined />, [
-                                getItem("信息", 10),
-                                getItem("设置", 11),
-                                getItem("登出", "logout"),
-                            ]));
+                            items.push(getItem("登出", "logout", <LogoutOutlined />));
                         });
-                    
-                    
                 }
-                // items.push(getItem("用户", "/User", <UserOutlined />, [
-                //     getItem("信息", 10),
-                //     getItem("设置", 11),
-                //     getItem("登出", "logout"),
-                // ]));
             })
             .catch((err) => {
                 message.warning(err.message);
@@ -295,7 +275,7 @@ const User: React.FC = () => {
             <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
                 <Layout style={{ minHeight: "100vh" }}>
                     <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-                        <Menu theme="dark" mode="inline" items={items}
+                        <Menu theme="dark" mode="inline" items={items} 
                             onClick={handleClick} />
                     </Sider>
                     <Layout className="site-layout">

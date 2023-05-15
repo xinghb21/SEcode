@@ -10,7 +10,7 @@ const nextConfig = {
         }, 
         {
             source: "/image",
-            destination: "https://aplus-secoder.oss-cn-beijing.aliyuncs.com",
+            destination: "https://aplus-avatar.oss-cn-beijing.aliyuncs.com",
         },
         {
             source: "/image/:path*",
