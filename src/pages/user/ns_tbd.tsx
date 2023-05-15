@@ -6,14 +6,6 @@ import { MessageTwoTone} from "@ant-design/icons";
 
 import { Badge, Tooltip } from "antd";
 
-interface DialogProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onSendR: (reason: string) => void;
-    title: string;
-    subtitle: string;
-}
-
 type Asset = {
     key: React.Key;
     assetname: string;
@@ -26,6 +18,7 @@ type Message = {
     message: string;
     type: number;
     status: number;
+    read: boolean;
     info: Asset[];
 }
 
@@ -54,7 +47,6 @@ const NSTbdDrawer = () => {
     const [isTBD, setTBD] = useState(false);//true即有待办任务，false相反
     const [dopen, setDOpen] = useState(false);
     const [assetTypes, setAssetTypes] = useState<assetType[]>([]);
-    const [isChoose, setIsChoose] = useState(false); //true即需要选择，false相反
 
     const showDrawer = () => {
         setDOpen(true);
@@ -82,7 +74,6 @@ const NSTbdDrawer = () => {
                 setMessage(data);
                 for(let i = 0; i < data.length; i++){
                     if(data[i].type === 5){
-                        setIsChoose(true);
                         request("/api/asset/assetclass", "GET").then((res) => {
                             let label_data: string[] = res.data;
                             setLabels(label_data);
@@ -154,7 +145,7 @@ const NSTbdDrawer = () => {
             setOpen(false);
             return true;
         }
-        if(isChoose && assetdisdata?.type === 5 && assetTypes.length != assetdisdata?.info.length){
+        if(assetdisdata?.type === 5 && assetTypes.length != assetdisdata?.info.length){
             message.warning("请为所有资产指定类别");
             return false;
         }
@@ -255,10 +246,24 @@ const NSTbdDrawer = () => {
             title: "操作",
             render: (record) => {
                 return (
-                    <Button type="primary" onClick={() => {
-                        setassetdisData(messages.filter((item) => item.id === record.id)[0]);
-                        showModal();
-                    }}> 查看</Button> 
+                    <>
+                        <Button type="primary" onClick={() => {
+                            setassetdisData(messages.filter((item) => item.id === record.id)[0]);
+                            showModal();
+                        }}> 查看</Button> 
+                        <Button type="default" onClick={() => {
+                            request("/api/user/ns/read", "POST", {
+                                id: record.id,
+                            }).then((res) => {
+                                message.success("操作成功");
+                                fetchtbdData();
+                                fetchtbd();
+                            }).catch((err) => {
+                                message.warning(err.message);
+                            });
+                        }
+                        }> 确认</Button>
+                    </>
                 );
             },
         },
@@ -283,6 +288,8 @@ const NSTbdDrawer = () => {
                 <Modal
                     open={open}
                     title="详细信息"
+                    closable={true}
+                    onCancel={() => setOpen(false)}
                     footer={[
                         <Button key="back" onClick={handleCancel}>
                             确认
