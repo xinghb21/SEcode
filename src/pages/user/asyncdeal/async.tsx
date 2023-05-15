@@ -74,7 +74,7 @@ const Asyncbd = () => {
     };
     useEffect((() => {
         //获取任务
-        request("/api/async/getalivetasks", "GET")
+        request("/api/async/getalivetasks", "GET",{page:1})
             .then((res) => {
                 let tasks:AsyncTask[] = res.info;
                 if(tasks){
@@ -84,6 +84,11 @@ const Asyncbd = () => {
                         setTBD(true);
                     }
                 }
+                setpagenation({
+                    current: 1,
+                    pageSize: 10,
+                    total: res.count,
+                });
             }).catch((err) => {
                 message.warning(err.message);
             });
@@ -91,12 +96,14 @@ const Asyncbd = () => {
     //这个函数用于每次切换页码之后向后端请求数据，page和pageSize这两个参数的名字不能变
     const handleFetch = (page:number,pageSize:number) => {
         //获取任务
-        request("/api/async/esgetalltask", "GET",{page:page})
+        request("/api/async/getalivetasks", "GET", {page:page})
             .then((res) => {
                 let tasks:AsyncTask[] = res.info;
                 if(tasks){
+                    tasks = tasks.filter((obj)=>{return obj.state != 4;});
                     if(tasks){
                         settasklist(tasks);
+                        setTBD(true);
                     }
                 }
                 setpagenation({
@@ -233,12 +240,14 @@ const Asyncbd = () => {
                         console.log(params);
                         let success:boolean = true;
                         //获取任务
-                        request("/api/async/esgetalltask", "GET",{page:params.current,from:params.startTime,to:params.endTime})
+                        request("/api/async/getalivetasks", "GET", {page:params.current,from:params.startTime,to:params.endTime})
                             .then((res) => {
                                 let tasks:AsyncTask[] = res.info;
                                 if(tasks){
+                                    tasks = tasks.filter((obj)=>{return obj.state != 4;});
                                     if(tasks){
                                         settasklist(tasks);
+                                        setTBD(true);
                                     }
                                 }
                                 setpagenation({
