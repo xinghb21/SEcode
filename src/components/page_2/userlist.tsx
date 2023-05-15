@@ -1,4 +1,4 @@
-import { Avatar, List, Space, Button, Tag, message, Tooltip } from "antd";
+import { Avatar, List, Space, Button, Tag, message, Tooltip, Typography } from "antd";
 import React from "react";
 import { ProColumns, ProForm, ProFormSelect, ProFormText, ProList, ProTable, QueryFilter, TableDropdown } from "@ant-design/pro-components";
 import { Progress } from "antd";
@@ -16,6 +16,8 @@ import CreateDE from "./CreateDE";
 import Manageapp from "./Manageapp";
 import Appmanage from "./Appmanage";
 import { ArrowDownOutlined, ArrowUpOutlined, DownOutlined, LockOutlined, PlusSquareOutlined, UnlockOutlined } from "@ant-design/icons";
+
+const { Text } = Typography;
 
 export type TableListItem = {
   key: string;
@@ -169,6 +171,7 @@ const Userlist =( () => {
             hideInSearch: true,
             filters: true,
             onFilter: true,
+            ellipsis: true,
             // align: 'center',
             valueEnum: {
                 unlocked: { text:"正常", status: "Success" },
@@ -201,6 +204,7 @@ const Userlist =( () => {
             hideInSearch: true,
             filters: true,
             onFilter: true,
+            ellipsis: true,
             // align: 'center',
             valueEnum: {
                 em: { text: "👨‍🔧普通员工"},
@@ -448,7 +452,8 @@ const Userlist =( () => {
                 }}
                 dateFormatter="string"
                 dataSource={usertable}
-                headerTitle="员工列表"
+                headerTitle=
+                {<Text ellipsis={true}>{"员工列表"}</Text>}
                 toolBarRender={() => [
                     <Button key="1" type="primary" onClick={()=>{setIsDialogOpen1(true);}}>
                     创建资产管理员

@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, List, Space, Button, Tag, message } from "antd";
+import { Avatar, List, Space, Button, Tag, message, Typography } from "antd";
 import { ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProList, QueryFilter, ProTable, ProColumns } from "@ant-design/pro-components";
 import { Progress } from "antd";
 import { useState } from "react";
@@ -11,6 +11,7 @@ import Column from "antd/es/table/Column";
 import Pagination from "antd";
 import moment from "moment";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+const { Text } = Typography;
 interface log{
     key:React.Key,
     id:number,
@@ -84,6 +85,7 @@ const Page_3 = () => {
             dataIndex: "id",
             hideInSearch: true,
             ellipsis: true,
+            sorter: (a, b) => a.id - b.id,
         },
         {
             title: "内容",
@@ -179,7 +181,8 @@ const Page_3 = () => {
                     });
                 }}
                 rowKey="key"
-                headerTitle="📝业务实体操作日志"
+                headerTitle=
+                {<Text ellipsis={true}>{"📝业务实体操作日志"}</Text>}
                 dataSource={loglist}
                 dateFormatter="string"
             />
