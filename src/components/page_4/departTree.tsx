@@ -58,12 +58,6 @@ const Dtree = () => {
     const [parent, setParent] = useState("");
     const [OldName, setOldName] = useState("");
     const router = useRouter();
-    const [pagenation,setpagenation] = useState({
-        current: 1, // 当前页码
-        pageSize: 10, // 每页显示条数
-        total: 0, // 总记录数
-    });
-    //选中的keys
     const [myselectedkeys, setkeys] = useState<{ checked: string[], halfChecked: string[] }>({ checked: [], halfChecked: [] });
     useEffect(() => {
         if (!router.isReady) {
