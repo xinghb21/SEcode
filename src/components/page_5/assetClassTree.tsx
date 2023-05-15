@@ -204,6 +204,7 @@ const ACtree = () => {
                     name: key.split(",")[0]
                 })
                     .then(() => {
+                        message.success("成功删除该类别");
                         fetchJson();
                     })
                     .catch((err) => {
@@ -243,6 +244,7 @@ const ACtree = () => {
             }
             )
                 .then(() => {
+                    message.success("成功创建新类别");
                     fetchJson();
                 })
                 .catch((err) => {
@@ -259,6 +261,7 @@ const ACtree = () => {
             }
             )
                 .then(() => {
+                    message.success("成功创建新类别");
                     fetchJson();
                 })
                 .catch((err) => {
@@ -283,6 +286,7 @@ const ACtree = () => {
             newname: assetClassName
         })
             .then(() => {
+                message.success("成功修改类别名称");
                 fetchJson();
             })
             .catch((err) => {

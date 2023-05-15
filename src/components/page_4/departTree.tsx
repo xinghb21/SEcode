@@ -1,4 +1,4 @@
-import React, { Key, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Spin, message } from "antd";
 import { request } from "../../utils/network";
@@ -190,6 +190,7 @@ const Dtree = () => {
                     name: key
                 })
                     .then(() => {
+                        message.success("成功删除该部门");
                         fetchJson();
                         if (isSpinning == true) {
                             setTimeout(() => {
@@ -226,6 +227,7 @@ const Dtree = () => {
             parent: (parent == localStorage.getItem("entity")) ? "" : parent
         })
             .then(() => {
+                message.success("成功创建新部门");
                 fetchJson();
                 if (isSpinning == true) {
                     setTimeout(() => {
@@ -252,6 +254,7 @@ const Dtree = () => {
             newname: department
         })
             .then(() => {
+                message.success("成功更改部门名称");
                 fetchJson();
                 if (isSpinning == true) {
                     setTimeout(() => {

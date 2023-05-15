@@ -3,7 +3,7 @@ import { Drawer, Space, Button, Table, Tag, message, Modal, Input, Select, Progr
 import type { ColumnsType } from "antd/es/table";
 import { request } from "../../../utils/network";
 import {
-    CarryOutTwoTone, CloudDownloadOutlined,CloudTwoTone
+    CarryOutTwoTone, CloudDownloadOutlined, CloudTwoTone
 } from "@ant-design/icons";
 
 import { Badge, Tooltip } from "antd";
@@ -23,13 +23,13 @@ interface DialogProps {
 }
 
 
-interface AsyncTask{
-    id:number,
-    preson:string,
-    type:number,
-    time:string,
-    state:number,
-    fileurl:string,
+interface AsyncTask {
+    id: number,
+    preson: string,
+    type: number,
+    time: string,
+    state: number,
+    fileurl: string,
 }
 
 const accessKeyId = "LTAI5tCj3A8UM1Lhoo5Frcmh";
@@ -54,12 +54,12 @@ const client = new OSS({
 
 
 const Asyncbd = () => {
-    const [clicktime,setclicktime] = useState<number>(0);
+    const [clicktime, setclicktime] = useState<number>(0);
     const [isTBD, setTBD] = useState(false);//true即有待办任务，false相反
     const [dopen, setDOpen] = useState(false);//是否打开任务中心
-    const [tasklist,settasklist] = useState<AsyncTask[]>([]);
+    const [tasklist, settasklist] = useState<AsyncTask[]>([]);
     const showDrawer = () => {
-        setclicktime(clicktime+1);
+        setclicktime(clicktime + 1);
         setDOpen(true);
     };
     const onClose = () => {
@@ -69,10 +69,10 @@ const Asyncbd = () => {
         //获取任务
         request("/api/async/getalivetasks", "GET")
             .then((res) => {
-                let tasks:AsyncTask[] = res.info;
-                if(tasks){
-                    tasks = tasks.filter((obj)=>{return obj.state != 4;});
-                    if(tasks){
+                let tasks: AsyncTask[] = res.info;
+                if (tasks) {
+                    tasks = tasks.filter((obj) => { return obj.state != 4; });
+                    if (tasks) {
                         settasklist(tasks);
                         setTBD(true);
                     }
@@ -81,10 +81,10 @@ const Asyncbd = () => {
                 message.warning(err.message);
             });
     }), [clicktime]);
-    const handleover=()=>{
-        setclicktime(clicktime+1);
+    const handleover = () => {
+        setclicktime(clicktime + 1);
     };
-    const handledownload=(fileroot:string)=>{
+    const handledownload = (fileroot: string) => {
         let url = client.signatureUrl(fileroot);
         var eleLink = document.createElement("a");
         eleLink.download = url;
@@ -100,9 +100,9 @@ const Asyncbd = () => {
     return (
         <>
             <Tooltip placement="bottomLeft" title={<span>任务中心</span>}>
-                <Button type="text" size="large" style={{ margin: 5 }} onClick={showDrawer}>
+                <Button type="text" size="large" style={{ marginTop: 5, marginBottom: 5 }} onClick={showDrawer}>
                     <Badge dot style={{ visibility: (!isTBD) ? "hidden" : "visible" }}>
-                        <CloudTwoTone  twoToneColor={(!isTBD) ? "#a8a8a8" : "#f82212"} style={{ fontSize: "25px" }} />
+                        <CloudTwoTone twoToneColor={(!isTBD) ? "#a8a8a8" : "#f82212"} style={{ fontSize: "25px" }} />
                     </Badge>
                 </Button>
             </Tooltip>
@@ -117,31 +117,31 @@ const Asyncbd = () => {
                         pageSize: 8,
                     }}
                     metas={{
-                        title: {dataIndex:"id",},
+                        title: { dataIndex: "id", },
                         description: {
-                            render: (_,row) => {
+                            render: (_, row) => {
                                 return (
                                     <div>
-                                        <Tag color={row.type==0?"green":"blue"}>{row.type==0?"异步导入":"异步导出"}</Tag>
-                                        <p>    Happen at:{moment(row.time,"X").format("YYYY-MM-DD-HH:mm:ss")}</p>
-                                    </div>    
+                                        <Tag color={row.type == 0 ? "green" : "blue"}>{row.type == 0 ? "异步导入" : "异步导出"}</Tag>
+                                        <p>    Happen at:{moment(row.time, "X").format("YYYY-MM-DD-HH:mm:ss")}</p>
+                                    </div>
                                 );
                             },
                         },
                         actions: {
                             render: (_, row) => {
                                 return (
-                                    (row.state==2||row.state==3)?<Processbar taskid={row.id}onover={handleover} ></Processbar>:( row.state==1?<Progress percent={100} type="circle" />:<Progress percent={10} type="circle" status="exception" />)
+                                    (row.state == 2 || row.state == 3) ? <Processbar taskid={row.id} onover={handleover} ></Processbar> : (row.state == 1 ? <Progress percent={100} type="circle" /> : <Progress percent={10} type="circle" status="exception" />)
                                 );
                             },
                         },
-                        extra :{
-                            render:(_,row)=>{
+                        extra: {
+                            render: (_, row) => {
                                 return (
-                                    (row.state==2||row.state==3)?<Button color="yellow">正在导出</Button>:(row.state==1?<Button color="green" onClick={()=>{handledownload(row.fileurl);}} >下载</Button>:<Button color="red">失败</Button>)
+                                    (row.state == 2 || row.state == 3) ? <Button color="yellow">正在导出</Button> : (row.state == 1 ? <Button color="green" onClick={() => { handledownload(row.fileurl); }} >下载</Button> : <Button color="red">失败</Button>)
                                 );
                             }
-                        },    
+                        },
                     }}
                     rowKey="key"
                     headerTitle="您正在进行的异步导入导出任务"
