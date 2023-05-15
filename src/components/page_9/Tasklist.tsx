@@ -28,7 +28,7 @@ interface DialogProps {
 
 interface AsyncTask{
     id:number,
-    preson:string,
+    person:string,
     type:number,
     time:number,
     state:number,
@@ -165,6 +165,12 @@ const Asyncbd = () => {
             },
         },
         {
+            title: "创建者",
+            width: 80,
+            dataIndex: "person",
+            ellipsis: true,
+        },
+        {
             title: "创建时间",
             width: 80,
             key: "showTime",
@@ -246,7 +252,7 @@ const Asyncbd = () => {
                     console.log(params);
                     let success:boolean = true;
                     //获取任务
-                    request("/api/async/esgetalltask", "GET",{page:params.current,from:params.startTime,to:params.endTime})
+                    request("/api/async/esgetalltask", "GET",{page:params.current,from:params.startTime,to:params.endTime,person:params.person})
                         .then((res) => {
                             let tasks:AsyncTask[] = res.info;
                             if(tasks){
