@@ -46,6 +46,7 @@ const DisplayModel = () => {
         loading ? <Spin tip="Loading..."></Spin> :
             <ProDescriptions<AssetDisplayType>
                 column={2}
+                title="资产详情"
                 dataSource={assetDisplay}
                 bordered
                 columns={[

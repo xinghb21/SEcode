@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Card, Col, Descriptions, Divider, Row, Space, Typography, Upload, message } from "antd";
+import { Avatar, Button, Card, Col, Descriptions, Divider, Row, Space, Typography, Upload, message } from "antd";
 import { request } from "../../utils/network";
 import { LoadingOutlined, PlusOutlined, UserOutlined } from "@ant-design/icons";
 import { UploadChangeParam } from "antd/es/upload";
@@ -134,13 +134,6 @@ const Page_home = (prop: ClickProps) => {
             });
     }, []);
 
-    const uploadButton = (
-        <div >
-            {loading ? <LoadingOutlined /> : <PlusOutlined />}
-            <div style={{ marginTop: 8 }}>上传头像</div>
-        </div>
-    );
-
     return (
         <>
             <div style={{ display: "flex", marginBottom: "1%"}}>
@@ -154,27 +147,33 @@ const Page_home = (prop: ClickProps) => {
                         <Descriptions.Item label="Entity">{user.entity}</Descriptions.Item>
                     </Descriptions>
                 </div>
-                <div style={{ marginLeft: "auto", marginRight: "auto", marginTop: "5%"}} key={1}>
-                    <ImgCrop rotationSlider cropShape="round">
-                        <Upload
-                            listType="picture-circle"
-                            className="avatar-uploader"
-                            showUploadList={false}
-                            action="/image"
-                            beforeUpload={beforeUpload}
-                            onChange={handleChange}
-                            onPreview={onPreview}
-                            data={{
-                                key: user.entity + "/" + user.department + "/" + user.username,
-                                policy: policyBase64,
-                                OSSAccessKeyId: accessKeyId,
-                                success_action_status: 200,
-                                signature: signature,
-                            }}
-                        >
-                            {imageUrl ? <Avatar src={imageUrl} alt="avatar" style={{ width: "100%", height: "100%" }} /> : uploadButton}
-                        </Upload>
-                    </ImgCrop>
+                <div style={{marginTop: "5%", width: "30%"}} key={1}>
+                    <Space direction="vertical" size="middle">
+                        {imageUrl ? <Avatar src={imageUrl} alt="avatar" style={{ width: 150, height: 150, marginLeft: "50%"}} /> : null}
+                        <div style={{marginLeft: "60%"}}>
+                            <ImgCrop rotationSlider cropShape="round">
+                                <Upload
+                                    className="avatar-uploader"
+                                    showUploadList={false}
+                                    action="/image"
+                                    beforeUpload={beforeUpload}
+                                    onChange={handleChange}
+                                    onPreview={onPreview}
+                                    data={{
+                                        key: user.entity + "/" + user.department + "/" + user.username,
+                                        policy: policyBase64,
+                                        OSSAccessKeyId: accessKeyId,
+                                        success_action_status: 200,
+                                        signature: signature,
+                                    }}
+                                >
+                                    <Button>
+                                        {loading ? <LoadingOutlined /> : <PlusOutlined />}上传头像
+                                    </Button>
+                                </Upload>
+                            </ImgCrop>
+                        </div>
+                    </Space>
                 </div>
             </div>
             <Card title="应用导航">
