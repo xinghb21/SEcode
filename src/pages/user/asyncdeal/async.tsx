@@ -218,45 +218,45 @@ const Asyncbd = () => {
                 onClose={onClose}
                 open={dopen}
             >
-            <ProTable<AsyncTask,Params>
-                pagination={{current:pagenation.current,pageSize:pagenation.pageSize,onChange:handleFetch,total:pagenation.total}}
-                columns={columns}
-                rowKey="key"
-                headerTitle={
-                    <Text ellipsis={true}>{"您正在进行或已经结束的异步导入导出任务"}</Text>
-                }
-                dataSource={tasklist}
-                dateFormatter="string"
-                request={(params, sorter, filter) => {
+                <ProTable<AsyncTask,Params>
+                    pagination={{current:pagenation.current,pageSize:pagenation.pageSize,onChange:handleFetch,total:pagenation.total}}
+                    columns={columns}
+                    rowKey="key"
+                    headerTitle={
+                        <Text ellipsis={true}>{"您正在进行或已经结束的异步导入导出任务"}</Text>
+                    }
+                    dataSource={tasklist}
+                    dateFormatter="string"
+                    request={(params, sorter, filter) => {
                     // 表单搜索项会从 params 传入，传递给后端接口。
-                    console.log("hello world");
-                    console.log(params);
-                    let success:boolean = true;
-                    //获取任务
-                    request("/api/async/esgetalltask", "GET",{page:params.current,from:params.startTime,to:params.endTime})
-                        .then((res) => {
-                            let tasks:AsyncTask[] = res.info;
-                            if(tasks){
+                        console.log("hello world");
+                        console.log(params);
+                        let success:boolean = true;
+                        //获取任务
+                        request("/api/async/esgetalltask", "GET",{page:params.current,from:params.startTime,to:params.endTime})
+                            .then((res) => {
+                                let tasks:AsyncTask[] = res.info;
                                 if(tasks){
-                                    settasklist(tasks);
+                                    if(tasks){
+                                        settasklist(tasks);
+                                    }
                                 }
-                            }
-                            setpagenation({
-                                current: (params.current)?params.current:1,
-                                pageSize: 10,
-                                total: res.count,
+                                setpagenation({
+                                    current: (params.current)?params.current:1,
+                                    pageSize: 10,
+                                    total: res.count,
+                                });
+                                success = true;
+                            }).catch((err) => {
+                                success = false;
+                                message.warning(err.message);
                             });
-                            success = true;
-                        }).catch((err) => {
-                            success = false;
-                            message.warning(err.message);
+                        return Promise.resolve({
+                            data: [],
+                            success: success,
                         });
-                    return Promise.resolve({
-                        data: [],
-                        success: success,
-                    });
-                }}
-            />
+                    }}
+                />
             </Drawer>
         </>
     );
