@@ -51,10 +51,12 @@ const NSTbdDrawer = () => {
     const showDrawer = () => {
         setDOpen(true);
     };
+
     const onClose = () => {
-        fetchtbd();
+        setTBD(checkTBD());
         setDOpen(false);
     };
+    
     useEffect((() => {
         request("/api/user/ns/getmessage", "GET")
             .then((res) => {
@@ -72,16 +74,12 @@ const NSTbdDrawer = () => {
                     });
                 }
                 setMessage(data);
-                for(let i = 0; i < data.length; i++){
-                    if(data[i].type === 5){
-                        request("/api/asset/assetclass", "GET").then((res) => {
-                            let label_data: string[] = res.data;
-                            setLabels(label_data);
-                        }).catch((err) => {
-                            message.warning(err.message);
-                        });
-                    }
-                }
+                request("/api/asset/assetclass", "GET").then((res) => {
+                    let label_data: string[] = res.data;
+                    setLabels(label_data);
+                }).catch((err) => {
+                    message.warning(err.message);
+                });
             })
             .catch((err) => {
                 message.warning(err.message);
@@ -140,8 +138,10 @@ const NSTbdDrawer = () => {
             }).catch((err) => {
                 message.warning(err.message);
             });
-            fetchtbdData();
-            fetchtbd();
+            //将message中的对应数据的已读状态置为true,并将该条数据放在message数组的最后
+            let data = messages;
+            data.filter((item) => item.id === assetdisdata?.id)[0].read = true;
+            setMessage(data);
             setOpen(false);
             return true;
         }
@@ -164,37 +164,44 @@ const NSTbdDrawer = () => {
                 message.warning(err.message);
             });
         });
-        fetchtbdData();
-        fetchtbd();
+        let data = messages;
+        data.filter((item) => item.id === assetdisdata?.id)[0].read = true;
+        setMessage(data);
         setOpen(false);
     };
 
-    const fetchtbdData = () => {
-        request("/api/user/ns/getmessage", "GET")
-            .then((res) => {
-                let data: Message[] = res.info;
-                if(data.length != 0){
-                    data.forEach((item) => {
-                        item.key = item.id; 
-                        if(item.info != null){
-                            item.info.forEach((item) => {
-                                item.key = item.assetname;
-                                return item;
-                            });
-                        }
-                        return item;
-                    });
-                }
-                setMessage(data);
-            })
-            .catch((err) => {
-                message.warning(err.message);
-            });
+    const checkTBD = () => {
+        //对message进行遍历，如果有未读消息则返回true
+        let flag = false;
+        messages.forEach((item) => {
+            if(item.read === false)
+                flag = true;
+        });
+        return flag;
     };
+
     const columns: ColumnsType<Message> = [
         {
             title: "消息编号",
             dataIndex: "id",
+            //显示操作编号的同时使用Tag显示消息是否已读
+            render: (text, record) => {
+                if(record.read === false){
+                    return (
+                        <>
+                            <Tag color="red">未读</Tag>
+                            {text}
+                        </>                     
+                    );
+                } else {
+                    return (
+                        <> 
+                            <Tag color="green">已读</Tag>
+                            {text}
+                        </>
+                    );
+                }
+            },
         },
         {
             title: "操作类型",
@@ -252,24 +259,21 @@ const NSTbdDrawer = () => {
             title: "操作",
             render: (record) => {
                 return (
-                    <>
+                    <Space>
                         <Button type="primary" onClick={() => {
                             setassetdisData(messages.filter((item) => item.id === record.id)[0]);
                             showModal();
                         }}> 查看</Button> 
-                        <Button type="default" onClick={() => {
-                            request("/api/user/ns/read", "POST", {
-                                id: record.id,
+                        <Button type="default" danger onClick={() => {
+                            request(`/api/user/ns/deletemsg?id=${record.id}`, "DELETE", {
                             }).then((res) => {
-                                message.success("操作成功");
-                                fetchtbdData();
-                                fetchtbd();
+                                message.success("删除成功");
+                                setMessage(messages.filter((item) => item.id !== record.id));
                             }).catch((err) => {
                                 message.warning(err.message);
                             });
-                        }
-                        }> 确认</Button>
-                    </>
+                        }}>删除</Button>
+                    </Space>
                 );
             },
         },
