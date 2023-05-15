@@ -71,10 +71,24 @@ const Ep_Message = () => {
                         </Tag>
                     );
                 }
-                else {
+                else if(text === 1){
                     return (
                         <Tag color="blue">
                             资产清退
+                        </Tag>
+                    );
+                }
+                else if(text === 2){
+                    return (
+                        <Tag color="green">
+                            调拨成功
+                        </Tag>
+                    );
+                }
+                else{
+                    return (
+                        <Tag color="red">
+                            调拨失败
                         </Tag>
                     );
                 }
