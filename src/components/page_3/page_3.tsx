@@ -182,7 +182,7 @@ const Page_3 = () => {
                 }}
                 rowKey="key"
                 headerTitle=
-                {<Text ellipsis={true}>{"📝业务实体操作日志"}</Text>}
+                    {<Text ellipsis={true}>{"📝业务实体操作日志"}</Text>}
                 dataSource={loglist}
                 dateFormatter="string"
             />

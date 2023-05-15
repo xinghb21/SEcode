@@ -112,7 +112,7 @@ const Asyncbd = () => {
             setoutputsuccess(true);
             request("/api/async/getsuccess","POST")
                 .then((res)=>{
-                    settasklist([...tasklist,res.info])
+                    settasklist([...tasklist,res.info]);
                     message.success("开始导出，请前往任务中心查看进度");
                     setoutputsuccess(false);
                 })
@@ -125,7 +125,7 @@ const Asyncbd = () => {
             setoutputfail(true);
             request("/api/async/getfailed","POST")
                 .then((res)=>{
-                    settasklist([...tasklist,res.info])
+                    settasklist([...tasklist,res.info]);
                     message.success("开始导出，请前往任务中心查看进度");
                     setoutputfail(false);
                 })
@@ -213,10 +213,10 @@ const Asyncbd = () => {
             render: (_,row) =>[
                 (row.state==2)?
                     ((row.state==2||row.state==3)?<Processbar taskid={row.id}onover={handleover} ></Processbar>:( row.state==1?<Progress percent={100} type="circle" />:<Progress percent={0} type="circle" status="exception" />))
-                :((row.state==3)?(<Tag color="orange" key={3}>{"未开始"}</Tag>):
-                ((row.state==4)?( <Tag color="grey" key={4}>{"已取消"}</Tag>):
-                ((row.state==1)?( <Tag color="green" key={1}>{"成功"}</Tag>):
-                ( <Tag color="red" key={0}>{"失败"}</Tag>))))
+                    :((row.state==3)?(<Tag color="orange" key={3}>{"未开始"}</Tag>):
+                        ((row.state==4)?( <Tag color="grey" key={4}>{"已取消"}</Tag>):
+                            ((row.state==1)?( <Tag color="green" key={1}>{"成功"}</Tag>):
+                                ( <Tag color="red" key={0}>{"失败"}</Tag>))))
             ]
         },
         {
@@ -236,7 +236,7 @@ const Asyncbd = () => {
                 columns={columns}
                 rowKey="key"
                 headerTitle={
-                <Text ellipsis={true}>{"业务实体内异步导入导出任务"}</Text>
+                    <Text ellipsis={true}>{"业务实体内异步导入导出任务"}</Text>
                 }
                 dataSource={tasklist}
                 dateFormatter="string"
@@ -273,12 +273,12 @@ const Asyncbd = () => {
                     return [
                         <div key={"tool"}>
                             <Space>
-                            <Button key="2" type="primary" onClick={()=>{handleoutput(false);}} loading={outputfail}>
+                                <Button key="2" type="primary" onClick={()=>{handleoutput(false);}} loading={outputfail}>
                                 导出所有失败任务
-                            </Button>
-                            <Button key="1" onClick={()=>{handleoutput(true);}} loading={outputsuccess} >
+                                </Button>
+                                <Button key="1" onClick={()=>{handleoutput(true);}} loading={outputsuccess} >
                                 导出所有成功任务
-                            </Button>
+                                </Button>
                             </Space>
                         </div>
                     ];

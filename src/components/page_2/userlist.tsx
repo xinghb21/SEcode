@@ -453,7 +453,7 @@ const Userlist =( () => {
                 dateFormatter="string"
                 dataSource={usertable}
                 headerTitle=
-                {<Text ellipsis={true}>{"员工列表"}</Text>}
+                    {<Text ellipsis={true}>{"员工列表"}</Text>}
                 toolBarRender={() => [
                     <Button key="1" type="primary" onClick={()=>{setIsDialogOpen1(true);}}>
                     创建资产管理员
