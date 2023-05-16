@@ -74,10 +74,31 @@ type AssetDisplayType = {
     new_price?: number;//资产现价值
 }
 
+type AssetQueryType = {
+    //查询资产的格式
+    name?: string;//资产的名称
+    parent?: string;//父资产的名称
+    assetclass?: string;//资产的类型
+    belonging?: string;//挂账人
+    from?: number;//资产创建时间的起始时间
+    to?: number;//资产创建时间的结束时间
+    user?: string;//条目型资产的使用人
+    status?: number;//条目型资产的状态
+    pricefrom?: number;//资产原始价值的起始值
+    priceto?: number;//资产原始价值的结束值
+    custom?: string;//自定义属性的名称
+    content?: string;//自定义属性的内容
+}
+
 const ddata: AssetDisplayType = {
     key: 0, name: "", category: "", number_idle: 0, description: "", create_time: 0, price: 0,
     life: 0, additional: {}, number: 0, haspic: false, userlist: [], additionalinfo: "", 
     belonging: "", department: "", entity: "", parent: "", type: false, user: "", usage: [], status: 0,
+};
+
+const emptyquery: AssetQueryType = {
+    name: "", parent: "", assetclass: "", belonging: "", from: 0, to: 0, user: "", status: 0,
+    pricefrom: 0, priceto: 0, custom: "", content: "",
 };
 
 const accessKeyId = "LTAI5t7ktfdDQPrsaDua9HaG";
@@ -114,6 +135,9 @@ const DelAsset = (() => {
         pageSize: 10, // 每页显示条数
         total: 0, // 总记录数
     });
+    const [check,setcheck] = useState<boolean>(false); //是否处于查询状态
+    const [query,setquery] = useState<AssetQueryType>(emptyquery); //查询的内容
+
     useEffect(() => {
         //获取当下部门所有的资产
         request("/api/asset/get", "GET", { page: 1 })
@@ -179,18 +203,50 @@ const DelAsset = (() => {
     const handleFetch = (page:number, pageSize:number) => {
         // 构造请求参数
         // 发送请求获取数据
-        request("/api/asset/get", "GET", { page: page })
-            .then((res) => {
-                setAssets(res.data);
-                setpagenation({
-                    current: page,
-                    pageSize: 10,
-                    total: res.count,
+        if(check) {
+            request("/api/user/ep/queryasset", "POST",
+                {
+                    //传递查询参数
+                    parent: query?.parent,
+                    assetclass: query?.assetclass,
+                    name: query?.name,
+                    belonging: query?.belonging,
+                    from: query?.from,
+                    to: query?.to,
+                    user: query?.user,
+                    status: query?.status,
+                    pricefrom: query?.pricefrom,
+                    priceto: query?.priceto,
+                    custom: query?.custom,
+                    content: query?.content,
+                    page: page,
+                })
+                .then((res) => {
+                    setAssets(res.data);
+                    setpagenation({
+                        current: page,
+                        pageSize: 10,
+                        total: res.count,
+                    });
+                })
+                .catch((err) => {
+                    message.warning(err.message);
                 });
-            })
-            .catch((err) => {
-                message.warning(err.message);
-            });
+        }
+        else {
+            request("/api/asset/get", "GET", { page: page })
+                .then((res) => {
+                    setAssets(res.data);
+                    setpagenation({
+                        current: page,
+                        pageSize: 10,
+                        total: res.count,
+                    });
+                })
+                .catch((err) => {
+                    message.warning(err.message);
+                });
+        }
     };
 
     return (
@@ -202,7 +258,27 @@ const DelAsset = (() => {
             >
                 <QueryFilter
                     labelWidth="auto"
+                    onReset={() => {
+                        setcheck(false);
+                        setquery(emptyquery);
+                    }}
                     onFinish={async (values) => {
+                        setcheck(true);
+                        //构造查询参数
+                        let tmp_query: AssetQueryType = {};
+                        tmp_query.parent = (values.parent != undefined) ? values.parent : "";
+                        tmp_query.assetclass = (values.assetclass != undefined) ? values.assetclass : "";
+                        tmp_query.name = (values.name != undefined) ? values.name : "";
+                        tmp_query.belonging = (values.belonging != undefined) ? values.belonging : "";
+                        tmp_query.from = (values.date != undefined) ? Date.parse(values.date[0]) / 1000 : 0;
+                        tmp_query.to = (values.date != undefined) ? Date.parse(values.date[1]) / 1000 : 0;
+                        tmp_query.user = (values.user != undefined) ? values.user : "";
+                        tmp_query.status = (values.status != undefined) ? values.status : -1;
+                        tmp_query.pricefrom = (values.price != undefined) ? values.price[0] : 0;
+                        tmp_query.priceto = (values.price != undefined) ? values.price[1] : 0;
+                        tmp_query.custom = (values.cusfeature != undefined) ? values.cusfeature : "";
+                        tmp_query.content = (values.cuscontent != undefined) ? values.cuscontent : "";
+                        setquery(tmp_query);
                         //发送查询请求，注意undefined的情况
                         request("/api/user/ep/queryasset", "POST",
                             {
@@ -218,9 +294,15 @@ const DelAsset = (() => {
                                 priceto: (values.price != undefined) ? values.price[1] : 0,
                                 custom: (values.cusfeature != undefined) ? values.cusfeature : "",
                                 content: (values.cuscontent != undefined) ? values.cuscontent : "",
+                                page: 1,
                             })
                             .then((res) => {
                                 setAssets(res.data);
+                                setpagenation({
+                                    current: 1,
+                                    pageSize: 10,
+                                    total: res.count,
+                                });
                                 message.success("查询成功");
                             }).catch((err) => {
                                 message.warning(err.message);
