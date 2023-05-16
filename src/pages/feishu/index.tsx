@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { Skeleton, message } from "antd";
 import { Md5 } from "ts-md5";
 
+import config from "../../../config/config-feishu.json";
 
 const Feishu = () => {
 
@@ -25,8 +26,7 @@ const Feishu = () => {
         if (!router.isReady) {
             return;
         }
-        let env = (process.env.NODE_ENV == "production" ? "https://aplus-frontend-aplus.app.secoder.net/feishu":"http://localhost:3000/feishu");
-        let url = "/api/feishu/code?code=" + query.code + "&redirect=" + env;
+        let url = "/api/feishu/code?code=" + query.code + "&redirect=" + config.redirect;
         request(url, "GET")
             .then((res) => {
                 request("/api/feishu/isbound", "GET")

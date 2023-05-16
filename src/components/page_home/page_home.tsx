@@ -56,6 +56,11 @@ interface ClickProps {
     onChange : (e: number) => void;
 }
 
+interface Feishu {
+    name: string;
+    isbound: boolean;
+}
+
 const Page_home = (prop: ClickProps) => {
 
     const [loading, setLoading] = useState(false);
@@ -67,6 +72,11 @@ const Page_home = (prop: ClickProps) => {
         department: "",
         entity: "",
         head: false,
+    });
+
+    const [feishu, setFeishu] = useState<Feishu>({
+        name: "",
+        isbound: false,
     });
 
     const beforeUpload = (file: RcFile) => {
@@ -128,6 +138,11 @@ const Page_home = (prop: ClickProps) => {
                 if(res.head === true)
                     url = client.signatureUrl(res.entity + "/" + res.department + "/" + res.username);
                 setImageUrl(url);
+                request("/api/feishu/getfeishuinfo/", "GET").then((res) => {
+                    setFeishu(res.info);
+                }).catch((err) => {
+                    message.error(err.message);
+                });
             })
             .catch((err) => {
                 message.error(err.message);
@@ -152,6 +167,9 @@ const Page_home = (prop: ClickProps) => {
                         <Descriptions.Item label="Username">{user.username}</Descriptions.Item>
                         <Descriptions.Item label="Department">{user.department}</Descriptions.Item>
                         <Descriptions.Item label="Entity">{user.entity}</Descriptions.Item>
+                        {(feishu.isbound === true) ? 
+                            <Descriptions.Item label="飞书账号">已绑定</Descriptions.Item> : 
+                            <Descriptions.Item label="飞书账号">未绑定</Descriptions.Item>}
                     </Descriptions>
                 </div>
                 <div style={{ marginLeft: "auto", marginRight: "auto", marginTop: "5%"}} key={1}>
