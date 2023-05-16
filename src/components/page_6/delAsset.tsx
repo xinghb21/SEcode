@@ -1,6 +1,6 @@
-import { Button, Descriptions, message, Modal } from "antd";
+import { Button,message} from "antd";
 import React from "react";
-import { ProColumns, ProFormDateRangePicker, ProFormDigitRange, ProList } from "@ant-design/pro-components";
+import { ProFormDateRangePicker, ProFormDigitRange, ProList } from "@ant-design/pro-components";
 import { useState } from "react";
 import { useEffect } from "react";
 import { request } from "../../utils/network";
@@ -15,7 +15,6 @@ import MoveAsset from "./moveAsset";
 import OSS from "ali-oss";
 import CryptoJS from "crypto-js";
 import Base64 from "base-64";
-import moment from "moment";
 
 interface Asset {
 
@@ -92,7 +91,7 @@ type AssetQueryType = {
 
 const ddata: AssetDisplayType = {
     key: 0, name: "", category: "", number_idle: 0, description: "", create_time: 0, price: 0,
-    life: 0, additional: {}, number: 0, haspic: false, userlist: [], additionalinfo: "", 
+    life: 0, additional: {}, number: 0, haspic: false, userlist: [], additionalinfo: "",
     belonging: "", department: "", entity: "", parent: "", type: false, user: "", usage: [], status: 0,
 };
 
@@ -111,7 +110,7 @@ const policyText = {
 };
 const policyBase64 = Base64.encode(JSON.stringify(policyText));
 const bytes = CryptoJS.HmacSHA1(policyBase64, accessSecret, { asBytes: true });
-const signature = bytes.toString(CryptoJS.enc.Base64); 
+const signature = bytes.toString(CryptoJS.enc.Base64);
 const client = new OSS({
     region: "oss-cn-beijing",
     accessKeyId: accessKeyId,
@@ -119,8 +118,12 @@ const client = new OSS({
     bucket: "aplus-secoder",
 });
 
-const DelAsset = (() => {
 
+const DelAsset = (() => {
+    //
+    const [selectedRowKeysContainer, setSRKC] = useState<Map<number, React.Key[]>>(new Map());
+    const [selectedRowAssetsContainer, setSRAC] = useState<Map<number, AssetMoveType[]>>(new Map());
+    //
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [assets, setAssets] = useState<Asset[]>([]);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -129,14 +132,14 @@ const DelAsset = (() => {
     const [displaydata, setDisplay] = useState<AssetDisplayType>(ddata);
     const [isMoveOpen, setIsMoveOpen] = useState(false);
     const [selectedAssets, setSelectedAssets] = useState<AssetMoveType[]>([]);
-    const [outputloading,setoupputloading] = useState<boolean>(false);
-    const [pagenation,setpagenation] = useState({
+    const [outputloading, setoupputloading] = useState<boolean>(false);
+    const [pagenation, setpagenation] = useState({
         current: 1, // 当前页码
         pageSize: 10, // 每页显示条数
         total: 0, // 总记录数
     });
-    const [check,setcheck] = useState<boolean>(false); //是否处于查询状态
-    const [query,setquery] = useState<AssetQueryType>(emptyquery); //查询的内容
+    const [check, setcheck] = useState<boolean>(false); //是否处于查询状态
+    const [query, setquery] = useState<AssetQueryType>(emptyquery); //查询的内容
 
     useEffect(() => {
         //获取当下部门所有的资产
@@ -170,40 +173,71 @@ const DelAsset = (() => {
 
     const rowSelection = {
         selectedRowKeys,
-        onChange: (keys: React.Key[]) => setSelectedRowKeys(keys),
+        onChange: (keys: React.Key[]) => {
+            //设置keys
+            setSelectedRowKeys(keys);
+            let tmpkeysmap = selectedRowKeysContainer;
+            tmpkeysmap.set(pagenation.current, keys);
+            setSRKC(tmpkeysmap);
+            let tmpassetsmap = selectedRowAssetsContainer;
+            if (keys.length != 0) {
+                tmpassetsmap.set(pagenation.current, keys.map(key => {
+                    let tmpitem = assets.find(data => data.key === key);
+                    if (tmpitem!=undefined) {
+                        return { key: tmpitem.key, assetname: tmpitem.name };
+                    }
+                    else {
+                        return { key: 0, assetname: "" };
+                    }
+                }));
+            }
+            else {
+                tmpassetsmap.set(pagenation.current, []);
+            }
+            setSRAC(tmpassetsmap);
+        },
     };
 
     //给后端发请求转移对应的asset
     const change_asset = (() => {
-
-        setSelectedAssets(selectedRowKeys.map(key => {
-            const item = assets.find(data => data.key === key);
-            return item ? { key: item.key, assetname: item.name } : { key: 0, assetname: "" };
-        }));
+        let AssetsContainer = Array.from(selectedRowAssetsContainer.values());
+        let tmpAssetsList: AssetMoveType[] = [];
+        for (let index = 0; index < AssetsContainer.length; index++) {
+            tmpAssetsList = tmpAssetsList.concat(AssetsContainer[index]);
+        }
+        setSelectedAssets(tmpAssetsList);
 
         setIsMoveOpen(true);
 
     });
+    //判断是否有选中的
+    function getHasSelected(): boolean {
+        let KeysContainer = Array.from(selectedRowKeysContainer.values());
+        let keysList: React.Key[] = [];
+        for (let index = 0; index < KeysContainer.length; index++) {
+            keysList = keysList.concat(KeysContainer[index]);
+        }
+        return keysList.length > 0;
+    }
 
-    const hasSelected = selectedRowKeys.length > 0;
-
-    const handleoutput= ()=>{
+    const handleoutput = () => {
         setoupputloading(true);
-        request("/api/async/newouttask","POST")
-            .then((res)=>{
+        request("/api/async/newouttask", "POST")
+            .then((res) => {
                 setoupputloading(false);
                 message.success("导出成功，请前往任务中心下载");
             })
-            .catch((err)=>{
+            .catch((err) => {
                 message.warning(err.message);
             });
         message.info("导出开始，请前往任务中心查看进度");
     };
 
-    const handleFetch = (page:number, pageSize:number) => {
+    const handleFetch = (page: number, pageSize: number) => {
         // 构造请求参数
         // 发送请求获取数据
-        if(check) {
+        //分页选取的复原
+        if (check) {
             request("/api/user/ep/queryasset", "POST",
                 {
                     //传递查询参数
@@ -246,6 +280,27 @@ const DelAsset = (() => {
                 .catch((err) => {
                     message.warning(err.message);
                 });
+        }
+        let keysList=Array.from(selectedRowKeysContainer.keys());
+        //如果不存在这个page
+        if (!(keysList.includes(page))) {
+            // console.log("不存在"+page);
+            let tempmap = selectedRowKeysContainer;
+            tempmap.set(page, []);
+            let tempmap2 = selectedRowAssetsContainer;
+            tempmap2.set(page, []);
+            setSRKC(tempmap);
+            setSelectedRowKeys([]);
+        } //反之存在这个page
+        else {
+            // console.log("存在"+page);
+            let templist = selectedRowKeysContainer.get(page);
+            if (templist!=null) {
+                setSelectedRowKeys(templist);
+            }
+            else {
+                setSelectedRowKeys([]);
+            }
         }
     };
 
@@ -428,18 +483,18 @@ const DelAsset = (() => {
                                     }).then((res) => {
                                         res.data.create_time *= 1000;
                                         res.data.key = row.key;
-                                        if(res.data.type == false) {
+                                        if (res.data.type == false) {
                                             res.data.number_idle = res.data.status == 0 ? 1 : 0;
-                                            if(res.data.user != null) res.data.userlist = [{key: res.data.user, name: res.data.user, number: 1}];
+                                            if (res.data.user != null) res.data.userlist = [{ key: res.data.user, name: res.data.user, number: 1 }];
                                         } else {
                                             res.data.userlist = [];
                                             res.data.userlist = res.data.usage.map((item) => {
                                                 return Object.entries(item).map(([key, value]) => {
-                                                    return {key: key, name: key, number: value};
+                                                    return { key: key, name: key, number: value };
                                                 })[0];
                                             });
                                         }
-                                        if(res.data.haspic == true) 
+                                        if (res.data.haspic == true)
                                             res.data.imageurl = client.signatureUrl(res.data.entity + "/" + res.data.department + "/" + res.data.name);
                                         setDisplay(res.data);
                                         setIsDetailOpen(true);
@@ -460,7 +515,7 @@ const DelAsset = (() => {
                 toolBarRender={() => {
                     return [
                         <div key={"tool"}>
-                            <Button key="2" type="primary" onClick={change_asset} disabled={!hasSelected}>
+                            <Button key="2" type="primary" onClick={change_asset} disabled={!getHasSelected()}>
                                 调拨选中资产
                             </Button>
                             <Button key="1" onClick={handleoutput} loading={outputloading} >
