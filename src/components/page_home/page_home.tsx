@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Card, Col, Descriptions, Divider, Row, Space, Typography, Upload, message } from "antd";
+import { Avatar, Button, Card, Col, Descriptions, Divider, Row, Space, Typography, Upload, message } from "antd";
 import { request } from "../../utils/network";
 import { LoadingOutlined, PlusOutlined, UserOutlined } from "@ant-design/icons";
 import { UploadChangeParam } from "antd/es/upload";
@@ -58,6 +58,7 @@ interface ClickProps {
 
 interface Feishu {
     name: string;
+    mobile: string;
     isbound: boolean;
 }
 
@@ -76,6 +77,7 @@ const Page_home = (prop: ClickProps) => {
 
     const [feishu, setFeishu] = useState<Feishu>({
         name: "",
+        mobile: "",
         isbound: false,
     });
 
@@ -168,7 +170,19 @@ const Page_home = (prop: ClickProps) => {
                         <Descriptions.Item label="Department">{user.department}</Descriptions.Item>
                         <Descriptions.Item label="Entity">{user.entity}</Descriptions.Item>
                         {(feishu.isbound === true) ? 
-                            <Descriptions.Item label="飞书账号">已绑定</Descriptions.Item> : 
+                            <Descriptions.Item label="飞书账号">{feishu.mobile}<Button onClick={()=>{
+                                request("/api/feishu/unbind", "DELETE")
+                                    .then((res)=>{
+                                        setFeishu({
+                                            name: "",
+                                            mobile: "",
+                                            isbound: false,
+                                        });
+                                    })
+                                    .catch((err) => {
+                                        message.error(err.message);
+                                    });
+                            }}>解除绑定</Button></Descriptions.Item> : 
                             <Descriptions.Item label="飞书账号">未绑定</Descriptions.Item>}
                     </Descriptions>
                 </div>
