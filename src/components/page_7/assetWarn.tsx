@@ -12,7 +12,6 @@ type WarningType = {
     condition: number;//策略条件，即需要设定的年限或者数量
 }
 
-
 const AssetWarn = () => {
 
     const [isMopen, setIsModalOpen] = useState(false);//增加model
