@@ -83,7 +83,7 @@ const Lookup = () => {
     return (
         <div 
             style={{
-                height: 600,
+                height: "600px",
                 overflow: "auto",
                 padding: "0 16px",
                 border: "1px solid rgba(140, 140, 140, 0.35)",

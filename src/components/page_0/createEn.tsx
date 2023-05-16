@@ -15,7 +15,7 @@ interface DialogProps{
 
 const CreateEn=(props: DialogProps) =>{
     const [entity, setEntity] = useState<string>("");
-    const [laoding,setloading] =useState<boolean>(false);
+    const [loading,setloading] =useState<boolean>(false);
     const handleCreateUser = () => {
         setloading(true);
         const newentity: EntityRegister = {
@@ -33,7 +33,7 @@ const CreateEn=(props: DialogProps) =>{
     };
 
     return (
-        <Modal  title="创建业务实体" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} >
+        <Modal  title="创建业务实体" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} confirmLoading={loading} >
             <div>
                 <label>业务实体名称:</label>
                 <Input type="text" value={entity} onChange={(e) => setEntity(e.target.value)} />

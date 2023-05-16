@@ -320,20 +320,10 @@ const Page_home = (prop: ClickProps) => {
                                     <Card
                                         hoverable
                                         style={{ width: 240 }}
-                                        cover={<img alt="example" src={pic8.src} />}
-                                        onClick={() => prop.onChange(0)}
-                                    >
-                                        <Meta title="业务实体管理" description="业务实体的查看、创建及删除" />
-                                    </Card>
-                                </Col>
-                                <Col span={6}>
-                                    <Card
-                                        hoverable
-                                        style={{ width: 240 }}
                                         cover={<img alt="example" src={pic10.src} />}
                                         onClick={() => prop.onChange(1)}
                                     >
-                                        <Meta title="系统人员管理" description="系统管理员的任命与解雇" />
+                                        <Meta title="业务实体管理" description="业务实体和系统管理员的管理" />
                                     </Card>
                                 </Col>
                             </> : null
