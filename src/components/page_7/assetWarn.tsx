@@ -81,7 +81,7 @@ const AssetWarn = () => {
                         setCGV(record.warning);
                         setIsMCOpen(true);
                     }}
-                    style={{ marginLeft: 10 }}>修改条件</Button>
+                        style={{ marginLeft: 10 }}>修改条件</Button>
                 </>
             ),
 
@@ -112,6 +112,9 @@ const AssetWarn = () => {
             .then(() => {
                 message.success("成功创建新的资产告警策略");
                 fetchWarning();
+                setCV(0);
+                setAN("");
+                setWC(0);
                 setIsModalOpen(false);
             })
             .catch((err) => {
@@ -125,6 +128,10 @@ const AssetWarn = () => {
 
 
     const handleCancel = () => {
+        setIS(true);
+        setCV(0);
+        setAN("");
+        setWC(0);
         setIsModalOpen(false);
     };
     //确定修改
@@ -247,7 +254,7 @@ const AssetWarn = () => {
                         修改告警策略条件
                     </text>
                 }
-                open={isMCopen} onOk={handleMCOk} onCancel={handleMCCancel} okButtonProps={{ disabled: (input_status ? false : true) }}>
+                    open={isMCopen} onOk={handleMCOk} onCancel={handleMCCancel} okButtonProps={{ disabled: (input_status ? false : true) }}>
                     <div>
                         <label>新条件为</label>
                         {changeV == 0 ?
