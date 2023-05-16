@@ -43,7 +43,7 @@ const DisplayModel = () => {
 
     return (
         <ProDescriptions<AssetDisplayType>
-            column={2}
+            column={1}
             title="资产详情"
             dataSource={assetDisplay}
             bordered
@@ -80,7 +80,7 @@ const DisplayModel = () => {
                     title: "资产使用年限",
                     dataIndex: "life",
                     key: "life",
-                    valueType: "digit",
+                    valueType: "text",
                     editable: false,
                 },
                 {
@@ -94,14 +94,14 @@ const DisplayModel = () => {
                     title: "资产总数",
                     dataIndex: "number",
                     key: "number",
-                    valueType: "digit",
+                    valueType: "text",
                     editable: false,
                 },
                 {
                     title: "可用资产数量",
                     dataIndex: "number_idle",
                     key: "number_idle",
-                    valueType: "digit",
+                    valueType: "text",
                     editable: false,
                 },
                 {
@@ -115,21 +115,21 @@ const DisplayModel = () => {
                     title: "创建时间",
                     dataIndex: "create_time",
                     key: "create_time",
-                    valueType: "dateTime",
+                    valueType: "text",
                     editable: false,
                 },
                 {
                     title: "资产原始价值",
                     dataIndex: "price",
                     key: "price",
-                    valueType: "money",
+                    valueType: "text",
                     editable: false,
                 },
                 {
                     title: "资产现价值",
                     dataIndex: "new_price",
                     key: "new_price",
-                    valueType: "money",
+                    valueType: "text",
                     editable: false,
                 },
             ]}
