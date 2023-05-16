@@ -97,7 +97,7 @@ const TbdDrawer = () => {
     let id: number = query.id as unknown as number;
     useEffect((() => {
         if(router.isReady === false) return;
-        console.log(query)
+        console.log(query);
         console.log(query.id);
         fetchtbdData();
         //获取部门下的资产类别
@@ -284,7 +284,7 @@ const TbdDrawer = () => {
                 </Tag>
             );
         }
-    }
+    };
     return (
         loading ? <Spin tip="Loading..."></Spin> :<>
             <Paragraph>
@@ -294,10 +294,10 @@ const TbdDrawer = () => {
                 {"申请理由："+tbdData?.reason+"\n"}
             </Paragraph>
             <Space>
-            <Text>
-                {"申请类型："}
-            </Text>
-            {optag(tbdData?.oper)}
+                <Text>
+                    {"申请类型："}
+                </Text>
+                {optag(tbdData?.oper)}
             </Space>
             <Table bordered columns={Assetcolumns} dataSource={assetdisdata} />
             <Space size="middle">
