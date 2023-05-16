@@ -53,15 +53,15 @@ const Exchangesubmit=(props:DialogProps)=>{
                 })
                 .catch((err)=>{
                 //申请没成功就关闭页面
-                    message.warning(err.message);
-                    props.onClose();
+                    message.error(err.message);
+                    // props.onClose();
                     setloading(false);
                 });    
         }else if(reason == ""){
-            message.warning("请填写申请原因");
+            message.error("请填写申请原因");
             setloading(false);
         }else {
-            message.warning("请填写转移人员");
+            message.error("请填写转移人员");
             setloading(false);
         }
     };
