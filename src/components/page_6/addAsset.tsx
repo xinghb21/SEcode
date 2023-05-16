@@ -473,8 +473,8 @@ const AddAsset = () => {
                 </Modal>
             </Space>
             <div style={{marginTop: 24}}>
-                <Table rowSelection={rowSelection} columns={columns} dataSource={assets} />
-                <Button type="primary" onClick={onSubmit} disabled={!hasSelected} loading={loading}>
+                <Table rowSelection={rowSelection} columns={columns} dataSource={assets} bordered={true}/>
+                <Button type="primary" onClick={onSubmit} disabled={!hasSelected} loading={loading} style={{marginTop:10}}>
                     提交
                 </Button>
             </div>
