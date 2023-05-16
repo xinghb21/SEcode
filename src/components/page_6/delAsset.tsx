@@ -109,11 +109,21 @@ const DelAsset = (() => {
     const [isMoveOpen, setIsMoveOpen] = useState(false);
     const [selectedAssets, setSelectedAssets] = useState<AssetMoveType[]>([]);
     const [outputloading,setoupputloading] = useState<boolean>(false);
+    const [pagenation,setpagenation] = useState({
+        current: 1, // 当前页码
+        pageSize: 10, // 每页显示条数
+        total: 0, // 总记录数
+    });
     useEffect(() => {
         //获取当下部门所有的资产
-        request("/api/asset/get", "GET")
+        request("/api/asset/get", "GET", { page: 1 })
             .then((res) => {
                 setAssets(res.data);
+                setpagenation({
+                    current: 1,
+                    pageSize: 10,
+                    total: res.count,
+                });
             })
             .catch((err) => {
                 message.warning(err.message);
@@ -165,6 +175,24 @@ const DelAsset = (() => {
             });
         message.info("导出开始，请前往任务中心查看进度");
     };
+
+    const handleFetch = (page:number, pageSize:number) => {
+        // 构造请求参数
+        // 发送请求获取数据
+        request("/api/asset/get", "GET", { page: page })
+        .then((res) => {
+            setAssets(res.data);
+            setpagenation({
+                current: page,
+                pageSize: 10,
+                total: res.count,
+            });
+        })
+        .catch((err) => {
+            message.warning(err.message);
+        });
+    };
+
     return (
         <>
             <div
@@ -290,8 +318,12 @@ const DelAsset = (() => {
                 </QueryFilter>
             </div>
             <ProList<Asset>
-
-                pagination={{ pageSize: 10 }}
+                pagination={{
+                    current: pagenation.current,
+                    pageSize: pagenation.pageSize,
+                    onChange: handleFetch,
+                    total: pagenation.total
+                }}
                 metas={{
                     title: { dataIndex: "name" },
                     description: {
