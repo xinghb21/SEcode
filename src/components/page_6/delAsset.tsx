@@ -180,17 +180,17 @@ const DelAsset = (() => {
         // 构造请求参数
         // 发送请求获取数据
         request("/api/asset/get", "GET", { page: page })
-        .then((res) => {
-            setAssets(res.data);
-            setpagenation({
-                current: page,
-                pageSize: 10,
-                total: res.count,
+            .then((res) => {
+                setAssets(res.data);
+                setpagenation({
+                    current: page,
+                    pageSize: 10,
+                    total: res.count,
+                });
+            })
+            .catch((err) => {
+                message.warning(err.message);
             });
-        })
-        .catch((err) => {
-            message.warning(err.message);
-        });
     };
 
     return (

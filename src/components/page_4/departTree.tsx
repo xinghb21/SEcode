@@ -58,6 +58,12 @@ const Dtree = () => {
     const [parent, setParent] = useState("");
     const [OldName, setOldName] = useState("");
     const router = useRouter();
+    const [pagenation, setpagenation] = useState({
+        current: 1, // 当前页码
+        pageSize: 10, // 每页显示条数
+        total: 0, // 总记录数
+    });
+    //选中的keys
     const [myselectedkeys, setkeys] = useState<{ checked: string[], halfChecked: string[] }>({ checked: [], halfChecked: [] });
     useEffect(() => {
         if (!router.isReady) {
@@ -68,9 +74,9 @@ const Dtree = () => {
     }, [router]);
 
     useEffect(() => {
-        if(myselectedkeys.checked.length == 0)
+        if (myselectedkeys.checked.length == 0)
             setUser([]);
-        else if(myselectedkeys.checked.length == 1)
+        else if (myselectedkeys.checked.length == 1)
             fetchDepart(myselectedkeys.checked[0]);
     }, [myselectedkeys]);
 
@@ -190,8 +196,8 @@ const Dtree = () => {
                     name: key
                 })
                     .then(() => {
-                        message.success("成功删除该部门");
                         fetchJson();
+                        message.success("成功删除该部门");
                         if (isSpinning == true) {
                             setTimeout(() => {
                                 setSpnning(false);
@@ -234,12 +240,12 @@ const Dtree = () => {
                         setSpnning(false);
                     }, 500);
                 }
+                setIsDialogOpenCT(false);
             })
             .catch((err) => {
                 message.warning(err.message);
                 setSpnning(false);
             });
-        setIsDialogOpenCT(false);
     };
     //更改部门的名称
     const handleChangeDt = (department: string) => {
@@ -254,19 +260,20 @@ const Dtree = () => {
             newname: department
         })
             .then(() => {
-                message.success("成功更改部门名称");
+                message.success("成功修改部门名称");
                 fetchJson();
                 if (isSpinning == true) {
                     setTimeout(() => {
                         setSpnning(false);
                     }, 500);
                 }
+                setIsDialogOpenCE(false);
             })
             .catch((err) => {
                 message.warning(err.message);
                 setSpnning(false);
             });
-        setIsDialogOpenCE(false);
+
     };
     //选中节点后传给table显示相应部门下的用户
     const handleCheck = (checkedKeys) => {
@@ -282,7 +289,7 @@ const Dtree = () => {
     };
     //将获得json利用递归转为相应的树组件data
     const fetchDepart = (name: string) => {
-        request("/api/user/es/staffs", "GET", 
+        request("/api/user/es/staffs", "GET",
             {
                 department: name,
                 page: 1,
@@ -307,10 +314,10 @@ const Dtree = () => {
             });
     };
 
-    const handleFetch = (page:number, pageSize:number) => {
+    const handleFetch = (page: number, pageSize: number) => {
         // 构造请求参数
         // 发送请求获取数据
-        request("/api/user/es/staffs","GET", 
+        request("/api/user/es/staffs", "GET",
             {
                 department: myselectedkeys.checked[0],
                 page: page
@@ -358,9 +365,9 @@ const Dtree = () => {
                     onChange: handleFetch,
                     total: pagenation.total
                 }}
-                columns={columns} 
-                dataSource={Depusers} 
-                style={{ height: "100%", width: "70%" }} 
+                columns={columns}
+                dataSource={Depusers}
+                style={{ height: "100%", width: "70%" }}
             />
             <CtCeDT title={"创建下属部门"} subtitle={"部门名称："} isOpen={isDialogOpenCT} onClose={() => setIsDialogOpenCT(false)} onCreateDt={handleCreateDt} />
             <CtCeDT title={"修改部门名称"} subtitle={"新名称："} isOpen={isDialogOpenCE} onClose={() => setIsDialogOpenCE(false)} onCreateDt={handleChangeDt} />

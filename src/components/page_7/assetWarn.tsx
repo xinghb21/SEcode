@@ -81,7 +81,7 @@ const AssetWarn = () => {
                         setCGV(record.warning);
                         setIsMCOpen(true);
                     }}
-                        style={{ marginLeft: 10 }}>修改条件</Button>
+                    style={{ marginLeft: 10 }}>修改条件</Button>
                 </>
             ),
 
@@ -254,7 +254,7 @@ const AssetWarn = () => {
                         修改告警策略条件
                     </text>
                 }
-                    open={isMCopen} onOk={handleMCOk} onCancel={handleMCCancel} okButtonProps={{ disabled: (input_status ? false : true) }}>
+                open={isMCopen} onOk={handleMCOk} onCancel={handleMCCancel} okButtonProps={{ disabled: (input_status ? false : true) }}>
                     <div>
                         <label>新条件为</label>
                         {changeV == 0 ?
