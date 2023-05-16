@@ -25,12 +25,12 @@ const { confirm } = Modal;
 //定义table的column
 const columns: ColumnsType<Depuser> = [
     {
-        title: "用户名",
-        dataIndex: "username",
+        title: "用户ID",
+        dataIndex: "id",
     },
     {
-        title: "部门",
-        dataIndex: "department",
+        title: "用户名",
+        dataIndex: "username",
     },
     {
         title: "职位",
@@ -42,6 +42,7 @@ const columns: ColumnsType<Depuser> = [
 //定义table里的每个item
 type Depuser = {
     key: React.Key;
+    id: number;
     username: string;
     department: string;
     identity: string;
@@ -290,21 +291,13 @@ const Dtree = () => {
                 page: 1,
             })
             .then((res) => {
-                let oriUser: Depuser[] = res.data.map((val) => ({
-                    key: val.name,
-                    username: val.name,
-                    department: val.department,
-                    identity: (val.identity == 3) ? "资产管理员" : "员工",
+                let oriUser: Depuser[] = res.info.map((val) => ({
+                    key: val.id,
+                    id: val.id,
+                    username: val.username,
+                    identity: (val.number == 3) ? "资产管理员" : "员工",
                 }));
-                let newUser: Depuser[] = [];
-                let len = res.data.length;
-                for (let index = 0; index < len; index++) {
-                    //利用includes函数筛选出相应的部门的用户
-                    if ((myselectedkeys.checked).includes(oriUser[index].department)) {
-                        newUser.push(oriUser[index]);
-                    }
-                }
-                setUser(newUser);
+                setUser(oriUser);
                 setpagenation({
                     current: 1,
                     pageSize: 10,
@@ -320,36 +313,28 @@ const Dtree = () => {
     const handleFetch = (page:number, pageSize:number) => {
         // 构造请求参数
         // 发送请求获取数据
-        request("/api/asset/allhistory","GET", 
+        request("/api/user/es/staffs","GET", 
             {
                 department: myselectedkeys.checked[0],
                 page: page
             })
             .then((res) => {
-            // 更新表格数据源和分页器状态
-                let oriUser: Depuser[] = res.data.map((val) => ({
-                    key: val.name,
-                    username: val.name,
-                    department: val.department,
-                    identity: (val.identity == 3) ? "资产管理员" : "员工",
+                let oriUser: Depuser[] = res.info.map((val) => ({
+                    key: val.id,
+                    id: val.id,
+                    username: val.username,
+                    identity: (val.number == 3) ? "资产管理员" : "员工",
                 }));
-                let newUser: Depuser[] = [];
-                let len = res.data.length;
-                for (let index = 0; index < len; index++) {
-                    //利用includes函数筛选出相应的部门的用户
-                    if ((myselectedkeys.checked).includes(oriUser[index].department)) {
-                        newUser.push(oriUser[index]);
-                    }
-                }
-                setUser(newUser);
+                setUser(oriUser);
                 setpagenation({
-                    current: page,
+                    current: 1,
                     pageSize: 10,
                     total: res.count,
                 });
+                // console.log("newUser"+Depusers);
             })
-            .catch((error) => {
-                message.warning(error.message);
+            .catch((err) => {
+                message.warning(err.message);
             });
     };
 
