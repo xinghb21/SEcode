@@ -12,6 +12,7 @@ import {
     ExclamationCircleFilled,
     CaretDownOutlined,
 } from "@ant-design/icons";
+import { ProColumns, ProTable } from "@ant-design/pro-components";
 
 //树组件的item
 type TreeData = {
@@ -23,20 +24,34 @@ type TreeData = {
 const { confirm } = Modal;
 
 //定义table的column
-const columns: ColumnsType<Depuser> = [
-    {
-        title: "用户ID",
-        dataIndex: "id",
-    },
+const columns: ProColumns<Depuser>[] = [
     {
         title: "用户名",
+        width: 80,
         dataIndex: "username",
+        copyable: true,
+        ellipsis: true,
+    },
+    {
+        title: "部门",
+        dataIndex: "department",
+        width: 80,
+        copyable: true,
+        ellipsis: true,
     },
     {
         title: "职位",
+        width: 80,
         dataIndex: "identity",
-    }
-
+        hideInSearch: true,
+        filters: true,
+        onFilter: true,
+        // align: 'center',
+        valueEnum: {
+            4: { text: "普通员工"},
+            3: { text: "资产管理员"},
+        },
+    },
 ];
 
 //定义table里的每个item
@@ -45,7 +60,7 @@ type Depuser = {
     id: number;
     username: string;
     department: string;
-    identity: string;
+    identity: number;
 }
 //定义page_4的核心组件：一个树组件和相应的table
 const Dtree = () => {
@@ -323,11 +338,11 @@ const Dtree = () => {
                 page: page
             })
             .then((res) => {
-                let oriUser: Depuser[] = res.info.map((val) => ({
-                    key: val.id,
-                    id: val.id,
-                    username: val.username,
-                    identity: (val.number == 3) ? "资产管理员" : "员工",
+                let oriUser: Depuser[] = res.data.map((val) => ({
+                    key: val.name,
+                    username: val.name,
+                    department: val.department,
+                    identity: (val.identity == 3) ? "💼资产管理员" : "👨‍🔧员工",
                 }));
                 setUser(oriUser);
                 setpagenation({
@@ -358,17 +373,7 @@ const Dtree = () => {
                     />
                 </Spin>
             </div>
-            <Table
-                pagination={{
-                    current: pagenation.current,
-                    pageSize: pagenation.pageSize,
-                    onChange: handleFetch,
-                    total: pagenation.total
-                }}
-                columns={columns}
-                dataSource={Depusers}
-                style={{ height: "100%", width: "70%" }}
-            />
+            <ProTable<Depuser> columns={columns} dataSource={Depusers} search={false} style={{ height: "100%", width: "70%" }} />
             <CtCeDT title={"创建下属部门"} subtitle={"部门名称："} isOpen={isDialogOpenCT} onClose={() => setIsDialogOpenCT(false)} onCreateDt={handleCreateDt} />
             <CtCeDT title={"修改部门名称"} subtitle={"新名称："} isOpen={isDialogOpenCE} onClose={() => setIsDialogOpenCE(false)} onCreateDt={handleChangeDt} />
         </div>

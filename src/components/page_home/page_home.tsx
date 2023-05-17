@@ -20,6 +20,7 @@ import pic8 from "./../../styles/部门管理.jpg";
 import pic9 from "./../../styles/操作日志.jpg";
 import pic10 from "./../../styles/人员管理.jpg";
 import pic11 from "./../../styles/异步任务.jpg";
+import SITE_CONFIG from "../../settings";
 
 const { Meta } = Card;
 
@@ -56,6 +57,12 @@ interface ClickProps {
     onChange : (e: number) => void;
 }
 
+interface Feishu {
+    name: string;
+    mobile: string;
+    isbound: boolean;
+}
+
 const Page_home = (prop: ClickProps) => {
 
     const [loading, setLoading] = useState(false);
@@ -67,6 +74,12 @@ const Page_home = (prop: ClickProps) => {
         department: "",
         entity: "",
         head: false,
+    });
+
+    const [feishu, setFeishu] = useState<Feishu>({
+        name: "",
+        mobile: "",
+        isbound: false,
     });
 
     const beforeUpload = (file: RcFile) => {
@@ -128,6 +141,11 @@ const Page_home = (prop: ClickProps) => {
                 if(res.head === true)
                     url = client.signatureUrl(res.entity + "/" + res.department + "/" + res.username);
                 setImageUrl(url);
+                request("/api/feishu/getfeishuinfo/", "GET").then((res) => {
+                    setFeishu(res.info);
+                }).catch((err) => {
+                    message.error(err.message);
+                });
             })
             .catch((err) => {
                 message.error(err.message);
@@ -145,6 +163,22 @@ const Page_home = (prop: ClickProps) => {
                         <Descriptions.Item label="Username">{user.username}</Descriptions.Item>
                         <Descriptions.Item label="Department">{user.department}</Descriptions.Item>
                         <Descriptions.Item label="Entity">{user.entity}</Descriptions.Item>
+                        {(feishu.isbound === true) ? 
+                            <Descriptions.Item label="飞书账号">{feishu.mobile}<Button onClick={()=>{
+                                request("/api/feishu/unbind", "DELETE")
+                                    .then((res)=>{
+                                        setFeishu({
+                                            name: "",
+                                            mobile: "",
+                                            isbound: false,
+                                        });
+                                    })
+                                    .catch((err) => {
+                                        message.error(err.message);
+                                    });
+                            }}>解除绑定</Button></Descriptions.Item> : 
+                            <Descriptions.Item label="飞书账号">未绑定<Button href={"https://passport.feishu.cn/suite/passport/oauth/authorize?client_id=cli_a4b17e84d0f8900e&redirect_uri="+SITE_CONFIG.FRONTEND+"/bind&response_type=code"}
+                            >绑定账号</Button></Descriptions.Item>}
                     </Descriptions>
                 </div>
                 <div style={{marginTop: "5%", width: "30%"}} key={1}>

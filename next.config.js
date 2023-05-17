@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
     reactStrictMode: false, /* @note: To prevent duplicated call of useEffect */
     swcMinify: true,
@@ -6,7 +7,7 @@ const nextConfig = {
     async rewrites() {
         return [{
             source: "/api/:path*",
-            destination: process.env.NODE_ENV === "production" ? "https://Aplus-backend-Aplus.app.secoder.net/:path*" : "http://127.0.0.1:8000/:path*",
+            destination: process.env.NEXT_PUBLIC_BACKEND_URL + "/:path*",
         }, 
         {
             source: "/image",
