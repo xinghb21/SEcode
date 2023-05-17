@@ -3,7 +3,7 @@
 import { useRouter } from "next/router";
 import React from "react";
 import { useEffect, useState } from "react";
-import config from "../../../config/config-feishu.json";
+import SITE_CONFIG from "../../settings";
 import { request } from "../../utils/network";
 import { Skeleton, Spin, message } from "antd";
 
@@ -17,7 +17,7 @@ const Feishu = () => {
         if (!router.isReady) {
             return;
         }
-        let url = "/api/feishu/bind?code=" + query.code + "&redirect=" + config.redirect.slice(0, -7) + "/bind";
+        let url = "/api/feishu/bind?code=" + query.code + "&redirect=" + SITE_CONFIG.BACKEND + "/bind";
         request(url, "POST")
             .then((res) => {
                 router.push("/user");
