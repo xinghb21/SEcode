@@ -43,6 +43,7 @@ const ACtree = () => {
     // const [data, setData] = useState<TreeData[]>([]);
     const [json, setJson] = useState({});
     const [isSpinning, setSpnning] = useState(false);
+    const [isSpinning2, setSpnning2] = useState(false);
     // const [Depusers, setUser] = useState<Depuser[]>([]);
     // const [Departs, setDepart] = useState<String[]>([]);
     const [isDialogOpenCT, setIsDialogOpenCT] = useState(false);
@@ -55,23 +56,6 @@ const ACtree = () => {
     const [types, setType] = useState<Type[]>([]);
 
     //从后端获取部门对应的所有自定义属性
-    useEffect(() => {
-        request("/api/asset/attributes", "GET")
-            .then((res) => {
-                let typelist: Type[] = [];
-                for (let i = 0; i < res.info.length; i++) {
-                    let tmp_type: Type = {
-                        key: res.info[i],
-                        info: res.info[i],
-                    };
-                    typelist.push(tmp_type);
-                }
-                setType(typelist);
-            })
-            .catch((err) => {
-                message.warning(err.message);
-            });
-    }, []);
     //属性
 
     useEffect(() => {
@@ -79,7 +63,9 @@ const ACtree = () => {
             return;
         }
         setSpnning(true);
+        setSpnning2(true);
         fetchJson();
+        fetchType();
     }, [router]);
 
     const parseTreeData = (data: Record<string, any>): TreeData[] => {
@@ -179,6 +165,28 @@ const ACtree = () => {
                 router.push("/");
             });
     };
+
+    const fetchType = () => {
+        request("/api/asset/attributes", "GET")
+            .then((res) => {
+                setTimeout(() => {
+                    setSpnning2(false);
+                }, 500);
+                let typelist: Type[] = [];
+                for (let i = 0; i < res.info.length; i++) {
+                    let tmp_type: Type = {
+                        key: res.info[i],
+                        info: res.info[i],
+                    };
+                    typelist.push(tmp_type);
+                }
+                setType(typelist);
+            })
+            .catch((err) => {
+                setSpnning2(false);
+                message.warning(err.message);
+            });
+    };
     //编辑按钮
     const onEdit = (key) => {
         setIsDialogOpenCE(true);
@@ -269,8 +277,9 @@ const ACtree = () => {
                     setSpnning(false);
                 });
         }
-
-        setSpnning(false);
+        setTimeout(() => {
+            setSpnning2(false);
+        }, 500);
         setIsDialogOpenCT(false);
     };
     //更改部门的名称
@@ -339,41 +348,94 @@ const ACtree = () => {
                             };
                             if (values.info == "资产类别") {
                                 message.warning("不能使用默认属性");
+                                if (isSpinning2 == true) {
+                                    setTimeout(() => {
+                                        setSpnning2(false);
+                                    }, 500);
+                                }
                             }
                             else if (values.info == "资产描述") {
                                 message.warning("不能使用默认属性");
+                                if (isSpinning2 == true) {
+                                    setTimeout(() => {
+                                        setSpnning2(false);
+                                    }, 500);
+                                }
                             }
                             else if (values.info == "资产名称") {
                                 message.warning("不能使用默认属性");
+                                if (isSpinning2 == true) {
+                                    setTimeout(() => {
+                                        setSpnning2(false);
+                                    }, 500);
+                                }
                             }
                             else if (values.info == "上级资产名称") {
                                 message.warning("不能使用默认属性");
+                                if (isSpinning2 == true) {
+                                    setTimeout(() => {
+                                        setSpnning2(false);
+                                    }, 500);
+                                }
                             }
                             else if (values.info == "资产数量") {
                                 message.warning("不能使用默认属性");
+                                if (isSpinning2 == true) {
+                                    setTimeout(() => {
+                                        setSpnning2(false);
+                                    }, 500);
+                                }
                             }
                             else if (values.info == "资产价值") {
                                 message.warning("不能使用默认属性");
+                                if (isSpinning2 == true) {
+                                    setTimeout(() => {
+                                        setSpnning2(false);
+                                    }, 500);
+                                }
                             }
                             else if (values.info == "挂账人") {
                                 message.warning("不能使用默认属性");
+                                if (isSpinning2 == true) {
+                                    setTimeout(() => {
+                                        setSpnning2(false);
+                                    }, 500);
+                                }
                             }
                             else if (!(values.info).trim() || (values.info).length == 0) {
                                 message.warning("请输入自定义属性");
+                                if (isSpinning2 == true) {
+                                    setTimeout(() => {
+                                        setSpnning2(false);
+                                    }, 500);
+                                }
                             }
                             else if ((values.info).includes(" ") || (values.info).includes(",") || (values.info).includes("，")) {
                                 message.warning("非法字符，请重新输入");
+                                if (isSpinning2 == true) {
+                                    setTimeout(() => {
+                                        setSpnning2(false);
+                                    }, 500);
+                                }
                             }
                             else {
                                 //与后端实现添加属性
+                                setSpnning2(true);
                                 request("/api/asset/createattributes", "POST", {
                                     name: values.info
                                 })
                                     .then((res) => {
+                                        setTimeout(() => {
+                                            setSpnning2(false);
+                                        }, 500);
                                         setType([...types, label]);
                                         message.success("创建成功");
                                     })
                                     .catch((err) => {
+                                        setTimeout(() => {
+                                            setSpnning2(false);
+                                        }, 500);
+
                                         message.warning(err.message);
                                     });
                                 return true;
@@ -392,7 +454,9 @@ const ACtree = () => {
                     </ModalForm>
                 </div>
                 <div style={{ marginBottom: 24 }}>
-                    <Table columns={columns} dataSource={types} bordered={true} />
+                    <Spin spinning={isSpinning2}>
+                        <Table columns={columns} dataSource={types} bordered={true} />
+                    </Spin>
                 </div>
             </div>
         </div>

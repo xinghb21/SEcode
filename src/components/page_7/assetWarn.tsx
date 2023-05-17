@@ -1,4 +1,4 @@
-import { Button, Modal, Input, Select, InputNumber, Space, message, Table, Tag } from "antd";
+import { Button, Modal, Input, Select, InputNumber, Space, message, Table, Tag, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import type { ColumnsType } from "antd/es/table";
 import { PlusOutlined, WarningOutlined } from "@ant-design/icons";
@@ -11,6 +11,7 @@ type WarningType = {
     warning: number,//告警的策略，0为资产过旧，1为资产数量不足
     condition: number;//策略条件，即需要设定的年限或者数量
 }
+const { Text } = Typography;
 
 const AssetWarn = () => {
 
@@ -42,9 +43,9 @@ const AssetWarn = () => {
                     );
                 }
                 else {
-                    <Tag color="yellow">
+                    return (<Tag color="yellow">
                         数量告警
-                    </Tag>;
+                    </Tag>);
                 }
             },
         },
@@ -199,49 +200,57 @@ const AssetWarn = () => {
                             <label>资产告警条件</label>
                             {choseV === 0
                                 ?
-                                <div style={{ marginTop: 5 }}>
-                                    <label>资产使用超过 </label>
-                                    <InputNumber min={0}
-                                        status={input_status ? "" : "error"}
-                                        value={inputWC}
-                                        onChange={(value) => {
-                                            if (value == null) {
-                                                setIS(false);
-                                                message.warning("请输入数值");
-                                            }
-                                            else if (typeof (value) != "number") {
-                                                setIS(false);
-                                                message.warning("请输入数值");
-                                            }
-                                            else {
-                                                setIS(true);
-                                                setWC(value);
-                                            }
-                                        }}
-                                    />
-                                    <label> 年，则开始告警</label>
+                                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                    <div style={{ marginTop: 5 }}>
+                                        <label>资产使用超过 </label>
+                                        <InputNumber min={0}
+                                            status={input_status ? "" : "error"}
+                                            value={inputWC}
+                                            onChange={(value) => {
+                                                if (value == null) {
+                                                    setIS(false);
+                                                }
+                                                else if (typeof (value) != "number") {
+                                                    setIS(false);
+                                                }
+                                                else {
+                                                    setIS(true);
+                                                    setWC(value);
+                                                }
+                                            }}
+                                        />
+
+                                        <label> 年，则开始告警</label>
+
+                                    </div>
+                                    <Text type="danger" style={{ visibility: (input_status ? "hidden" : "visible"), marginRight: 20 }} >
+                                        请输入数值
+                                    </Text>
                                 </div>
                                 :
-                                <div style={{ marginTop: 5 }}>
-                                    <label>资产数量少于 </label>
-                                    <InputNumber min={0}
-                                        status={input_status ? "" : "error"}
-                                        value={inputWC}
-                                        onChange={(value) => {
-                                            if (value == null) {
-                                                setIS(false);
-                                                message.warning("请输入数值");
-                                            }
-                                            else if (typeof (value) != "number") {
-                                                setIS(false);
-                                                message.warning("请输入数值");
-                                            } else {
-                                                setIS(true);
-                                                setWC(value);
-                                            }
-                                        }}
-                                    />
-                                    <label> ，则开始告警</label>
+                                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                    <div style={{ marginTop: 5 }}>
+                                        <label>资产数量少于 </label>
+                                        <InputNumber min={0}
+                                            status={input_status ? "" : "error"}
+                                            value={inputWC}
+                                            onChange={(value) => {
+                                                if (value == null) {
+                                                    setIS(false);
+                                                }
+                                                else if (typeof (value) != "number") {
+                                                    setIS(false);
+                                                } else {
+                                                    setIS(true);
+                                                    setWC(value);
+                                                }
+                                            }}
+                                        />
+                                        <label> ，则开始告警</label>
+                                    </div>
+                                    <Text type="danger" style={{ visibility: (input_status ? "hidden" : "visible"), marginRight: 20 }} >
+                                        请输入数值
+                                    </Text>
                                 </div>
                             }
                         </div>
@@ -261,7 +270,7 @@ const AssetWarn = () => {
                                 <label>
                                     新的告警年限为
                                 </label>
-                                <div>
+                                <div style={{ display: "flex", flexDirection: "column" }}>
                                     <InputNumber min={0}
                                         style={{ marginTop: 10 }}
                                         value={inputCGWC}
@@ -269,11 +278,9 @@ const AssetWarn = () => {
                                         onChange={(value) => {
                                             if (value == null) {
                                                 setIS(false);
-                                                message.warning("请输入数值");
                                             }
                                             else if (typeof (value) != "number") {
                                                 setIS(false);
-                                                message.warning("请输入数值");
                                             }
                                             else {
                                                 setIS(true);
@@ -281,6 +288,9 @@ const AssetWarn = () => {
                                             }
                                         }}
                                     />
+                                    <Text type="danger" style={{ marginLeft: 4, visibility: (input_status ? "hidden" : "visible") }} >
+                                        请输入数值
+                                    </Text>
                                 </div>
                             </>
                             :
@@ -296,11 +306,9 @@ const AssetWarn = () => {
                                         onChange={(value) => {
                                             if (value == null) {
                                                 setIS(false);
-                                                message.warning("请输入数值");
                                             }
                                             else if (typeof (value) != "number") {
                                                 setIS(false);
-                                                message.warning("请输入数值");
                                             }
                                             else {
                                                 setIS(true);
@@ -308,6 +316,9 @@ const AssetWarn = () => {
                                             }
                                         }}
                                     />
+                                    <Text type="danger" style={{ marginLeft: 4, visibility: (input_status ? "hidden" : "visible") }} >
+                                        请输入数值
+                                    </Text>
                                 </div>
                             </>
                         }
