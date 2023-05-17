@@ -315,10 +315,18 @@ const DelAsset = (() => {
                     labelWidth="auto"
                     onReset={() => {
                         setcheck(false);
+                        setSRKC(new Map());
+                        setSelectedAssets([]);
+                        setSelectedRowKeys([]);
+                        setSRAC(new Map());
                         setquery(emptyquery);
                     }}
                     onFinish={async (values) => {
                         setcheck(true);
+                        setSRKC(new Map());
+                        setSRAC(new Map());
+                        setSelectedAssets([]);
+                        setSelectedRowKeys([]);
                         //构造查询参数
                         let tmp_query: AssetQueryType = {};
                         tmp_query.parent = (values.parent != undefined) ? values.parent : "";
