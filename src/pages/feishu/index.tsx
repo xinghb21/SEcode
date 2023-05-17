@@ -26,7 +26,7 @@ const Feishu = () => {
         if (!router.isReady) {
             return;
         }
-        let url = "/api/feishu/code?code=" + query.code + "&redirect=" + SITE_CONFIG.BACKEND + "/feishu";
+        let url = "/api/feishu/code?code=" + query.code + "&redirect=" + SITE_CONFIG.FRONTEND + "/feishu";
         request(url, "GET")
             .then((res) => {
                 request("/api/feishu/isbound", "GET")

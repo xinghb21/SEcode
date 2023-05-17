@@ -80,7 +80,7 @@ const LoginForm = (props: LoginFormProps) => {
 
                     </Form>
                     <Divider >Or</Divider>
-                    <Button block shape='round' href={"https://passport.feishu.cn/suite/passport/oauth/authorize?client_id=cli_a4b17e84d0f8900e&redirect_uri="+SITE_CONFIG.BACKEND+"/feishu"+"&response_type=code"}>使用飞书登录</Button>
+                    <Button block shape='round' href={"https://passport.feishu.cn/suite/passport/oauth/authorize?client_id=cli_a4b17e84d0f8900e&redirect_uri="+SITE_CONFIG.FRONTEND+"/feishu"+"&response_type=code"}>使用飞书登录</Button>
                 </div>
             </div>
             <div>

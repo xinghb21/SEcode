@@ -17,7 +17,7 @@ const Feishu = () => {
         if (!router.isReady) {
             return;
         }
-        let url = "/api/feishu/bind?code=" + query.code + "&redirect=" + SITE_CONFIG.BACKEND + "/bind";
+        let url = "/api/feishu/bind?code=" + query.code + "&redirect=" + SITE_CONFIG.FRONTEND + "/bind";
         request(url, "POST")
             .then((res) => {
                 router.push("/user");
