@@ -45,3 +45,6 @@ sonar-project.properties
 
 # database
 **/db.sqlite
+
+# config
+config
