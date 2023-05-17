@@ -57,6 +57,7 @@ const columns: ProColumns<Depuser>[] = [
 //定义table里的每个item
 type Depuser = {
     key: React.Key;
+    id: number;
     username: string;
     department: string;
     identity: number;
@@ -67,12 +68,18 @@ const Dtree = () => {
     const [json, setJson] = useState({});
     const [isSpinning, setSpnning] = useState(false);
     const [Depusers, setUser] = useState<Depuser[]>([]);
-    const [Departs, setDepart] = useState<String[]>([]);
     const [isDialogOpenCT, setIsDialogOpenCT] = useState(false);
     const [isDialogOpenCE, setIsDialogOpenCE] = useState(false);
     const [parent, setParent] = useState("");
     const [OldName, setOldName] = useState("");
     const router = useRouter();
+    const [pagenation, setpagenation] = useState({
+        current: 1, // 当前页码
+        pageSize: 10, // 每页显示条数
+        total: 0, // 总记录数
+    });
+    //选中的keys
+    const [myselectedkeys, setkeys] = useState<{ checked: string[], halfChecked: string[] }>({ checked: [], halfChecked: [] });
     useEffect(() => {
         if (!router.isReady) {
             return;
@@ -80,6 +87,14 @@ const Dtree = () => {
         setSpnning(true);
         fetchJson();
     }, [router]);
+
+    useEffect(() => {
+        if (myselectedkeys.checked.length == 0)
+            setUser([]);
+        else if (myselectedkeys.checked.length == 1)
+            fetchDepart(myselectedkeys.checked[0]);
+    }, [myselectedkeys]);
+
 
     const parseTreeData = (data: Record<string, any>): TreeData[] => {
         return Object.entries(data).map(([key, keyvalue]) => {
@@ -119,7 +134,7 @@ const Dtree = () => {
                     title: (<div>
                         <span>{key}</span>
                         <span>
-                            <Tooltip placement="bottomRight"  title={<span>修改部门名称</span>}>
+                            <Tooltip placement="bottomRight" title={<span>修改部门名称</span>}>
                                 <FormOutlined style={{ marginLeft: 10 }} onClick={() => onEdit(key)} />
                             </Tooltip>
                             <Tooltip placement="bottom" title={<span>添加部门</span>}>
@@ -197,7 +212,7 @@ const Dtree = () => {
                 })
                     .then(() => {
                         fetchJson();
-                        fetchDepart();
+                        message.success("成功删除该部门");
                         if (isSpinning == true) {
                             setTimeout(() => {
                                 setSpnning(false);
@@ -222,7 +237,7 @@ const Dtree = () => {
     //创建新的部门
     const handleCreateDt = (department: string) => {
         //不允许空输入
-        if (!department.trim() ||department.length == 0) {
+        if (!department.trim() || department.length == 0) {
             message.warning("请输入部门名称");
             return;
         }
@@ -233,24 +248,24 @@ const Dtree = () => {
             parent: (parent == localStorage.getItem("entity")) ? "" : parent
         })
             .then(() => {
+                message.success("成功创建新部门");
                 fetchJson();
-                fetchDepart();
                 if (isSpinning == true) {
                     setTimeout(() => {
                         setSpnning(false);
                     }, 500);
                 }
+                setIsDialogOpenCT(false);
             })
             .catch((err) => {
                 message.warning(err.message);
                 setSpnning(false);
             });
-        setIsDialogOpenCT(false);
     };
     //更改部门的名称
     const handleChangeDt = (department: string) => {
         //不允许空输入
-        if (!department.trim() ||department.length == 0) {
+        if (!department.trim() || department.length == 0) {
             message.warning("请输入部门名称");
             return;
         }
@@ -260,44 +275,53 @@ const Dtree = () => {
             newname: department
         })
             .then(() => {
+                message.success("成功修改部门名称");
                 fetchJson();
-                fetchDepart();
                 if (isSpinning == true) {
                     setTimeout(() => {
                         setSpnning(false);
                     }, 500);
                 }
+                setIsDialogOpenCE(false);
             })
             .catch((err) => {
                 message.warning(err.message);
                 setSpnning(false);
             });
-        setIsDialogOpenCE(false);
+
     };
     //选中节点后传给table显示相应部门下的用户
     const handleCheck = (checkedKeys) => {
-        setDepart(checkedKeys.checked);
+        //实现单选
+        let checked_len = (checkedKeys.checked).length;
+        if (checked_len == 0) {
+            setkeys({ checked: [], halfChecked: [] });
+        }
+        else {
+            setkeys({ checked: [(checkedKeys.checked)[checked_len - 1]], halfChecked: [] });
+        }
         // console.log(checkedKeys.checked);
     };
     //将获得json利用递归转为相应的树组件data
-    const fetchDepart = () => {
-        request("/api/user/es/checkall", "GET")
+    const fetchDepart = (name: string) => {
+        request("/api/user/es/staffs", "GET",
+            {
+                department: name,
+                page: 1,
+            })
             .then((res) => {
-                let oriUser: Depuser[] = res.data.map((val) => ({
-                    key: val.name,
-                    username: val.name,
-                    department: val.department,
-                    identity: (val.identity == 3) ? "💼资产管理员" : "👨‍🔧员工",
+                let oriUser: Depuser[] = res.info.map((val) => ({
+                    key: val.id,
+                    id: val.id,
+                    username: val.username,
+                    identity: (val.number == 3) ? "资产管理员" : "员工",
                 }));
-                let newUser: Depuser[] = [];
-                let len = res.data.length;
-                for (let index = 0; index < len; index++) {
-                    //利用includes函数筛选出相应的部门的用户
-                    if (Departs.includes(oriUser[index].department)) {
-                        newUser.push(oriUser[index]);
-                    }
-                }
-                setUser(newUser);
+                setUser(oriUser);
+                setpagenation({
+                    current: 1,
+                    pageSize: 10,
+                    total: res.count,
+                });
                 // console.log("newUser"+Depusers);
             })
             .catch((err) => {
@@ -305,10 +329,34 @@ const Dtree = () => {
             });
     };
 
-    //获取该企业实体下的所有用户用来在table里显示
-    useEffect((() => {
-        fetchDepart();
-    }), [Departs]);
+    const handleFetch = (page: number, pageSize: number) => {
+        // 构造请求参数
+        // 发送请求获取数据
+        request("/api/user/es/staffs", "GET",
+            {
+                department: myselectedkeys.checked[0],
+                page: page
+            })
+            .then((res) => {
+                let oriUser: Depuser[] = res.data.map((val) => ({
+                    key: val.name,
+                    username: val.name,
+                    department: val.department,
+                    identity: (val.identity == 3) ? "💼资产管理员" : "👨‍🔧员工",
+                }));
+                setUser(oriUser);
+                setpagenation({
+                    current: 1,
+                    pageSize: 10,
+                    total: res.count,
+                });
+                // console.log("newUser"+Depusers);
+            })
+            .catch((err) => {
+                message.warning(err.message);
+            });
+    };
+
     return (
         <div style={{ display: "flex", flex: "flex-start", flexDirection: "row", height: "100%", width: "100%" }}>
             <div style={{ backgroundColor: "#f7f7f7", marginRight: 20, padding: 10, borderRadius: 10, width: "30%", height: "100%" }}>
@@ -321,6 +369,7 @@ const Dtree = () => {
                         checkable
                         treeData={parseTreeData(json)}
                         onCheck={handleCheck}
+                        checkedKeys={myselectedkeys}
                     />
                 </Spin>
             </div>

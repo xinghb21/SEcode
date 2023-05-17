@@ -76,7 +76,7 @@ interface app{
     urlvalue:string;
 }
 const AppList: any[] = [
-    "业务实体管理", "系统人员管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产定义", "资产管理", "资产分析", "资产申请", "应用列表","异步任务管理"
+    "系统人员管理", "业务实体管理", "企业人员管理", "操作日志查询", "企业部门管理", "资产定义", "资产管理", "资产分析", "资产申请", "应用列表","异步任务管理"
 ];
 
 
@@ -151,7 +151,7 @@ const User: React.FC = () => {
                             child.push(getItem(AppList[index], index));
                         }
                     }
-                    items.push(getItem(AppList[0], 0, <ShareAltOutlined />));
+                    // items.push(getItem(AppList[0], 0, <ShareAltOutlined />));
                     items.push(getItem(AppList[1], 1, <TeamOutlined />));
                     items.push(getItem("登出", "logout", <LogoutOutlined />));
 
@@ -291,7 +291,7 @@ const User: React.FC = () => {
                                     </Text>
                                 </Space>
                             </Space>
-                            <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer, borderRadius: 10 }}>
+                            <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, height:"90%", background: colorBgContainer, borderRadius: 10 }}>
                                 {PageList[page]}
                             </div>
                         </Content>
@@ -321,7 +321,7 @@ const User: React.FC = () => {
                                         </Text>
                                     </Space>
                                 </Space>
-                                <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer, borderRadius: 10 }}>
+                                <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, height:"90%", background: colorBgContainer, borderRadius: 10 }}>
                                     {PageList[page]}
                                 </div>
                             </Content>
@@ -348,7 +348,7 @@ const User: React.FC = () => {
                                     </Text>
                                 </Space>
                             </Space>
-                            <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, minHeight: 600, background: colorBgContainer, borderRadius: 10 }}>
+                            <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5,height:"90%", background: colorBgContainer, borderRadius: 10 }}>
                                 {PageList[page]}
                             </div>
                         </Content>

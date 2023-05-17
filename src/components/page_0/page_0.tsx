@@ -7,16 +7,6 @@ interface Entity {
     name: string;
     admin: string;
 }
-const columns: ColumnsType<Entity> = [
-    {
-        title: "entityname",
-        dataIndex: "name",
-    },
-    {
-        title: "adminname",
-        dataIndex: "admin",
-    },
-];
 
 const Page_0 = () => {
 

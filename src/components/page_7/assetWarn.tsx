@@ -1,4 +1,4 @@
-import { Button, Modal, Input, Select, InputNumber, Space, message, Table, Tag } from "antd";
+import { Button, Modal, Input, Select, InputNumber, Space, message, Table, Tag, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import type { ColumnsType } from "antd/es/table";
 import { PlusOutlined, WarningOutlined } from "@ant-design/icons";
@@ -11,7 +11,7 @@ type WarningType = {
     warning: number,//告警的策略，0为资产过旧，1为资产数量不足
     condition: number;//策略条件，即需要设定的年限或者数量
 }
-
+const { Text } = Typography;
 
 const AssetWarn = () => {
 
@@ -24,6 +24,7 @@ const AssetWarn = () => {
     const [choseK, setCK] = useState<React.Key>();//要修改的策略的编号
     const [isMCopen, setIsMCOpen] = useState(false);//修改model
     const [inputCGWC, setCGWC] = useState<number>(0);//更改后的告警条件
+    const [input_status, setIS] = useState<boolean>(true);//NumberInput的状态
 
     //表格的规范
     const Assetcolumns: ColumnsType<WarningType> = [
@@ -42,9 +43,9 @@ const AssetWarn = () => {
                     );
                 }
                 else {
-                    <Tag color="yellow">
+                    return (<Tag color="yellow">
                         数量告警
-                    </Tag>;
+                    </Tag>);
                 }
             },
         },
@@ -111,6 +112,10 @@ const AssetWarn = () => {
             .then(() => {
                 message.success("成功创建新的资产告警策略");
                 fetchWarning();
+                setCV(0);
+                setAN("");
+                setWC(0);
+                setIsModalOpen(false);
             })
             .catch((err) => {
                 message.warning(err.message);
@@ -119,11 +124,14 @@ const AssetWarn = () => {
         setCV(0);
         setAN("");
         setWC(0);
-        setIsModalOpen(false);
     };
 
 
     const handleCancel = () => {
+        setIS(true);
+        setCV(0);
+        setAN("");
+        setWC(0);
         setIsModalOpen(false);
     };
     //确定修改
@@ -135,12 +143,12 @@ const AssetWarn = () => {
             .then(() => {
                 message.success("成功修改资产告警策略");
                 fetchWarning();
+                setIsMCOpen(false);
             })
             .catch((err) => {
                 message.warning(err.warning);
             });
         setCGWC(0);
-        setIsMCOpen(false);
     };
 
     const handleMCCancel = () => {
@@ -162,7 +170,7 @@ const AssetWarn = () => {
                         <WarningOutlined />
                         告警策略
                     </text>
-                } open={isMopen} onOk={handleOk} onCancel={handleCancel}>
+                } open={isMopen} onOk={handleOk} onCancel={handleCancel} okButtonProps={{ disabled: (input_status ? false : true) }}>
                     <div>
                         <label>资产实例名称</label>
                         <div style={{ marginTop: 5 }}>
@@ -190,32 +198,61 @@ const AssetWarn = () => {
                         </div>
                         <div style={{ marginLeft: 50 }}>
                             <label>资产告警条件</label>
-                            {choseV === 0 ? <div style={{ marginTop: 5 }}>
-                                <label>资产使用超过 </label>
-                                <InputNumber min={0}
-                                    value={inputWC}
-                                    onChange={(value) => {
-                                        if (value == null) {
-                                        }
-                                        else {
-                                            setWC(value);
-                                        }
-                                    }}
-                                />
-                                <label> 年，则开始告警</label>
-                            </div> : <div style={{ marginTop: 5 }}>
-                                <label>资产数量少于 </label>
-                                <InputNumber min={0}
-                                    value={inputWC}
-                                    onChange={(value) => {
-                                        if (value == null) {
-                                        } else {
-                                            setWC(value);
-                                        }
-                                    }}
-                                />
-                                <label> ，则开始告警</label>
-                            </div>}
+                            {choseV === 0
+                                ?
+                                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                    <div style={{ marginTop: 5 }}>
+                                        <label>资产使用超过 </label>
+                                        <InputNumber min={0}
+                                            status={input_status ? "" : "error"}
+                                            value={inputWC}
+                                            onChange={(value) => {
+                                                if (value == null) {
+                                                    setIS(false);
+                                                }
+                                                else if (typeof (value) != "number") {
+                                                    setIS(false);
+                                                }
+                                                else {
+                                                    setIS(true);
+                                                    setWC(value);
+                                                }
+                                            }}
+                                        />
+
+                                        <label> 年，则开始告警</label>
+
+                                    </div>
+                                    <Text type="danger" style={{ visibility: (input_status ? "hidden" : "visible"), marginRight: 20 }} >
+                                        请输入数值
+                                    </Text>
+                                </div>
+                                :
+                                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                    <div style={{ marginTop: 5 }}>
+                                        <label>资产数量少于 </label>
+                                        <InputNumber min={0}
+                                            status={input_status ? "" : "error"}
+                                            value={inputWC}
+                                            onChange={(value) => {
+                                                if (value == null) {
+                                                    setIS(false);
+                                                }
+                                                else if (typeof (value) != "number") {
+                                                    setIS(false);
+                                                } else {
+                                                    setIS(true);
+                                                    setWC(value);
+                                                }
+                                            }}
+                                        />
+                                        <label> ，则开始告警</label>
+                                    </div>
+                                    <Text type="danger" style={{ visibility: (input_status ? "hidden" : "visible"), marginRight: 20 }} >
+                                        请输入数值
+                                    </Text>
+                                </div>
+                            }
                         </div>
                     </div>
                 </Modal>
@@ -225,7 +262,7 @@ const AssetWarn = () => {
                         修改告警策略条件
                     </text>
                 }
-                open={isMCopen} onOk={handleMCOk} onCancel={handleMCCancel}>
+                open={isMCopen} onOk={handleMCOk} onCancel={handleMCCancel} okButtonProps={{ disabled: (input_status ? false : true) }}>
                     <div>
                         <label>新条件为</label>
                         {changeV == 0 ?
@@ -233,14 +270,27 @@ const AssetWarn = () => {
                                 <label>
                                     新的告警年限为
                                 </label>
-                                <div>
+                                <div style={{ display: "flex", flexDirection: "column" }}>
                                     <InputNumber min={0}
+                                        style={{ marginTop: 10 }}
                                         value={inputCGWC}
+                                        status={input_status ? "" : "error"}
                                         onChange={(value) => {
                                             if (value == null) {
-                                            } else { setCGWC(value); }
+                                                setIS(false);
+                                            }
+                                            else if (typeof (value) != "number") {
+                                                setIS(false);
+                                            }
+                                            else {
+                                                setIS(true);
+                                                setCGWC(value);
+                                            }
                                         }}
                                     />
+                                    <Text type="danger" style={{ marginLeft: 4, visibility: (input_status ? "hidden" : "visible") }} >
+                                        请输入数值
+                                    </Text>
                                 </div>
                             </>
                             :
@@ -250,12 +300,25 @@ const AssetWarn = () => {
                                 </label>
                                 <div style={{ marginTop: 10, marginBottom: 10 }}>
                                     <InputNumber min={0}
+                                        style={{ marginTop: 10 }}
                                         value={inputCGWC}
+                                        status={input_status ? "" : "error"}
                                         onChange={(value) => {
                                             if (value == null) {
-                                            } else { setCGWC(value); }
+                                                setIS(false);
+                                            }
+                                            else if (typeof (value) != "number") {
+                                                setIS(false);
+                                            }
+                                            else {
+                                                setIS(true);
+                                                setCGWC(value);
+                                            }
                                         }}
                                     />
+                                    <Text type="danger" style={{ marginLeft: 4, visibility: (input_status ? "hidden" : "visible") }} >
+                                        请输入数值
+                                    </Text>
                                 </div>
                             </>
                         }
@@ -263,7 +326,7 @@ const AssetWarn = () => {
                 </Modal>
             </div>
             <div style={{ margin: 5 }}>
-                <Table columns={Assetcolumns} dataSource={allwarning}></Table>
+                <Table columns={Assetcolumns} dataSource={allwarning} bordered={true}></Table>
             </div>
         </>
     );

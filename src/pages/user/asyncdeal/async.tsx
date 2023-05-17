@@ -3,7 +3,7 @@ import { Drawer, Space, Button, Table, Tag, message, Modal, Input, Select, Progr
 import type { ColumnsType } from "antd/es/table";
 import { request } from "../../../utils/network";
 import {
-    CarryOutTwoTone, CloudDownloadOutlined,CloudTwoTone
+    CarryOutTwoTone, CloudDownloadOutlined, CloudTwoTone
 } from "@ant-design/icons";
 
 import { Badge, Tooltip } from "antd";
@@ -56,7 +56,7 @@ const client = new OSS({
 
 
 const Asyncbd = () => {
-    const [clicktime,setclicktime] = useState<number>(0);
+    const [clicktime, setclicktime] = useState<number>(0);
     const [isTBD, setTBD] = useState(false);//true即有待办任务，false相反
     const [dopen, setDOpen] = useState(false);//是否打开任务中心
     const [tasklist,settasklist] = useState<AsyncTask[]>([]);
@@ -66,7 +66,7 @@ const Asyncbd = () => {
         total: 0, // 总记录数
     });
     const showDrawer = () => {
-        setclicktime(clicktime+1);
+        setclicktime(clicktime + 1);
         setDOpen(true);
     };
     const onClose = () => {
@@ -76,10 +76,10 @@ const Asyncbd = () => {
         //获取任务
         request("/api/async/getalivetasks", "GET",{page:1})
             .then((res) => {
-                let tasks:AsyncTask[] = res.info;
-                if(tasks){
-                    tasks = tasks.filter((obj)=>{return obj.state != 4;});
-                    if(tasks){
+                let tasks: AsyncTask[] = res.info;
+                if (tasks) {
+                    tasks = tasks.filter((obj) => { return obj.state != 4; });
+                    if (tasks) {
                         settasklist(tasks);
                         setTBD(true);
                     }
@@ -118,7 +118,7 @@ const Asyncbd = () => {
     const handleover=()=>{
         setclicktime(clicktime+1);
     };
-    const handledownload=(fileroot:string)=>{
+    const handledownload = (fileroot: string) => {
         let url = client.signatureUrl(fileroot);
         var eleLink = document.createElement("a");
         eleLink.download = url;
@@ -213,10 +213,8 @@ const Asyncbd = () => {
     return (
         <>
             <Tooltip placement="bottomLeft" title={<span>任务中心</span>}>
-                <Button type="text" size="large" style={{ margin: 5 }} onClick={showDrawer}>
-                    <Badge dot style={{ visibility: (!isTBD) ? "hidden" : "visible" }}>
-                        <CloudTwoTone  twoToneColor={(!isTBD) ? "#a8a8a8" : "#f82212"} style={{ fontSize: "25px" }} />
-                    </Badge>
+                <Button type="text" size="large" style={{ marginRight: 5 }} onClick={showDrawer}>
+                    <CloudTwoTone  twoToneColor={"#a8a8a8"} style={{ fontSize: "25px" }} />
                 </Button>
             </Tooltip>
             <Drawer
