@@ -12,7 +12,7 @@ RUN yarn install
 
 RUN yarn build
 
-FROM node:18-alpine
+FROM node:18
 
 ENV HOME=/opt/app
 
