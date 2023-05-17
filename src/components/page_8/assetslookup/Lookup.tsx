@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import type { MenuProps } from "antd";
-import { Button, Input, Menu, Space, Tag, message, Table, Skeleton, Divider } from "antd";
+import { Button, Input, Menu, Space, Tag, message, Table, Skeleton, Divider, Spin } from "antd";
 import { request } from "../../../utils/network";
-import { ProList } from "@ant-design/pro-components";
+import { ProColumns, ProList, ProTable } from "@ant-design/pro-components";
 import { ColumnsType } from "antd/es/table";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import moment from "moment";
@@ -12,6 +12,7 @@ import CryptoJS from "crypto-js";
 import Base64 from "base-64";
 import VirtualList from "rc-virtual-list";
 import InfiniteScroll from "react-infinite-scroll-component";
+import Column from "antd/es/table/Column";
 interface asset{
     key:React.Key;
     id:number;
@@ -21,6 +22,10 @@ interface asset{
     state:object;
     haspic:boolean;
     imageurl:string;
+    in_use:number;
+    in_mentain:number;
+    in_damage:number;
+    in_deal:number;
 }
 
 const accessKeyId = "LTAI5t7ktfdDQPrsaDua9HaG";
@@ -51,7 +56,82 @@ const Lookup = () => {
         pageSize: 10, // 每页显示条数
         total: 0, // 总记录数
     });
+    const [spinloading,setspinloading] = useState<boolean>(false);
+    const columns: ProColumns<asset> []= [
+        {        
+            title: "资产名称",
+            dataIndex: "name",
+        },
+        {
+            title:"资产编号",
+            dataIndex:"id",
+        },
+        {
+            title: "资产类别",
+            dataIndex: "type",
+            render: (_, row) => {
+                return (
+                    <Space size={0}>
+                        {(row.type===1)?<Tag color="blue" key={row.name}>{"数量型"}</Tag>
+                            :<Tag color="blue" key={row.name}>{"条目型"}</Tag>  
+                        }
+                    </Space>
+                );
+            },
+        },
+        {
+            title: "使用中数量",
+            key:"in use",
+            render:(_, row) => {
+                return (
+                    <div  style={{color:"green"}} >{row.in_use}</div>
+                );
+            },
+        },
+        {
+            title:"维保中数量",
+            key:" mentain",
+            render:(_, row) => {
+                return (
+                    <div style={{color:"orange"}} >{row.in_mentain}</div>
+                );
+            },
+        },
+        {
+            title:"报废数量",
+            key:" damaged",
+            render:(_, row) => {
+                return (
+                    <div style={{color:"red"}} >{row.in_damage}</div>
+                );
+            },
+        },   
+        {
+            title:"处理中数量",
+            key:" deal",
+            render:(_, row) => {
+                return (
+                    <div style={{color:"blue"}}>{row.in_deal}</div>
+                );
+            },
+        },            
+        {
+            title: "资产图片",
+            key:"picpic",
+            render:(_,row)=>{
+                if(row.imageurl != ""){
+                    return <img src={row.imageurl} width={60} height={60} loading="lazy" ></img>;
+                }else{
+                    return <a>暂无图片</a>;
+                }
+            }
+        }
+    ];
+
+
+
     const  fetchlist=()=>{
+        setspinloading(true);
         request("/api/user/ns/possess","GET")
             .then((res) => {
             // 更新表格数据源和分页器状态
@@ -60,7 +140,7 @@ const Lookup = () => {
                     if(val.haspic){
                         imageurli = client.signatureUrl(res.entity+"/"+res.department+"/"+val.name);
                     }
-                    return {
+                    let temp = {
                         key:val.id,
                         id:val.id,
                         name:val.name,
@@ -68,11 +148,38 @@ const Lookup = () => {
                         state:val.state,
                         haspic:val.haspic,
                         imageurl:imageurli,
+                        in_use:0,
+                        in_mentain:0,
+                        in_damage:0,
+                        in_deal:0,
                     };
+                    Object.entries(val.state).forEach(([k, v]) => {
+                        let stnum :number = +k;
+                        let count : number = v as number;
+                        if(v!==0){
+                            switch (stnum){
+                            case 1:
+                                temp.in_use=count;
+                                break;
+                            case 2:
+                                temp.in_mentain = count;
+                                break;
+                            case 3:
+                                temp.in_damage = count;
+                                break;
+                            case 5:
+                                temp.in_deal = count;
+                                break;
+                            }
+                        }
+                    });
+                    return temp;
                 });
                 setassetlist(templist);
+                setspinloading(false);
             })
             .catch((error) => {
+                setspinloading(false);
                 message.warning(error.message);
             });
     };
@@ -89,64 +196,17 @@ const Lookup = () => {
                 border: "1px solid rgba(140, 140, 140, 0.35)",
             }}
         >
-            <ProList<asset,Params>
+            <Spin spinning={spinloading} size="large"  >  
+                <ProTable<asset>
                 //切换页面的实现在于pagination的配置，如下
-                metas={{
-                    title: {dataIndex:"name",},
-                    description: {
-                        render: (_,row) =>{
-                            let statelist : any[] = [];
-                            Object.entries(row.state).forEach(([k, v]) => {
-                                let stnum :number = +k;
-                                let count : number = v as number;
-                                if(v!==0){
-                                    switch (stnum){
-                                    case 1:
-                                        statelist.push(<div style={{display:"flex",flexDirection:"row"}}><Tag color="green" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
-                                        break;
-                                    case 2:
-                                        statelist.push(<div style={{display:"flex",flexDirection:"row"}}><Tag color="blue" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
-                                        break;
-                                    case 3:
-                                        statelist.push(<div style={{display:"flex",flexDirection:"row"}} ><Tag color="red" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
-                                        break;
-                                    case 5:
-                                        statelist.push(<div style={{display:"flex",flexDirection:"row"}} ><Tag color="yellow" >{state[stnum]}</Tag><p>数量为{count}</p></div>);
-                                        break;
-                                    }
-                                }
-                            });
-                            return(
-                                <div style={{display:"flex",flexDirection:"row"}}>
-                                    {statelist}
-                                </div>
-                            );
-                        },
-                    },
-                    subTitle: {
-                        render: (_, row) => {
-                            return (
-                                <Space size={0} key={1}>
-                                    {(row.type===1)?<Tag color="blue" key={row.name}>{"数量型"}</Tag>
-                                        :<Tag color="blue" key={row.name}>{"条目型"}</Tag>  
-                                    }
-                                </Space>
-                            );
-                        },
-                        search: false,
-                    },
-                    actions:{
-                        render:(_,row) =>{
-                            return(
-                                <img src={row.imageurl} width={60} height={60} loading="lazy" ></img>
-                            );
-                        }
-                    },
-                }}
-                rowKey="key"
-                headerTitle="您拥有的资产列表"
-                dataSource={assetlist}
-            />
+                    columns={columns}
+                    search={false}
+                    options={false}
+                    rowKey="key"
+                    headerTitle="您拥有的资产列表"
+                    dataSource={assetlist}
+                />
+            </Spin>
         </div>
     );
 };
