@@ -100,10 +100,8 @@ const Asyncbd = () => {
     return (
         <>
             <Tooltip placement="bottomLeft" title={<span>任务中心</span>}>
-                <Button type="text" size="large" style={{ marginTop: 5, marginBottom: 5 }} onClick={showDrawer}>
-                    <Badge dot style={{ visibility: (!isTBD) ? "hidden" : "visible" }}>
-                        <CloudTwoTone twoToneColor={(!isTBD) ? "#a8a8a8" : "#f82212"} style={{ fontSize: "25px" }} />
-                    </Badge>
+                <Button type="text" size="large" style={{ marginRight: 5 }} onClick={showDrawer}>
+                    <CloudTwoTone  twoToneColor={"#a8a8a8"} style={{ fontSize: "25px" }} />
                 </Button>
             </Tooltip>
             <Drawer

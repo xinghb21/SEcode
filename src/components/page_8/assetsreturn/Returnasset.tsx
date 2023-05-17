@@ -1,12 +1,17 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import type { MenuProps } from "antd";
-import { Button, Input, Menu, Space, Tag, message, Table } from "antd";
+import { Button, Input, Menu, Space, Tag, message, Table, Spin } from "antd";
 import { request } from "../../../utils/network";
-import { ProList } from "@ant-design/pro-components";
+import { ProColumns, ProList, ProTable } from "@ant-design/pro-components";
 import Applysubmit from "./Applysubmit";
 import { ColumnsType } from "antd/es/table";
 import Applydetail from "./Applydetail";
+import { Typography } from "antd";
+
+const { Title } = Typography;
+
+
     interface asset{
         key:React.Key;
         id:number;
@@ -35,6 +40,52 @@ const Returnasset=()=>{
     const [detailreason,setdetailreason] =useState<string>("");
     const [datailmessage,setdetailmessage] = useState<string>("");
     const [datailid,setdetailid] =useState<number>(-1);
+    const [spinloading,setspinloading] = useState<boolean>(false);
+    const columns: ProColumns<asset> []= [
+        {        
+            title: "资产名称",
+            dataIndex: "name",
+        },
+        {
+            title:"资产编号",
+            dataIndex:"id",
+        },
+        {
+            title: "资产类别",
+            dataIndex: "type",
+            render: (_, row) => {
+                return (
+                    <Space size={0}>
+                        {(row.type===1)?<Tag color="blue" key={row.name}>{"数量型"}</Tag>
+                            :<Tag color="blue" key={row.name}>{"条目型"}</Tag>  
+                        }
+                    </Space>
+                );
+            },
+        },
+        {
+            title: "资产数量",
+            dataIndex: "count",
+        },
+        {
+            title: "申请数量",
+            key:"number input",
+            render:(_,row)=>{
+                return (
+                    row.type==1?
+                        <Input
+                            onChange={(e)=>{handleChange(e,row.name);}}
+                            placeholder="请输入一个数字"
+                            maxLength={16}
+                        />
+                        :
+                        <a>1</a>
+                );
+            }
+        }
+    ];
+
+
     useEffect((()=>{
         fetchlist();
         fetchapply();
@@ -55,6 +106,7 @@ const Returnasset=()=>{
             });
     };
     const fetchlist=()=>{
+        setspinloading(true);
         request("/api/user/ns/possess","GET")
             .then((res)=>{
                 let size = res.assets.length;
@@ -78,9 +130,11 @@ const Returnasset=()=>{
                 }
                 let useable :asset[] = tem.filter(item =>(item.state==="1"));
                 setuseable_assetlist(useable);
+                setspinloading(false);
             })
             .catch((err)=>{
                 message.warning(err.message);
+                setspinloading(false);
             });
     };
     const rowSelection = {
@@ -152,119 +206,76 @@ const Returnasset=()=>{
     
     return (
         <div>
-            <Applysubmit isOpen={IsDialogOpen1} onClose={()=>{setIsDialogOpen1(false);}} proassetlist={assetselected} onSuccess={handlesubmitsuccess} ></Applysubmit>
-            <Applydetail isOpen={isdetalopen} onClose={()=>{setisdetailopen(false);}} id={datailid} reason={detailreason} message={datailmessage} > </Applydetail>
-            <ProList<asset>
-                toolBarRender={() => {
-                    return [
-                        <Button key="1" type="primary" disabled={!hasSelected} onClick={()=>{handlesubclick();}}>
+            <Spin spinning={spinloading} size="large"  > 
+                <Applysubmit isOpen={IsDialogOpen1} onClose={()=>{setIsDialogOpen1(false);}} proassetlist={assetselected} onSuccess={handlesubmitsuccess} ></Applysubmit>
+                <Applydetail isOpen={isdetalopen} onClose={()=>{setisdetailopen(false);}} id={datailid} reason={detailreason} message={datailmessage} > </Applydetail>
+                <Title  level={3} style={{marginLeft:"2%"}} >
+            资产退库
+                </Title >
+                <ProTable<asset>
+                    toolBarRender={() => {
+                        return [
+                            <Button key="1" type="primary" disabled={!hasSelected} onClick={()=>{handlesubclick();}}>
                                     申请资产退库
-                        </Button>,                      
-                    ];
-                }}
-                pagination={{
-                    pageSize: 5,
-                }}
-                metas={{
-                    title: {dataIndex:"name",},
-                    description: {
-                        render: (_,row) => {
-                            return (
-                                <div>
+                            </Button>,                      
+                        ];
+                    }}
+                    pagination={{
+                        pageSize: 5,
+                    }}
+                    columns={columns}
+                    search={false}
+                    options={false}
+                    rowKey="key"
+                    headerTitle="您拥有的资产列表"
+                    rowSelection={rowSelection}
+                    dataSource={useable_assetslist}
+                />
+                <ProList<applys>
+                    pagination={{
+                        pageSize: 5,
+                    }}
+                    metas={{
+                        title: {dataIndex:"id"},
+                        description: {
+                            render: (_,row) => {
+                                return (
                                     <div>
-                                        {"现有数量: "+row.count}
+                                        <div>
+                                            {"申请原因: "+row.reason}
+                                        </div>
                                     </div>
-                                    <div>
-                                        {"资产编号："+row.id}
-                                    </div>
-                                </div>
-                            );
+                                );
+                            },
                         },
-                    },
-                    subTitle: {
-                        render: (_, row) => {
-                            return (
-                                <div>
-                                    <Space size={0} key={1}>
-                                        {(row.type===1)?<Tag color="blue" key={row.name}>{"数量型"}</Tag>
-                                            :<Tag color="blue" key={row.name}>{"条目型"}</Tag>  
+                        subTitle: {
+                            render: (_, row) => {
+                                return (
+                                    <Space size={0}>
+                                        {(row.state===2)?<Tag color="red" key={row.id}>{"拒绝"}</Tag>
+                                            :((row.state===0)?<Tag color="blue" key={row.id} >{"处理中"}</Tag>:<Tag color="green" key={row.id}>{"通过"}</Tag>)  
                                         }
                                     </Space>
-                                    <Space size={0} key={2}>
-                                        {(row.state==="1")?<Tag color="blue" key={row.name}>{"使用中"}</Tag>
-                                            :((row.state==="2")?<Tag color="blue" key={row.name}>{"维保中"}</Tag>
-                                                :(((row.state==="3")?<Tag color="blue" key={row.name}>{"报废"}</Tag>
-                                                    :<Tag color="blue" key={row.name}>{"正在处理"}</Tag>)))  
-                                        }
-                                    </Space>
-                                </div>                                    
-                            );
+                                );
+                            },
+                            search: false,
                         },
-                        search: false,
-                    },
-                    // actions: {
-                    //     render: (_,row) => {
-                    //         return (
-                    //             <div >
-                    //                 <Input
-                    //                     onChange={(e)=>{handleChange(e,row.name);}}
-                    //                     placeholder="Input a number"
-                    //                     maxLength={16}
-                    //                 />
-                    //             </div>
-                    //         );
-                    //     },
-                    // },
-                }}
-                rowKey="key"
-                headerTitle="您拥有的资产列表"
-                rowSelection={rowSelection}
-                dataSource={useable_assetslist}
-            />
-            <ProList<applys>
-                pagination={{
-                    pageSize: 5,
-                }}
-                metas={{
-                    title: {dataIndex:"id"},
-                    description: {
-                        render: (_,row) => {
-                            return (
-                                <div>
+                        actions: {
+                            render: (_,row) => {
+                                return (
                                     <div>
-                                        {"申请原因: "+row.reason}
+                                        <Button onClick={()=>{setdetailid(row.id);setdetailmessage(row.message);setdetailreason(row.reason);setisdetailopen(true);}}>查看详情</Button>
+                                        <Button onClick={()=>{handledelete(row.id);}}disabled={(row.state === 0)} > 删除 </Button>
                                     </div>
-                                </div>
-                            );
+                                );
+                            },
                         },
-                    },
-                    subTitle: {
-                        render: (_, row) => {
-                            return (
-                                <Space size={0}>
-                                    {(row.state===2)?<Tag color="red" key={row.id}>{"拒绝"}</Tag>
-                                        :((row.state===0)?<Tag color="blue" key={row.id} >{"处理中"}</Tag>:<Tag color="green" key={row.id}>{"通过"}</Tag>)  
-                                    }
-                                </Space>
-                            );
-                        },
-                        search: false,
-                    },
-                    actions: {
-                        render: (_,row) => {
-                            return (
-                                <div>
-                                    <Button onClick={()=>{setdetailid(row.id);setdetailmessage(row.message);setdetailreason(row.reason);setisdetailopen(true);}}>查看详情</Button>
-                                    <Button onClick={()=>{handledelete(row.id);}}disabled={(row.state === 0)} > 删除 </Button>
-                                </div>
-                            );
-                        },
-                    },
-                }}
-                rowKey="key"
-                headerTitle="您的退库申请列表"
-                dataSource={applylist}
-            />
+                    }}
+                    rowKey="key"
+                    headerTitle="您的退库申请列表"
+                    dataSource={applylist}
+                />
+            </Spin>
         </div>
     );
 };

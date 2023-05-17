@@ -1,10 +1,16 @@
 import CreateES from "./createES";
-import { Button, Table, message } from "antd";
+import { Button, Space, Table, message, Spin, Descriptions } from "antd";
 import { request } from "../../utils/network";
 import { Md5 } from "ts-md5";
 import type { ColumnsType } from "antd/es/table";
 import React, { useEffect, useState } from "react";
 import User from "./createES";
+import { stat } from "fs";
+import CreateEn from "../page_0/createEn";
+import AssignEs from "../page_0/assign";
+import Label from "../page_5/label";
+import { color } from "echarts";
+import { ProColumns, ProTable } from "@ant-design/pro-components";
 //start hqf
 
 interface User{
@@ -14,108 +20,162 @@ interface User{
     entity:string;
 }
 
-const columns: ColumnsType<User> = [
-    {
-        title: "Username",
-        dataIndex: "username",
-    },
-    {
-        title: "Entity",
-        dataIndex: "entity",
-    },
-];
+interface EntityRegister{
+    key: React.Key;
+    entityname:string;
+}
+
 const EStable=()=> {
     const [users, setUsers] = useState<User[]>([]);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [isentityDialogOpen, setIsentityDialogOpen] = useState(false);
+    const [spinloading , setspinloading] = useState (false);
+    const [isuserDialogopen, setIsuserDialogopen] = useState(false);
+    const [assignentity,setassignentity] = useState<string>("");
+    const columns: ProColumns<User> []= [
+        {        
+            title: "业务实体编号",
+            dataIndex: "key",
+        },
+        {
+            title: "业务实体名称",
+            dataIndex: "entity",
+        },
+        {
+            title: "系统管理员",
+            dataIndex: "username",
+            render:(_,row)=>{return (row.username==""?<a>暂无资产管理员</a>:<a>{row.username}</a>);}
+        },
+        {
+            title: "操作",
+            key: "action",
+            render: (_, row) => (
+                (row.username=="")?
+                    <Space size="middle">
+                        <a onClick={()=>{ setassignentity(row.entity);setIsuserDialogopen(true);} } style={{color:"green"}} > {"委派系统管理员"}</a>
+                        <a onClick={()=>{delete_entity(row.entity);}} style={{color:"red"}}>删除业务实体</a>
+                    </Space>
+                    :
+                    <Space size="middle">
+                        <a onClick={()=>{start(row.entity);}} style={{color:"red"}}>{"删除系统管理员"}</a>
+                        <a onClick={()=>{delete_entity(row.entity);}}style={{color:"red"}} >删除业务实体</a>
+                    </Space>
+            ),
+        },
+    ];
     useEffect(() => {
+        fetchlist();
+    },[]);
+    const handleCreateUser = (user: User) => {
+        //在这里向后端发送请求
+        const userdata = { "name": user.username, "entity": user.entity, "password": Md5.hashStr(user.password) };
+        if(user.username!==""){
+            request("/api/entity/assgin", "POST", userdata)
+                .then((res) => {
+                    setIsuserDialogopen(false);
+                    message.success("创建成功");
+                    fetchlist();
+                })
+                .catch((err) => {
+                    setIsuserDialogopen(false);
+                    message.warning("创建失败");
+                });
+        }else{
+            message.warning("用户名为空");
+        }
+    };
+
+    const handleCreateEntity = ((entitys: EntityRegister) => {
+        //在这里实现后端通信，添加业务实体，不指派管理员，setEntitylist
+        if(entitys.entityname !== ""){
+            request("/api/entity/create", "POST", { name: entitys.entityname })
+                .then((res) => {
+                    setIsentityDialogOpen(false);
+                    fetchlist();
+                    message.success("创建成功");
+                })
+                .catch((err) => {
+                    setIsentityDialogOpen(false);
+                    message.warning(err.message);
+                });
+        }else{
+            message.warning("用户名为空");
+        }
+    });
+    const fetchlist = ()=>{
+        setspinloading(true);
         request("/api/entity/superget","GET")
             .then((res)=>{
                 let size:number=res.data.length;
                 let initaluser :User[]=[];
                 let i:number=0;
                 for (i; i < size;i++){
-                    if(res.data[i].admin!=""){
-                        const newuser:User={key:res.data[i].admin,username: res.data[i].admin,password: "123456",entity: res.data[i].name};
-                        initaluser.push(newuser);
-                    }
+                    const newuser:User={key:res.data[i].id,username: res.data[i].admin,password: "123456",entity: res.data[i].name};
+                    initaluser.push(newuser);
                 }
                 setUsers(initaluser);
+                setspinloading(false);
             })
             .catch((err)=>{
                 message.warning(err.message);
+                setspinloading(false);
             });
-    },[]);
-    const start = () => {
-        if (window.confirm("确认删除所选企业系统管理员？")){
-            setLoading(true);
+    };
+    const start = (entityname:string) => {
+        if (window.confirm("确认解雇改企业系统管理员？")){
             //在这里加入删除的后端访问
             let i=0;
-            const size= selectedRowKeys.length;
-            let deleteduser:User[]=[];
             let deleteenbtityname:string[]=[];
-            for (i ;i<size;i++){
-                let tobedeleteuser=(users).find((obj)=>{return obj.key===selectedRowKeys.at(i);});
-                if(tobedeleteuser != null ){
-                    deleteduser.push(tobedeleteuser);      
-                    deleteenbtityname.push(tobedeleteuser.entity);                  
-                }
-            }
+            deleteenbtityname.push(entityname);
             request("/api/entity/deletealladmins","DELETE",{entity:deleteenbtityname})
                 .then((res)=>{
-                    let remained_user:User[]=[];
-                    let j=0;
-                    let length_before=users.length;
-                    for (j;j<length_before;j++){
-                        if( deleteduser.find((obj)=>{return obj===users.at(j);}) == null){   
-                            remained_user.push(users[j]);
-                        }
-                    }
-                    setUsers(remained_user);
-                    setSelectedRowKeys([]);
-                    setLoading(false);
+                    fetchlist();
                 })
                 .catch((err)=>{
                     message.warning(err.message);
                 });
-            
         }
     };
-    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-        setSelectedRowKeys(newSelectedRowKeys);
-    };
-    
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: onSelectChange,
-    };
-    const hasSelected = selectedRowKeys.length > 0;
-    
-    const handleCreateUser = (user: User) => {
-        //在这里向后端发送请求
-        const userdata={"name":user.username,"entity":user.entity,"password":Md5.hashStr(user.password)};
-        request("/api/entity/assgin","POST",userdata)
-            .then((res)=>{
-                setUsers([...users, user]);
-                setIsDialogOpen(false);
-            })
-            .catch((err)=>{
-                message.warning("创建失败");
-                setIsDialogOpen(false);
-            });
 
-    };
+    const delete_entity = ((name:string) => {
+        if (window.confirm("确认删除所选业务实体？")) {
+            //在这里添加后端通信，删除业务实体，并更改前端
+            let i = 0;
+            let deleteentityname: string[] = [];
+            deleteentityname.push(name);
+            request("/api/entity/deleteall", "DELETE", { name: deleteentityname })
+                .then((res) => {
+                    fetchlist();
+                    message.success("删除成功");
+                })
+                .catch((err) => {
+                    message.warning(err.message);
+                });
+        }
+    });
+
 
     return (
-        <>
-            <div >
-                <Button type="default" danger = {true} onClick={start} disabled={!hasSelected} loading={loading} style={{float : "right"}}>解雇选中系统管理员</Button>
-            </div>
-            <Table rowSelection={rowSelection} columns={columns} dataSource={users} />
-            <CreateES isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} onCreateUser={handleCreateUser} />
-        </>
+        <div style={{height:"100%"}} >  
+            <Spin size="large" spinning={spinloading}>    
+                <Descriptions title="业务实体列表" style={{ marginBottom :"5px"}} >
+                </Descriptions>
+                <Button onClick={()=>{setIsentityDialogOpen(true);}} style={{color:"green",float:"right",marginBottom:"5px"}} > 添加业务实体 </Button>
+                <ProTable <User>
+                    bordered={true}
+                    size="large"
+                    search={false}
+                    options={false}
+                    columns={columns} 
+                    pagination={{
+                        pageSize: 10,
+                    }}
+                    dataSource={users} 
+                />
+                <AssignEs isOpen={isuserDialogopen} entityname={assignentity} onClose={() => setIsuserDialogopen(false)} onCreateUser={handleCreateUser} ></AssignEs>
+                <CreateEn isOpen={isentityDialogOpen} onClose={() => setIsentityDialogOpen(false)} onCreateUser={handleCreateEntity} ></CreateEn>
+            
+            </Spin>
+        </div>
     );
 };
 export default EStable;

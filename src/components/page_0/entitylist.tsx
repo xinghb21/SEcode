@@ -1,12 +1,13 @@
 import { Button, message } from "antd";
 import React from "react";
-import { ProList } from "@ant-design/pro-components";
+import { ProList, ProTable } from "@ant-design/pro-components";
 import { useState } from "react";
 import CreateEn from "./createEn";
 import { useEffect } from "react";
 import { request } from "../../utils/network";
 import AssignEs from "./assign";
 import { Md5 } from "ts-md5";
+import { ColumnsType } from "antd/es/table";
 interface Entity {
     key: React.Key;
     entityname: string;
@@ -22,6 +23,15 @@ interface EntityRegister {
     key: React.Key;
     entityname: string;
 }
+
+const columns: ColumnsType<Entity> = [
+    {
+        title:"业务实体名称",
+        dataIndex:"entityname",
+        render:(name:string)=>{return (<a> </a>);}
+    },
+];
+
 
 const Entitylist = (() => {
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -83,6 +93,7 @@ const Entitylist = (() => {
                     const newentity: Entity = { key: entitys.entityname, entityname: entitys.entityname, admingname: "" };
                     setEntitylist([...Entitylist, newentity]);
                     setIsDialogOpen(false);
+                    message.success("创建成功");
                 })
                 .catch((err) => {
                     message.warning(err.message);
@@ -148,7 +159,7 @@ const Entitylist = (() => {
         <div >
             <AssignEs isOpen={isassignopen} entityname={assignentity} onClose={() => setIsassignOpen(false)} onCreateUser={handleCreateUser} ></AssignEs>
             <CreateEn isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} onCreateUser={handleCreateEntity} ></CreateEn>
-            <ProList<Entity>
+            <ProTable<Entity>
                 toolBarRender={() => {
                     return [
                         <Button key="1" type="primary" onClick={() => { setIsDialogOpen(true); }}>
@@ -160,29 +171,29 @@ const Entitylist = (() => {
                 pagination={{
                     pageSize: 10,
                 }}
-                metas={{
-                    title: { dataIndex: "entityname", },
-                    description: {
-                        render: (_, row) => {
-                            return (
-                                <div>
-                                    {(row.admingname === "") ? "暂无系统管理员" : ("系统管理员 :  " + row.admingname)}
-                                </div>
-                            );
-                        },
-                    },
-                    actions: {
-                        dataIndex: "admingname",
-                        render: (_, row) => {
-                            return (
-                                //这里的回调函数可能有问题
-                                <Button style={((row.admingname) === "") ? { display: "block" } : { display: "none" }} onClick={() => { assign(row.entityname); }} >
-                                    创建并委派企业系统管理员
-                                </Button>
-                            );
-                        },
-                    },
-                }}
+                // metas={{
+                //     title: { dataIndex: "entityname", },
+                //     description: {
+                //         render: (_, row) => {
+                //             return (
+                //                 <div>
+                //                     {(row.admingname === "") ? "暂无系统管理员" : ("系统管理员 :  " + row.admingname)}
+                //                 </div>
+                //             );
+                //         },
+                //     },
+                //     actions: {
+                //         dataIndex: "admingname",
+                //         render: (_, row) => {
+                //             return (
+                //                 //这里的回调函数可能有问题
+                //                 <Button style={((row.admingname) === "") ? { display: "block" } : { display: "none" }} onClick={() => { assign(row.entityname); }} >
+                //                     创建并委派企业系统管理员
+                //                 </Button>
+                //             );
+                //         },
+                //     },
+                // }}
                 rowKey="key"
                 headerTitle="业务实体列表"
                 rowSelection={rowSelection}
