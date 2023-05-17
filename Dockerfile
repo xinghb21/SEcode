@@ -12,7 +12,7 @@ RUN yarn install
 
 RUN yarn build
 
-FROM node:18
+FROM node:18-alpine
 
 ENV HOME=/opt/app
 
@@ -20,8 +20,6 @@ WORKDIR $HOME
 
 ENV NODE_ENV production
 
-COPY --from=build /opt/frontend/config ./config
-RUN true
 COPY --from=build /opt/frontend/public ./public
 RUN true
 COPY --from=build /opt/frontend/.next ./.next
@@ -33,4 +31,4 @@ RUN true
 
 CMD ["yarn", "start", "-p", "80"]
 
-EXPOSE 80
+EXPOSE 80 
