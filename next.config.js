@@ -1,7 +1,5 @@
 /** @type {import('next').NextConfig} */
 
-const { default: SITE_CONFIG } = require('./src/settings');
-
 const nextConfig = {
     reactStrictMode: false, /* @note: To prevent duplicated call of useEffect */
     swcMinify: true,
@@ -9,7 +7,7 @@ const nextConfig = {
     async rewrites() {
         return [{
             source: "/api/:path*",
-            destination: SITE_CONFIG.BACKEND + "/:path*",
+            destination: process.env.NEXT_PUBLIC_BACKEND_URL + "/:path*",
         }, 
         {
             source: "/image",

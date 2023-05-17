@@ -20,9 +20,7 @@ import pic8 from "./../../styles/部门管理.jpg";
 import pic9 from "./../../styles/操作日志.jpg";
 import pic10 from "./../../styles/人员管理.jpg";
 import pic11 from "./../../styles/异步任务.jpg";
-import config from "../../../config/config-feishu.json";
-
-const redirect = config.redirect.slice(0, -7);
+import SITE_CONFIG from "../../settings";
 
 const { Meta } = Card;
 
@@ -134,7 +132,6 @@ const Page_home = (prop: ClickProps) => {
     useEffect(() => {
         request("/api/user/home/" + localStorage.getItem("username"), "GET")
             .then((res) => {
-                console.log(redirect);
                 if(res.identity === 1) res.identity = "超级系统管理员";
                 else if(res.identity === 2) res.identity = "系统管理员";
                 else if(res.identity === 3) res.identity = "资产管理员";
@@ -187,7 +184,7 @@ const Page_home = (prop: ClickProps) => {
                                         message.error(err.message);
                                     });
                             }}>解除绑定</Button></Descriptions.Item> : 
-                            <Descriptions.Item label="飞书账号">未绑定<Button href={"https://passport.feishu.cn/suite/passport/oauth/authorize?client_id=cli_a4b17e84d0f8900e&redirect_uri="+redirect+"/bind&response_type=code"}
+                            <Descriptions.Item label="飞书账号">未绑定<Button href={"https://passport.feishu.cn/suite/passport/oauth/authorize?client_id=cli_a4b17e84d0f8900e&redirect_uri="+SITE_CONFIG.BACKEND+"/bind&response_type=code"}
                             >绑定账号</Button></Descriptions.Item>}
                     </Descriptions>
                 </div>
