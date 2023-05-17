@@ -145,14 +145,24 @@ const NSTbdDrawer = () => {
             setOpen(false);
             return true;
         }
-        if(assetdisdata?.type === 5 && assetTypes.length != assetdisdata?.info.length){
-            message.warning("请为所有资产指定类别");
-            return false;
+        if(assetdisdata?.type === 5){
+            if(assetdisdata?.info != null){
+                assetdisdata?.info.forEach((item) => {
+                    if(assetTypes.filter((item1) => item1.assetname === item.assetname).length === 0) {
+                        message.warning("请为所有资产指定类别");
+                        return false;
+                    }
+                })
+            }
         }
-        assetTypes.forEach((item) => {
+        assetdisdata.info.forEach((item) => {
+            if(assetTypes.filter((item1) => item1.assetname === item.assetname).length === 0) {
+                return false;
+            }
+            let label = assetTypes.filter((item1) => item1.assetname === item.assetname)[0].label;
             request("/api/user/ns/setcat", "POST", {
                 assetname: item.assetname,
-                label: item.label,
+                label: label,
             }).then((res) => {
                 message.success("操作成功");
                 request("/api/user/ns/read", "POST", {
@@ -160,14 +170,24 @@ const NSTbdDrawer = () => {
                 }).catch((err) => {
                     message.warning(err.message);
                 });
+                setOpen(false);
+                let data = messages;
+                data.filter((item) => item.id === assetdisdata?.id)[0].read = true;
+                //只保留assetTypes中在info中的数据
+                let data1 = assetTypes.filter((item1) => {
+                    let flag = false;
+                    assetdisdata?.info.forEach((item2) => {
+                        if(item1.assetname === item2.assetname)
+                            flag = true;
+                    });
+                    return flag;
+                });
+                setAssetTypes(data1);
+                setMessage(data);
             }).catch((err) => {
                 message.warning(err.message);
             });
         });
-        let data = messages;
-        data.filter((item) => item.id === assetdisdata?.id)[0].read = true;
-        setMessage(data);
-        setOpen(false);
     };
 
     const checkTBD = () => {

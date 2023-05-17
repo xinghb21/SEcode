@@ -66,7 +66,7 @@ const Exchangesubmit=(props:DialogProps)=>{
         }
     };
     return (
-        <Modal  title="资产领用申请" onOk={()=>{handlesubmit();}} okText={"提交申请"} confirmLoading={loading} onCancel={props.onClose} open={props.isOpen}  >
+        <Modal  title="资产转移申请" onOk={()=>{handlesubmit();}} okText={"提交申请"} confirmLoading={loading} onCancel={props.onClose} open={props.isOpen}  >
             <label>请填写申请原因：</label>
             <Input type='text' onChange={(e)=>{setreason(e.target.value);}} maxLength={200}></Input>
             <label>请填写转移人员：</label>
