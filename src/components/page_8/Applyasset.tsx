@@ -40,6 +40,7 @@ const Applyasset=()=>{
     const [datailid,setdetailid] =useState<number>(-1);
     const [spinloading,setspinloading] = useState<boolean>(false);
     const [currentrowselcet,setcurrentrowselect] = useState<React.Key[]>([]);
+    const [applynum,setapplynum] = useState<number>(0);
     const [pagenation,setpagenation] = useState({
         current: 1, // 当前页码
         pageSize: 10, // 每页显示条数
@@ -75,15 +76,17 @@ const Applyasset=()=>{
         {
             title: "申请数量",
             key:"number input",
+            dataIndex:"applycount",
+            width:"15%",
             render:(_,row)=>{
                 return (
                     row.type==1?
                         <Input
-
+                            name="inputnum"
                             onChange={(e)=>{handleChange(e,row.name);}}
                             placeholder="请输入一个数字"
                             maxLength={16}
-                            
+                            defaultValue={1}
                         />
                         :
                         <a>1</a>
@@ -94,7 +97,7 @@ const Applyasset=()=>{
     useEffect((()=>{
         fetchlist();
         fetchapply();
-    }),[]);
+    }),[applynum]);
     const fetchapply=()=>{
         request("api/user/ns/getallapply","GET")
             .then((res)=>{
@@ -118,14 +121,14 @@ const Applyasset=()=>{
         // 构造请求参数
         // 发送请求获取数据
         //判断是否重复请求数据
-        setcurrentrowselect([]);
+        
         setspinloading(true);
         request("/api/user/ns/getassets","GET",{page:page})
             .then((res) => {
             // 更新表格数据源和分页器状态
                 let tem=res.info.map((val)=>{
                     return({
-                        key:val.id,
+                        key: (val.id as string) + " "+ (val.count as string) ,
                         id:val.id,
                         name:val.name,
                         type:val.type,
@@ -142,6 +145,7 @@ const Applyasset=()=>{
                 });
                 //分页选取实现
                 setspinloading(false);
+                setcurrentrowselect([]);
             })
             .catch((error) => {
                 message.warning(error.message);
@@ -175,10 +179,15 @@ const Applyasset=()=>{
     const hasSelected = currentrowselcet.length > 0;
     const handlesubmitsuccess=()=>{
         //在员工成功申请之后，重新刷新页面
+        document.getElementsByName("inputnum").forEach((e)=>{
+            (e as HTMLInputElement ).value = "4";
+            console.log("set");
+        });
+        
         setcurrentrowselect([]);
         setassetselected([]);
-        fetchlist();
-        fetchapply();
+        setapplynum(applynum+1);
+        console.log(currentrowselcet);
     };  
     const handledelete=(rowid:number)=>{
         request("/api/user/ns/deleteapplys","DELETE",{id:rowid})
@@ -193,7 +202,7 @@ const Applyasset=()=>{
     };
     //检查一遍申请的资产数量
     const checksubmit=()=>{
-        let selectasset=useable_assetslist.filter((obj)=>{return currentrowselcet.find((row)=>{return row==obj.id;}) != null; });
+        let selectasset=useable_assetslist.filter((obj)=>{return currentrowselcet.find((row)=>{return row==obj.key;}) != null; });
         let size= selectasset.length;
         let ans = true;
         let i = 0;
@@ -208,7 +217,8 @@ const Applyasset=()=>{
     };
     const handlesubclick=()=>{
         if(checksubmit()){
-            let selectasset=useable_assetslist.filter((obj)=>{return currentrowselcet.find((row)=>{return row==obj.id;}) != null; });
+            let selectasset=useable_assetslist.filter((obj)=>{return currentrowselcet.find((row)=>{return row==obj.key;}) != null; });
+            
             setIsDialogOpen1(true);
             setassetselected(selectasset);
         }else{
@@ -239,6 +249,7 @@ const Applyasset=()=>{
                         }}
                     >
                         <ProTable<asset>
+                            
                             toolBarRender={() => {
                                 return [
                                     <Button key="1" type="primary" disabled={!hasSelected} onClick={()=>{handlesubclick();}}>

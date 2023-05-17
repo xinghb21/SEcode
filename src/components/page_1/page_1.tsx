@@ -155,7 +155,7 @@ const EStable=()=> {
 
 
     return (
-        <>  
+        <div style={{height:"100%"}} >  
             <Spin size="large" spinning={spinloading}>    
                 <Descriptions title="业务实体列表" style={{ marginBottom :"5px"}} >
                 </Descriptions>
@@ -175,7 +175,7 @@ const EStable=()=> {
                 <CreateEn isOpen={isentityDialogOpen} onClose={() => setIsentityDialogOpen(false)} onCreateUser={handleCreateEntity} ></CreateEn>
             
             </Spin>
-        </>
+        </div>
     );
 };
 export default EStable;
