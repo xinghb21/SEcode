@@ -16,18 +16,6 @@ build-master:
     - deployer build
   only: 
     - master
-    
-build-dev:
-  stage: build
-  script: 
-    - cp ./.env.dev ./.env
-    - export BUILD_IMAGE_NAME=$CI_REGISTRY_IMAGE
-    - export BUILD_IMAGE_TAG=$CI_COMMIT_REF_SLUG
-    - export BUILD_IMAGE_USERNAME=$CI_REGISTRY_USER
-    - export BUILD_IMAGE_PASSWORD=$CI_REGISTRY_PASSWORD
-    - deployer build
-  only:
-    - dev
 
 build-feature:
   stage: build
@@ -40,7 +28,6 @@ build-feature:
     - deployer build
   except:
     - master
-    - dev
 
 .test:
   image: node:18
@@ -73,24 +60,15 @@ unit-test:
 
 deploy-master:
   stage: deploy
-  only: 
-    - master 
   script:
     - deployer dyno replace $CI_PROJECT_NAME "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" "$REGISTRY_USER" "$REGISTRY_PWD"
-
-
-deploy-dev:
-  stage: deploy
   only: 
-    - dev 
-  script:
-    - deployer dyno replace frontend-feature "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" "$REGISTRY_USER" "$REGISTRY_PWD"
+    - master 
     
 deploy-feature:
   stage: deploy
-  except: 
-    - dev
-    - master 
   script:
-    - deployer dyno replace $CI_PROJECT_NAME "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" "$REGISTRY_USER" "$REGISTRY_PWD"
+    - deployer dyno replace frontend-feature "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" "$REGISTRY_USER" "$REGISTRY_PWD"
+  except: 
+    - master 
     
