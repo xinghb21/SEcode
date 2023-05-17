@@ -20,6 +20,8 @@ WORKDIR $HOME
 
 ENV NODE_ENV production
 
+COPY --from=build /opt/frontend/config ./config
+RUN true
 COPY --from=build /opt/frontend/public ./public
 RUN true
 COPY --from=build /opt/frontend/.next ./.next
