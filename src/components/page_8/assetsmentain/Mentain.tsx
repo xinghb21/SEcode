@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
-import type { MenuProps } from "antd";
-import { Button, Input, Menu, Space, Tag, message, Table, Spin } from "antd";
+import { Button, Input, Space, Tag, message, Spin } from "antd";
 import { request } from "../../../utils/network";
 import { ProColumns, ProList, ProTable } from "@ant-design/pro-components";
 import Applysubmit from "./Applysubmit";
-import { ColumnsType } from "antd/es/table";
 import Applydetail from "./Applydetail";
 import { Typography } from "antd";
 
@@ -211,6 +209,7 @@ const Mentainasset=()=>{
             资产维保
                 </Title >
                 <ProTable<asset>
+                    bordered={true}
                     toolBarRender={() => {
                         return [
                             <Button key="1" type="primary" disabled={!hasSelected} onClick={()=>{handlesubclick();}}>
@@ -230,6 +229,7 @@ const Mentainasset=()=>{
                     dataSource={useable_assetslist}
                 />
                 <ProList<applys>
+                    style={{border:"1px solid #E6E6E6", margin:25}}
                     pagination={{
                         pageSize: 5,
                     }}

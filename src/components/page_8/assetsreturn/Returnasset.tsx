@@ -213,6 +213,7 @@ const Returnasset=()=>{
             资产退库
                 </Title >
                 <ProTable<asset>
+                    bordered={true}
                     toolBarRender={() => {
                         return [
                             <Button key="1" type="primary" disabled={!hasSelected} onClick={()=>{handlesubclick();}}>
@@ -232,6 +233,7 @@ const Returnasset=()=>{
                     dataSource={useable_assetslist}
                 />
                 <ProList<applys>
+                    style={{border:"1px solid #E6E6E6", margin:25}}
                     pagination={{
                         pageSize: 5,
                     }}

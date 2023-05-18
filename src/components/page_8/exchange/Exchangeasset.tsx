@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { Button, Input, Menu, Space, Tag, message, Table, Spin } from "antd";
+import { Button, Input,  Space, Tag, message, Spin } from "antd";
 import { request } from "../../../utils/network";
 import { ProColumns, ProList, ProTable } from "@ant-design/pro-components";
 import Exchangesubmit from "./Exchangesubmit";
@@ -214,6 +214,7 @@ const Exchangeasset=()=>{
             资产转移
                 </Title >
                 <ProTable<asset>
+                    bordered={true}
                     toolBarRender={() => {
                         return [
                             <Button key="1" type="primary" disabled={!hasSelected} onClick={()=>{handlesubclick();}}>
@@ -236,6 +237,7 @@ const Exchangeasset=()=>{
                     pagination={{
                         pageSize: 5,
                     }}
+                    style={{border:"1px solid #E6E6E6", margin:25}}
                     metas={{
                         title: {dataIndex:"id"},
                         description: {
