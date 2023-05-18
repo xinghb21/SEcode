@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { request } from "../../utils/network";
-import { Space, Tag, message } from "antd";
+import { Space, Spin, Tag, message } from "antd";
 import { ProForm, ProFormDateRangePicker, ProFormSelect, ProFormText, QueryFilter, ProTable, ProColumns } from "@ant-design/pro-components";
 // import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import moment from "moment";
@@ -15,33 +15,33 @@ interface History {
 }
 
 const AssetHistory = () => {
-
-    const [historylist,sethistorylist] = useState<History[]>([]);
-    const [datatype , setdatatype] = useState<any>("");
-    const [dataname,setdataname] = useState<any>("");
-    const [datatimefrom,setdatatimefrom] = useState<any>("");
-    const [datatimeto,setdatatimeto ] = useState<any>("");   
-    const [pagenation,setpagenation] = useState({
+    const [isSpinning, setIsSpinning] = useState<boolean>(false);
+    const [historylist, sethistorylist] = useState<History[]>([]);
+    const [datatype, setdatatype] = useState<any>("");
+    const [dataname, setdataname] = useState<any>("");
+    const [datatimefrom, setdatatimefrom] = useState<any>("");
+    const [datatimeto, setdatatimeto] = useState<any>("");
+    const [pagenation, setpagenation] = useState({
         current: 1, // 当前页码
         pageSize: 10, // 每页显示条数
         total: 0, // 总记录数
     });
-    const columns:ProColumns<History>[]=[
+    const columns: ProColumns<History>[] = [
         {
-            title:"资产名称",
-            dataIndex:"asset",
+            title: "资产名称",
+            dataIndex: "asset",
         },
         {
-            title:"操作类型",
-            dataIndex:"type",
-            render:(_,row)=>{
+            title: "操作类型",
+            dataIndex: "type",
+            render: (_, row) => {
                 return (
                     <Space size={0}>
                         {(row.type === 1) ? <Tag color="blue" key={row.id}>资产创建</Tag> :
-                            ((row.type===2) ? <Tag color="green" key={row.id}>资产领用</Tag> :  
-                                ((row.type===3) ? <Tag color="orange" key={row.id}>资产转移</Tag> :
-                                    ((row.type===4) ? <Tag color="red" key={row.id}>资产维保</Tag> :
-                                        ((row.type===5) ? <Tag color="purple" key={row.id}>资产退库</Tag> :
+                            ((row.type === 2) ? <Tag color="green" key={row.id}>资产领用</Tag> :
+                                ((row.type === 3) ? <Tag color="orange" key={row.id}>资产转移</Tag> :
+                                    ((row.type === 4) ? <Tag color="red" key={row.id}>资产维保</Tag> :
+                                        ((row.type === 5) ? <Tag color="purple" key={row.id}>资产退库</Tag> :
                                             <Tag color="cyan" key={row.id}>资产数量变动</Tag>))))
                         }
                     </Space>
@@ -49,9 +49,9 @@ const AssetHistory = () => {
             },
         },
         {
-            title:"操作描述",
-            dataIndex:"content",
-            render: (_,row) => {
+            title: "操作描述",
+            dataIndex: "content",
+            render: (_, row) => {
                 return (
                     <div>
                         {row.content}
@@ -60,22 +60,23 @@ const AssetHistory = () => {
             },
         },
         {
-            title:"时间",
-            dataIndex:"time",
-            render: (_,row) =>{
-                return(
-                    <div style={{display:"flex",flexDirection:"column"}}>
-                        <p>Happen at: {moment(row.time,"X").format("YYYY-MM-DD-HH:mm:ss")}</p>
+            title: "时间",
+            dataIndex: "time",
+            render: (_, row) => {
+                return (
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                        <p>Happen at: {moment(row.time, "X").format("YYYY-MM-DD-HH:mm:ss")}</p>
                     </div>
                 );
             },
         }
     ];
-    useEffect((()=>{
-        request("/api/asset/allhistory", "GET", {page: 1})
+    useEffect((() => {
+        setIsSpinning(true);
+        request("/api/asset/allhistory", "GET", { page: 1 })
             .then((res) => {
-            // 更新表格数据源和分页器状态
-                sethistorylist(res.info.map((val)=>{
+                // 更新表格数据源和分页器状态
+                sethistorylist(res.info.map((val) => {
                     return {
                         key: val.id,
                         id: val.id,
@@ -94,22 +95,26 @@ const AssetHistory = () => {
             .catch((error) => {
                 message.warning(error.message);
             });
-    }),[]);
+        setTimeout(() => {
+            setIsSpinning(false);
+        }, 500);
+    }), []);
 
-    const handleFetch = (page:number, pageSize:number) => {
+    const handleFetch = (page: number, pageSize: number) => {
         // 构造请求参数
         // 发送请求获取数据
+        setIsSpinning(true);
         request("/api/asset/queryhis", "GET",
             {
                 type: datatype,
                 assetname: dataname,
                 timefrom: datatimefrom,
                 timeto: datatimeto,
-                page:page,
+                page: page,
             })
             .then((res) => {
-            //更改
-                sethistorylist(res.info.map((val)=>{
+                //更改
+                sethistorylist(res.info.map((val) => {
                     return {
                         key: val.id,
                         id: val.id,
@@ -127,6 +132,9 @@ const AssetHistory = () => {
             }).catch((err) => {
                 message.warning(err.message);
             });
+        setTimeout(() => {
+            setIsSpinning(false);
+        }, 500);
     };
 
     return (
@@ -136,34 +144,35 @@ const AssetHistory = () => {
                     labelWidth="auto"
                     onFinish={async (values) => {
                         //发送查询请求，注意undefined的情况
-                        if(values.status != undefined){
+                        if (values.status != undefined) {
                             setdatatype(values.status);
-                        }else{
+                        } else {
                             setdatatype("");
                         }
-                        if(values.name!= undefined){
+                        if (values.name != undefined) {
                             setdataname(values.name);
-                        }else{
+                        } else {
                             setdataname("");
                         }
-                        if(values.date!=undefined){
+                        if (values.date != undefined) {
                             setdatatimefrom(Date.parse(values.date[0]) / 1000);
                             setdatatimeto(Date.parse(values.date[1]) / 1000);
-                        }else{
+                        } else {
                             setdatatimefrom("");
                             setdatatimeto("");
                         }
+                        setIsSpinning(true);
                         request("/api/asset/queryhis", "GET",
                             {
                                 type: (values.status != undefined) ? values.status : "",
                                 assetname: (values.name != undefined) ? values.name : "",
                                 timefrom: (values.date != undefined) ? Date.parse(values.date[0]) / 1000 : "",
                                 timeto: (values.date != undefined) ? Date.parse(values.date[1]) / 1000 : "",
-                                page:"1",
+                                page: "1",
                             })
                             .then((res) => {
                                 //更改
-                                sethistorylist(res.info.map((val)=>{
+                                sethistorylist(res.info.map((val) => {
                                     return {
                                         key: val.id,
                                         id: val.id,
@@ -182,6 +191,9 @@ const AssetHistory = () => {
                             }).catch((err) => {
                                 message.warning(err.message);
                             });
+                        setTimeout(() => {
+                            setIsSpinning(false);
+                        }, 500);
                     }
                     }
                 >
@@ -228,26 +240,28 @@ const AssetHistory = () => {
                             name="date"
                             label="时间段选择"
                         />
-            
+
                     </ProForm.Group>
                 </QueryFilter>
             </div>
-            <ProTable<History>
-                bordered={true}
-                //切换页面的实现在于pagination的配置，如下
-                pagination={{
-                    current: pagenation.current,
-                    pageSize: pagenation.pageSize,
-                    onChange: handleFetch,
-                    total: pagenation.total
-                }}
-                search={false}
-                options={false}
-                columns={columns}
-                rowKey="key"
-                headerTitle="资产历史查看"
-                dataSource={historylist}
-            />
+            <Spin spinning={isSpinning}>
+                <ProTable<History>
+                    bordered={true}
+                    //切换页面的实现在于pagination的配置，如下
+                    pagination={{
+                        current: pagenation.current,
+                        pageSize: pagenation.pageSize,
+                        onChange: handleFetch,
+                        total: pagenation.total
+                    }}
+                    search={false}
+                    options={false}
+                    columns={columns}
+                    rowKey="key"
+                    headerTitle="资产历史查看"
+                    dataSource={historylist}
+                />
+            </Spin>
         </div>
     );
 };

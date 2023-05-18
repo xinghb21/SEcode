@@ -1,4 +1,4 @@
-import { Button, Modal, Input, Select, InputNumber, Space, message, Table, Tag, Typography } from "antd";
+import { Button, Modal, Input, Select, InputNumber, Space, message, Table, Tag, Typography, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import type { ColumnsType } from "antd/es/table";
 import { PlusOutlined, WarningOutlined } from "@ant-design/icons";
@@ -25,6 +25,7 @@ const AssetWarn = () => {
     const [isMCopen, setIsMCOpen] = useState(false);//修改model
     const [inputCGWC, setCGWC] = useState<number>(0);//更改后的告警条件
     const [input_status, setIS] = useState<boolean>(true);//NumberInput的状态
+    const [isSpinning,setIsSpinning]=useState<boolean>(false);//Spin的状态
 
     //表格的规范
     const Assetcolumns: ColumnsType<WarningType> = [
@@ -67,14 +68,20 @@ const AssetWarn = () => {
             render: (record) => (
                 <>
                     <Button danger onClick={() => {
+                        setIsSpinning(true);
                         request("/api/user/ep/aw/deleteaw", "DELETE", {
                             key: record.key
                         }).then(() => {
+                            setTimeout(() => {
+                                setIsSpinning(false);
+                            }, 500);
                             message.success("成功删除该资产告警策略");
                             fetchWarning();
                         }).catch((err) => {
+                            setIsSpinning(false);
                             message.warning(err.message);
                         });
+                        setIsSpinning(false);
                     }}>删除</Button>
                     <Button onClick={() => {
                         setCK(record.key);
@@ -89,6 +96,7 @@ const AssetWarn = () => {
     ];
 
     useEffect((() => {
+        setIsSpinning(true);
         fetchWarning();
     }), []);
 
@@ -97,13 +105,18 @@ const AssetWarn = () => {
         request("/api/user/ep/aw/getw", "GET")
             .then((res) => {
                 setwarning(res.info);
+                setTimeout(() => {
+                    setIsSpinning(false);
+                }, 500);
             })
             .catch((err) => {
                 message.warning(err.message);
+                setIsSpinning(false);
             });
     };
     //确定增加
     const handleOk = () => {
+        setIsSpinning(true);
         request("/api/user/ep/aw/newaw", "POST", {
             assetname: inputAN,
             warning: choseV,
@@ -118,6 +131,9 @@ const AssetWarn = () => {
                 setIsModalOpen(false);
             })
             .catch((err) => {
+                setTimeout(() => {
+                    setIsSpinning(false);
+                }, 500);
                 message.warning(err.message);
             });
         //清空
@@ -133,9 +149,11 @@ const AssetWarn = () => {
         setAN("");
         setWC(0);
         setIsModalOpen(false);
+        setIsSpinning(false);
     };
     //确定修改
     const handleMCOk = () => {
+        setIsSpinning(true);
         request("/api/user/ep/aw/cgcondition", "POST", {
             key: choseK,
             newcondition: inputCGWC
@@ -144,14 +162,19 @@ const AssetWarn = () => {
                 message.success("成功修改资产告警策略");
                 fetchWarning();
                 setIsMCOpen(false);
+                setTimeout(() => {
+                    setIsSpinning(false);
+                }, 500);
             })
             .catch((err) => {
+                setIsSpinning(false);
                 message.warning(err.warning);
             });
         setCGWC(0);
     };
 
     const handleMCCancel = () => {
+        setIsSpinning(false);
         setIsMCOpen(false);
     };
 
@@ -325,9 +348,11 @@ const AssetWarn = () => {
                     </div>
                 </Modal>
             </div>
-            <div style={{ margin: 5 }}>
-                <Table columns={Assetcolumns} dataSource={allwarning} bordered={true}></Table>
-            </div>
+            <Spin spinning={isSpinning}>
+                <div style={{ margin: 5 }}>
+                    <Table columns={Assetcolumns} dataSource={allwarning} bordered={true}></Table>
+                </div>
+            </Spin>
         </>
     );
 };

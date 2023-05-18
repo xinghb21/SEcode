@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import { request } from "../../utils/network";
-import { Button, message} from "antd";
+import { Button, Spin, message} from "antd";
 import {  ProColumns, ProList, ProTable } from "@ant-design/pro-components";
 
 interface AssetDisplayType {
@@ -17,9 +17,10 @@ const ClearAsset = (() => {
     
     const [assetList, setAlist] = useState<AssetDisplayType[]>([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-
+    const [isSpinning,setIsSpinning]=useState<boolean>(false);
     //初始化获取需要清退的资产
     useEffect(() => {
+        setIsSpinning(true);
         request("/api/user/ep/assetstbc", "GET")
             .then((res) => {
                 setAlist(res.info.map((item) => {
@@ -35,6 +36,9 @@ const ClearAsset = (() => {
             .catch((err) => {
                 message.warning(err.message);
             });
+        setTimeout(() => {
+            setIsSpinning(false);
+        }, 500);
     }, []);
 
     //选择后的处理
@@ -45,7 +49,7 @@ const ClearAsset = (() => {
 
     //给后端发请求清退对应的asset
     const clear_asset = (() => {
-
+        setIsSpinning(true);
         const newAssets = assetList.filter(item => !selectedRowKeys.includes(item.key));
 
         const selectedNames = selectedRowKeys.map(key => {
@@ -65,6 +69,9 @@ const ClearAsset = (() => {
             .catch((err) => {
                 message.warning(err.message);
             });
+        setTimeout(() => {
+            setIsSpinning(false);
+        }, 500);
     });
 
     const columns: ProColumns<AssetDisplayType>[] = [
@@ -110,50 +117,53 @@ const ClearAsset = (() => {
 
     return (
         <>
-            <ProTable<AssetDisplayType>
-                bordered={true}
-                pagination={{ pageSize: 10 }}
-                // metas={{
-                //     title: { dataIndex: "assetname" },
-                //     description: {
-                //         render: (_, row) => {
-                //             return (
-                //                 <>
-                //                     <div>
-                //                         资产类型{row.assetclass}
-                //                     </div>
-                //                     <div>
-                //                         资产编号{row.key}
-                //                     </div>
-                //                     <div>
-                //                         所属部门{row.department}
-                //                     </div>
-                //                     <div>
-                //                         资产数量{row.number}
-                //                     </div>
+            <Spin spinning={isSpinning}>
+                <ProTable<AssetDisplayType>
+                    bordered={true}
+                    pagination={{ pageSize: 10 }}
+                    // metas={{
+                    //     title: { dataIndex: "assetname" },
+                    //     description: {
+                    //         render: (_, row) => {
+                    //             return (
+                    //                 <>
+                    //                     <div>
+                    //                         资产类型{row.assetclass}
+                    //                     </div>
+                    //                     <div>
+                    //                         资产编号{row.key}
+                    //                     </div>
+                    //                     <div>
+                    //                         所属部门{row.department}
+                    //                     </div>
+                    //                     <div>
+                    //                         资产数量{row.number}
+                    //                     </div>
 
-                //                 </>
-                //             );
-                //         }
-                //     },
-                //     avatar: {},
-                //     extra: {},
-                //     actions: {},
-                // }}
-                search={false}
-                rowKey="key"
-                columns={columns}
-                headerTitle="需清退资产"
-                rowSelection={rowSelection}
-                dataSource={assetList}
-                toolBarRender={() => {
-                    return [
-                        <Button key="2" type="default" danger={true} onClick={clear_asset} disabled={!hasSelected}>
+                    //                 </>
+                    //             );
+                    //         }
+                    //     },
+                    //     avatar: {},
+                    //     extra: {},
+                    //     actions: {},
+                    // }}
+                    options={{ reload: false }}
+                    search={false}
+                    rowKey="key"
+                    columns={columns}
+                    headerTitle="需清退资产"
+                    rowSelection={rowSelection}
+                    dataSource={assetList}
+                    toolBarRender={() => {
+                        return [
+                            <Button key="2" type="default" danger={true} onClick={clear_asset} disabled={!hasSelected}>
                             清退选中资产
-                        </Button>
-                    ];
-                }}
-            />
+                            </Button>
+                        ];
+                    }}
+                />
+            </Spin>
         </>);
 });
 
