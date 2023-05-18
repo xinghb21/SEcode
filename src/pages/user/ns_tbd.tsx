@@ -152,7 +152,7 @@ const NSTbdDrawer = () => {
                         message.warning("请为所有资产指定类别");
                         return false;
                     }
-                })
+                });
             }
         }
         assetdisdata.info.forEach((item) => {
