@@ -89,7 +89,7 @@ deploy-dev:
 deploy-feature:
   stage: deploy
   script:
-    - deployer dyno replace frontend-tmp "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" "$REGISTRY_USER" "$REGISTRY_PWD"
+    - deployer dyno replace frontend-feature "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" "$REGISTRY_USER" "$REGISTRY_PWD"
   except: 
     - dev
     - master 
