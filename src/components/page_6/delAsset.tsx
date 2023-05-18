@@ -42,6 +42,7 @@ type Userlist = {
     key: React.Key;
     name: string;
     number: number;
+    label: number;
 }
 
 type AssetDisplayType = {
@@ -71,6 +72,8 @@ type AssetDisplayType = {
     additionalinfo: string;//附加信息
     imageurl?: string;//图片url
     new_price?: number;//资产现价值
+    maintain?: Object[];//资产维保情况
+    process?: Object[];//资产处理情况
 }
 
 type AssetQueryType = {
@@ -343,14 +346,25 @@ const DelAsset = (() => {
                         res.data.key = row.key;
                         if (res.data.type == false) {
                             res.data.number_idle = res.data.status == 0 ? 1 : 0;
-                            if (res.data.user != null) res.data.userlist = [{ key: res.data.user, name: res.data.user, number: 1 }];
+                            if (res.data.user != null) res.data.userlist = [{ key: res.data.user, name: res.data.user, number: 1 , label: res.data.status}];
                         } else {
                             res.data.userlist = [];
-                            res.data.userlist = res.data.usage.map((item) => {
+                            let tmp1 = res.data.usage.map((item) => {
                                 return Object.entries(item).map(([key, value]) => {
-                                    return { key: key, name: key, number: value };
+                                    return { key: key, name: key, number: value, label: 1 };
                                 })[0];
                             });
+                            let tmp2 = res.data.maintain.map((item) => {
+                                return Object.entries(item).map(([key, value]) => {
+                                    return { key: key, name: key, number: value, label: 2 };
+                                })[0];
+                            });
+                            let tmp3 = res.data.process.map((item) => {
+                                return Object.entries(item).map(([key, value]) => {
+                                    return { key: key, name: key, number: value, label: 5 };
+                                })[0];
+                            });
+                            res.data.userlist = [...tmp1, ...tmp2, ...tmp3];
                         }
                         if (res.data.haspic == true)
                             res.data.imageurl = client.signatureUrl(res.data.entity + "/" + res.data.department + "/" + res.data.name);
