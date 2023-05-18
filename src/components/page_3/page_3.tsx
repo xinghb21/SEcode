@@ -121,7 +121,7 @@ const Page_3 = () => {
             render: (_,row) =>{
                 return(
                     <div style={{display:"flex",flexDirection:"column"}}>
-                        {moment(row.time,"X").format("YYYY-MM-DD-HH:mm:ss")}
+                        {moment(row.time,"X").format("YYYY-MM-DD HH:mm:ss")}
                     </div>
                 );
             },
