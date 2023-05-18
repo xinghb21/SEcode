@@ -185,7 +185,7 @@ const Page_home = (prop: ClickProps) => {
                                             });
                                     }}>解除绑定</Button>
                                 </Space>
-                                </Descriptions.Item> : 
+                            </Descriptions.Item> : 
                             <Descriptions.Item label="飞书账号">
                                 <Space>
                                     未绑定

@@ -263,7 +263,7 @@ const DisplayModel = (props: ModelProps) => {
             align: "center",
         }
 
-    ]
+    ];
 
     const handleprint=()=>{
         const canvas = document.getElementById("labeltoprint");
