@@ -11,6 +11,9 @@ import AssignEs from "../page_0/assign";
 import Label from "../page_5/label";
 import { color } from "echarts";
 import { ProColumns, ProTable } from "@ant-design/pro-components";
+import { Typography } from "antd";
+
+const { Title } = Typography;
 //start hqf
 
 interface User{
@@ -157,8 +160,7 @@ const EStable=()=> {
     return (
         <div style={{height:"100%"}} >  
             <Spin size="large" spinning={spinloading}>    
-                <Descriptions title="业务实体列表" style={{ marginBottom :"5px"}} >
-                </Descriptions>
+                <Title level={4} style={{marginLeft: "2%"}}>业务实体列表</Title>
                 <Button onClick={()=>{setIsentityDialogOpen(true);}} style={{color:"green",float:"right",marginBottom:"5px"}} > 添加业务实体 </Button>
                 <ProTable <User>
                     bordered={true}

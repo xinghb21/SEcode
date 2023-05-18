@@ -1,6 +1,6 @@
 import { Button,message} from "antd";
 import React from "react";
-import { ProFormDateRangePicker, ProFormDigitRange, ProList } from "@ant-design/pro-components";
+import { ProColumns, ProFormDateRangePicker, ProFormDigitRange, ProList, ProTable } from "@ant-design/pro-components";
 import { useState } from "react";
 import { useEffect } from "react";
 import { request } from "../../utils/network";
@@ -24,7 +24,7 @@ interface Asset {
     department?: string;
     parent?: string;
     child?: string;
-    assetclass: string;
+    category: string;
     description?: string;
     number?: Number;
     addtion?: Object;
@@ -304,6 +304,68 @@ const DelAsset = (() => {
         }
     };
 
+    const columns: ProColumns<Asset>[] = [
+        {
+            title: "资产名称",
+            width: 80,
+            dataIndex: "name",
+            ellipsis: true,
+            hideInSearch: true,
+        },
+        {
+            title: "资产类别",
+            width: 80,
+            dataIndex: "category",
+            ellipsis: true,
+            hideInSearch: true,
+        },
+        {
+            title: "资产描述",
+            width: 80,
+            dataIndex: "description",
+            ellipsis: true,
+            hideInSearch: true,
+            render: (_, row) => [
+                row.description == "" ? "暂无描述" : row.description
+            ]
+        },
+        {
+            title: "查看详情",
+            valueType: "option",
+            width: 80,
+            key: "option",
+            render: (_, row) => [
+                <Button type="link" key="option" onClick={() => {
+                    request("/api/asset/getdetail", "GET", {
+                        id: row.key
+                    }).then((res) => {
+                        res.data.create_time *= 1000;
+                        res.data.key = row.key;
+                        if (res.data.type == false) {
+                            res.data.number_idle = res.data.status == 0 ? 1 : 0;
+                            if (res.data.user != null) res.data.userlist = [{ key: res.data.user, name: res.data.user, number: 1 }];
+                        } else {
+                            res.data.userlist = [];
+                            res.data.userlist = res.data.usage.map((item) => {
+                                return Object.entries(item).map(([key, value]) => {
+                                    return { key: key, name: key, number: value };
+                                })[0];
+                            });
+                        }
+                        if (res.data.haspic == true)
+                            res.data.imageurl = client.signatureUrl(res.data.entity + "/" + res.data.department + "/" + res.data.name);
+                        setDisplay(res.data);
+                        setIsDetailOpen(true);
+                    }).catch((err) => {
+                        message.warning(err.message);
+                    });
+                }}>
+                    查看及修改资产信息
+                </Button>
+            ],
+        }
+    ];
+
     return (
         <>
             <div
@@ -462,76 +524,27 @@ const DelAsset = (() => {
                     </ProForm.Group>
                 </QueryFilter>
             </div>
-            <ProList<Asset>
+            <ProTable<Asset>
                 pagination={{
                     current: pagenation.current,
                     pageSize: pagenation.pageSize,
                     onChange: handleFetch,
                     total: pagenation.total
                 }}
-                metas={{
-                    title: { dataIndex: "name" },
-                    description: {
-                        render: (_, row) => {
-                            return (
-                                <div>
-                                    {row.description == "" ? "暂无描述" : row.description}
-                                </div>
-                            );
-                        }
-                    },
-                    avatar: {},
-                    extra: {},
-                    actions: {
-                        render: (_, row) => {
-                            return (
-                                <Button type="link" onClick={() => {
-                                    request("/api/asset/getdetail", "GET", {
-                                        id: row.key
-                                    }).then((res) => {
-                                        res.data.create_time *= 1000;
-                                        res.data.key = row.key;
-                                        if (res.data.type == false) {
-                                            res.data.number_idle = res.data.status == 0 ? 1 : 0;
-                                            if (res.data.user != null) res.data.userlist = [{ key: res.data.user, name: res.data.user, number: 1 }];
-                                        } else {
-                                            res.data.userlist = [];
-                                            res.data.userlist = res.data.usage.map((item) => {
-                                                return Object.entries(item).map(([key, value]) => {
-                                                    return { key: key, name: key, number: value };
-                                                })[0];
-                                            });
-                                        }
-                                        if (res.data.haspic == true)
-                                            res.data.imageurl = client.signatureUrl(res.data.entity + "/" + res.data.department + "/" + res.data.name);
-                                        setDisplay(res.data);
-                                        setIsDetailOpen(true);
-                                    }).catch((err) => {
-                                        message.warning(err.message);
-                                    });
-                                }}>
-                                    查看及修改资产信息
-                                </Button>
-                            );
-                        },
-                    },
-                }}
+                columns={columns}
                 rowKey="key"
                 headerTitle="资产列表"
                 rowSelection={rowSelection}
+                search={false}
                 dataSource={assets}
-                toolBarRender={() => {
-                    return [
-                        <div key={"tool"}>
-                            <Button key="2" type="primary" onClick={change_asset} disabled={!getHasSelected()}>
-                                调拨选中资产
-                            </Button>
-                            <Button key="1" onClick={handleoutput} loading={outputloading} >
-                                导出部门内所有资产
-                            </Button>
-                        </div>
-                    ];
-                }}
+                toolBarRender={() => [
+                    <Button key="2" type="primary" onClick={change_asset} disabled={!getHasSelected()}>
+                        调拨选中资产
+                    </Button>,
+                    <Button key="1" onClick={handleoutput} loading={outputloading} >
+                        导出部门内所有资产
+                    </Button>
+                ]}
             />
             <DisplayModel isOpen={isDetailOpen} onClose={() => { setIsDetailOpen(false); }} content={displaydata} />
             <MoveAsset isOpen={isMoveOpen} onClose={() => { setIsMoveOpen(false); }} content={selectedAssets}></MoveAsset>
