@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { request } from "../../utils/network";
 import { Button, message} from "antd";
-import {  ProList } from "@ant-design/pro-components";
+import {  ProColumns, ProList, ProTable } from "@ant-design/pro-components";
 
 interface AssetDisplayType {
     //table数据的格式
@@ -67,42 +67,82 @@ const ClearAsset = (() => {
             });
     });
 
+    const columns: ProColumns<AssetDisplayType>[] = [
+        {
+            title: "资产编号",
+            width: 80,
+            dataIndex: "key",
+            ellipsis: true,
+            hideInSearch: true,
+        },
+        {
+            title: "资产名称",
+            width: 80,
+            dataIndex: "assetname",
+            ellipsis: true,
+            hideInSearch: true,
+        },
+        {
+            title: "资产类别",
+            width: 80,
+            dataIndex: "assetclass",
+            ellipsis: true,
+            hideInSearch: true,
+        },
+        {
+            title: "所属部门",
+            width: 80,
+            dataIndex: "department",
+            ellipsis: true,
+            hideInSearch: true,
+        },
+        {
+            title: "资产数量",
+            width: 80,
+            dataIndex: "number",
+            ellipsis: true,
+            hideInSearch: true,
+        },
+    ];
+
     //是否有选中的清退资产
     const hasSelected = selectedRowKeys.length > 0;
 
     return (
         <>
-            <ProList<AssetDisplayType>
-
+            <ProTable<AssetDisplayType>
+                bordered={true}
                 pagination={{ pageSize: 10 }}
-                metas={{
-                    title: { dataIndex: "assetname" },
-                    description: {
-                        render: (_, row) => {
-                            return (
-                                <>
-                                    <div>
-                                        资产类型{row.assetclass}
-                                    </div>
-                                    <div>
-                                        资产编号{row.key}
-                                    </div>
-                                    <div>
-                                        所属部门{row.department}
-                                    </div>
-                                    <div>
-                                        资产数量{row.number}
-                                    </div>
+                // metas={{
+                //     title: { dataIndex: "assetname" },
+                //     description: {
+                //         render: (_, row) => {
+                //             return (
+                //                 <>
+                //                     <div>
+                //                         资产类型{row.assetclass}
+                //                     </div>
+                //                     <div>
+                //                         资产编号{row.key}
+                //                     </div>
+                //                     <div>
+                //                         所属部门{row.department}
+                //                     </div>
+                //                     <div>
+                //                         资产数量{row.number}
+                //                     </div>
 
-                                </>
-                            );
-                        }
-                    },
-                    avatar: {},
-                    extra: {},
-                    actions: {},
-                }}
+                //                 </>
+                //             );
+                //         }
+                //     },
+                //     avatar: {},
+                //     extra: {},
+                //     actions: {},
+                // }}
+                search={false}
                 rowKey="key"
+                columns={columns}
                 headerTitle="需清退资产"
                 rowSelection={rowSelection}
                 dataSource={assetList}
