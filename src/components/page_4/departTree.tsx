@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { Spin, message } from "antd";
 import { request } from "../../utils/network";
 import CtCeDT from "./ctceDT";
-import { Modal, Tree, Tooltip, Table } from "antd";
+import { Modal, Tree, Tooltip } from "antd";
 import {
     FormOutlined,
     PlusSquareOutlined,
@@ -316,35 +316,7 @@ const Dtree = () => {
                     key: val.id,
                     id: val.id,
                     username: val.username,
-                    identity: (val.number == 3) ? "资产管理员" : "员工",
-                }));
-                setUser(oriUser);
-                setpagenation({
-                    current: 1,
-                    pageSize: 10,
-                    total: res.count,
-                });
-                // console.log("newUser"+Depusers);
-            })
-            .catch((err) => {
-                message.warning(err.message);
-            });
-    };
-
-    const handleFetch = (page: number, pageSize: number) => {
-        // 构造请求参数
-        // 发送请求获取数据
-        request("/api/user/es/staffs", "GET",
-            {
-                department: myselectedkeys.checked[0],
-                page: page
-            })
-            .then((res) => {
-                let oriUser: Depuser[] = res.data.map((val) => ({
-                    key: val.name,
-                    username: val.name,
-                    department: val.department,
-                    identity: (val.identity == 3) ? "💼资产管理员" : "👨‍🔧员工",
+                    identity: (val.number == 3) ? "💼资产管理员" : "👨‍🔧员工",
                 }));
                 setUser(oriUser);
                 setpagenation({
@@ -381,7 +353,7 @@ const Dtree = () => {
                 </div>
             </div>
             
-            <ProTable<Depuser> columns={columns} dataSource={Depusers} search={false} style={{ height: "100%", width: "70%" }} />
+            <ProTable<Depuser> bordered={true} columns={columns} dataSource={Depusers} search={false} style={{ height: "100%", width: "70%" }} />
             <CtCeDT title={"创建下属部门"} subtitle={"部门名称："} isOpen={isDialogOpenCT} onClose={() => setIsDialogOpenCT(false)} onCreateDt={handleCreateDt} />
             <CtCeDT title={"修改部门名称"} subtitle={"新名称："} isOpen={isDialogOpenCE} onClose={() => setIsDialogOpenCE(false)} onCreateDt={handleChangeDt} />
         </div>

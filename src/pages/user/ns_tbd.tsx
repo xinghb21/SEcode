@@ -302,7 +302,7 @@ const NSTbdDrawer = () => {
     return (
         <>
             <Tooltip placement="bottomLeft" title={<span>通知消息</span>}>
-                <Button type="text" size="large" style={{ margin: 5 }} onClick={showDrawer}>
+                <Button type="text" size="large" style={{ marginTop:5,marginBottom:5 }} onClick={showDrawer}>
                     <Badge dot style={{ visibility: (!isTBD) ? "hidden" : "visible" }}>
                         <MessageTwoTone twoToneColor={(!isTBD) ? "#a8a8a8" : "#f82212"} style={{ fontSize: "25px" }} />
                     </Badge>
