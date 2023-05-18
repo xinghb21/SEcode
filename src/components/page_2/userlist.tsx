@@ -170,7 +170,7 @@ const Userlist =( () => {
             ellipsis: true,
             request: async () => {
                 console.log(departmentlsit);
-                return departmentlsit},
+                return departmentlsit;},
         // valueEnum: departmentlsit.map((item)=>{return {text:item.label,value:item.value};}),
         // align: 'center',
         // sorter: (a, b) => a.containers - b.containers,
