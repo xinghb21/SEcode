@@ -48,7 +48,7 @@ import Lookup from "../../components/page_8/assetslookup/Lookup";
 import Mentainasset from "../../components/page_8/assetsmentain/Mentain";
 import Returnasset from "../../components/page_8/assetsreturn/Returnasset";
 import Exchangeasset from "../../components/page_8/exchange/Exchangeasset";
-
+import ReactCanvasNest from "react-canvas-nest"; 
 
 const { Text } = Typography;
 
@@ -274,29 +274,41 @@ const User: React.FC = () => {
         return (
             <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
                 <Layout style={{ minHeight: "100vh" }}>
-                    <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+                    <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} style={{zIndex: 2}}>
                         <Menu theme="dark" mode="inline" items={items} 
                             onClick={handleClick} />
                     </Sider>
-                    <Layout className="site-layout">
-                        <Content style={{ margin: "0 16px" }}>
-                            <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
-                                
-                                {identity == 3 ? <><Ep_Message /><TbdDrawer /><Asyncbd/></> : <NSTbdDrawer />}
-                                
-                                <Space align="center">
-                                    <Avatar icon={<UserOutlined />} />
-                                    <Text strong>
-                                        {name}
-                                    </Text>
+                    <div style={{width: "100%"}}>
+                        <Layout className="site-layout">
+                            <Content style={{ margin: "0 16px", zIndex: 2 }}>
+                                <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
+                                    
+                                    {identity == 3 ? <><Ep_Message /><TbdDrawer /><Asyncbd/></> : <NSTbdDrawer />}
+                                    
+                                    <Space align="center">
+                                        <Avatar icon={<UserOutlined />} />
+                                        <Text strong>
+                                            {name}
+                                        </Text>
+                                    </Space>
                                 </Space>
-                            </Space>
-                            <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, height:"100%", background: colorBgContainer, borderRadius: 10 }}>
-                                {PageList[page]}
-                            </div>
-                        </Content>
-                        <Footer style={{ textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
-                    </Layout>
+                                <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, height:"100%", background: colorBgContainer, borderRadius: 10}}>
+                                    {PageList[page]}
+                                </div>
+                            </Content>
+                        </Layout>
+                        <Footer style={{zIndex: 0, textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
+                    </div>
+                    <ReactCanvasNest
+                        className='canvasNest'
+                        config={{
+                            pointColor: "38, 138, 255",
+                            lineColor: "22, 44, 154",
+                            lineWidth: 2,
+                            pointR: 1.5
+                        }}
+                        style={{ zIndex: 1, height: "100%", width: "100%"}}
+                    />     
                 </Layout>
             </Skeleton>
         );
@@ -306,27 +318,41 @@ const User: React.FC = () => {
             return (
                 <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
                     <Layout style={{ minHeight: "100vh" }}>
-                        <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-                            <Menu theme="dark" mode="inline" items={items}
+                        <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} style={{zIndex: 2}}>
+                            <Menu theme="dark" mode="inline" items={items} 
                                 onClick={handleClick} />
                         </Sider>
-                        <Layout className="site-layout">
-                            <Content style={{ margin: "0 16px" }}>
-                                <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
-                                    <Asyncbd/>
-                                    <Space align="center">
-                                        <Avatar icon={<UserOutlined />} />
-                                        <Text strong>
-                                            {name}
-                                        </Text>
+                        <div style={{width: "100%"}}>
+                            <Layout className="site-layout">
+                                <Content style={{ margin: "0 16px", zIndex: 2 }}>
+                                    <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
+                                    
+                                        <Asyncbd/>
+                                    
+                                        <Space align="center">
+                                            <Avatar icon={<UserOutlined />} />
+                                            <Text strong>
+                                                {name}
+                                            </Text>
+                                        </Space>
                                     </Space>
-                                </Space>
-                                <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, height:"100%", background: colorBgContainer, borderRadius: 10 }}>
-                                    {PageList[page]}
-                                </div>
-                            </Content>
-                            <Footer style={{ textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
-                        </Layout>
+                                    <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, height:"100%", background: colorBgContainer, borderRadius: 10}}>
+                                        {PageList[page]}
+                                    </div>
+                                </Content>
+                            </Layout>
+                            <Footer style={{zIndex: 0, textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
+                        </div>
+                        <ReactCanvasNest
+                            className='canvasNest'
+                            config={{
+                                pointColor: "38, 138, 255",
+                                lineColor: "22, 44, 154",
+                                lineWidth: 2,
+                                pointR: 1.5
+                            }}
+                            style={{ zIndex: 1, height: "100%", width: "100%"}}
+                        />     
                     </Layout>
                 </Skeleton>
             );
@@ -334,26 +360,38 @@ const User: React.FC = () => {
         return (
             <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
                 <Layout style={{ minHeight: "100vh" }}>
-                    <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-                        <Menu theme="dark" mode="inline" items={items}
+                    <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} style={{zIndex: 2}}>
+                        <Menu theme="dark" mode="inline" items={items} 
                             onClick={handleClick} />
                     </Sider>
-                    <Layout className="site-layout">
-                        <Content style={{ margin: "0 16px" }}>
-                            <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
-                                <Space align="center">
-                                    <Avatar icon={<UserOutlined />} />
-                                    <Text strong>
-                                        {name}
-                                    </Text>
+                    <div style={{width: "100%"}}>
+                        <Layout className="site-layout">
+                            <Content style={{ margin: "0 16px", zIndex: 2 }}>
+                                <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
+                                    <Space align="center">
+                                        <Avatar icon={<UserOutlined />} />
+                                        <Text strong>
+                                            {name}
+                                        </Text>
+                                    </Space>
                                 </Space>
-                            </Space>
-                            <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5,height:"100%", background: colorBgContainer, borderRadius: 10 }}>
-                                {PageList[page]}
-                            </div>
-                        </Content>
-                        <Footer style={{ textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
-                    </Layout>
+                                <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, height:"100%", background: colorBgContainer, borderRadius: 10}}>
+                                    {PageList[page]}
+                                </div>
+                            </Content>
+                        </Layout>
+                        <Footer style={{zIndex: 0, textAlign: "center" }}>EAM ©2023 Created by Aplus </Footer>
+                    </div>
+                    <ReactCanvasNest
+                        className='canvasNest'
+                        config={{
+                            pointColor: "38, 138, 255",
+                            lineColor: "22, 44, 154",
+                            lineWidth: 2,
+                            pointR: 1.5
+                        }}
+                        style={{ zIndex: 1, height: "100%", width: "100%"}}
+                    />     
                 </Layout>
             </Skeleton>
         );
