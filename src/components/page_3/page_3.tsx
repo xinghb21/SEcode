@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, List, Space, Button, Tag, message, Typography } from "antd";
+import { Avatar, List, Space, Button, Tag, message, Typography, Spin } from "antd";
 import { ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProList, QueryFilter, ProTable, ProColumns } from "@ant-design/pro-components";
 import { Progress } from "antd";
 import { useState } from "react";
@@ -21,6 +21,7 @@ interface log{
     range:string[]
 }
 const Page_3 = () => {
+    const [isSpinning, setSpnning] = useState(false);
     const [loglist,setloglist]=useState<log[]>([]);
     const [pagenation,setpagenation] = useState({
         current: 1, // 当前页码
@@ -46,8 +47,13 @@ const Page_3 = () => {
                     pageSize: 10,
                     total: res.count,
                 });
+                
+                setTimeout(() => {
+                    setSpnning(false);
+                }, 500);
             })
             .catch((error) => {
+                setSpnning(false);
                 message.warning(error.message);
             });
     }),[]);
@@ -142,7 +148,7 @@ const Page_3 = () => {
         },
     ];
     return (
-        <div>
+        isSpinning?<Spin tip="Loading..."></Spin>:<div>
             <ProTable<log,Params>
                 //切换页面的实现在于pagination的配置，如下
                 pagination={{current:pagenation.current,pageSize:pagenation.pageSize,onChange:handleFetch,total:pagenation.total}}

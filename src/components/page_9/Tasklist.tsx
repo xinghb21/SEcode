@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Drawer, Space, Button, Table, Tag, message, Modal, Input, Select, Progress, Typography } from "antd";
+import { Drawer, Space, Button, Table, Tag, message, Modal, Input, Select, Progress, Typography, Spin } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { request } from "../../utils/network";
 import {
@@ -54,6 +54,7 @@ const client = new OSS({
 });
 
 const Asyncbd = () => {
+    const [isSpinning, setSpnning] = useState(false);
     const [clicktime,setclicktime] = useState<number>(0);
     const [tasklist,settasklist] = useState<AsyncTask[]>([]);
     const [outputsuccess,setoutputsuccess] = useState<boolean>(false);
@@ -78,7 +79,12 @@ const Asyncbd = () => {
                     pageSize: 10,
                     total: res.count,
                 });
+                
+                setTimeout(() => {
+                    setSpnning(false);
+                }, 500);
             }).catch((err) => {
+                setSpnning(false);
                 message.warning(err.message);
             });
     }), [clicktime]);
@@ -236,7 +242,7 @@ const Asyncbd = () => {
         },
     ];
     return (
-        <>
+        isSpinning?<Spin tip="Loading..."></Spin>:<>
             <ProTable<AsyncTask,Params>
                 pagination={{current:pagenation.current,pageSize:pagenation.pageSize,onChange:handleFetch,total:pagenation.total}}
                 columns={columns}
