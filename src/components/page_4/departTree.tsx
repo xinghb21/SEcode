@@ -4,7 +4,6 @@ import { Spin, message } from "antd";
 import { request } from "../../utils/network";
 import CtCeDT from "./ctceDT";
 import { Modal, Tree, Tooltip, Table } from "antd";
-import type { ColumnsType } from "antd/es/table";
 import {
     FormOutlined,
     PlusSquareOutlined,
@@ -13,6 +12,9 @@ import {
     CaretDownOutlined,
 } from "@ant-design/icons";
 import { ProColumns, ProTable } from "@ant-design/pro-components";
+import { Typography } from "antd";
+
+const { Title } = Typography;
 
 //树组件的item
 type TreeData = {
@@ -26,16 +28,16 @@ const { confirm } = Modal;
 //定义table的column
 const columns: ProColumns<Depuser>[] = [
     {
-        title: "用户名",
+        title: "用户ID",
         width: 80,
-        dataIndex: "username",
+        dataIndex: "id",
         copyable: true,
         ellipsis: true,
     },
     {
-        title: "部门",
-        dataIndex: "department",
+        title: "用户名",
         width: 80,
+        dataIndex: "username",
         copyable: true,
         ellipsis: true,
     },
@@ -359,20 +361,26 @@ const Dtree = () => {
 
     return (
         <div style={{ display: "flex", flex: "flex-start", flexDirection: "row", height: "100%", width: "100%" }}>
-            <div style={{ backgroundColor: "#f7f7f7", marginRight: 20, padding: 10, borderRadius: 10, width: "30%", height: "100%" }}>
-                <Spin spinning={isSpinning}>
-                    <Tree
-                        showLine
-                        switcherIcon={<CaretDownOutlined />}
-                        checkStrictly={true}
-                        style={{ backgroundColor: "#ffffff", padding: 10, borderRadius: 20 }}
-                        checkable
-                        treeData={parseTreeData(json)}
-                        onCheck={handleCheck}
-                        checkedKeys={myselectedkeys}
-                    />
-                </Spin>
+            <div style={{ width: "40%", height: "100%" }}>
+                <Title  level={3} style={{marginLeft:"2%"}} >
+                    部门树结构
+                </Title >
+                <div style={{ backgroundColor: "#f7f7f7", marginRight: 20, padding: 10, borderRadius: 10, width: "100%", height: "100%" }}>
+                    <Spin spinning={isSpinning}>
+                        <Tree
+                            showLine
+                            switcherIcon={<CaretDownOutlined />}
+                            checkStrictly={true}
+                            style={{ backgroundColor: "#ffffff", padding: 10, borderRadius: 20 }}
+                            checkable
+                            treeData={parseTreeData(json)}
+                            onCheck={handleCheck}
+                            checkedKeys={myselectedkeys}
+                        />
+                    </Spin>
+                </div>
             </div>
+            
             <ProTable<Depuser> columns={columns} dataSource={Depusers} search={false} style={{ height: "100%", width: "70%" }} />
             <CtCeDT title={"创建下属部门"} subtitle={"部门名称："} isOpen={isDialogOpenCT} onClose={() => setIsDialogOpenCT(false)} onCreateDt={handleCreateDt} />
             <CtCeDT title={"修改部门名称"} subtitle={"新名称："} isOpen={isDialogOpenCE} onClose={() => setIsDialogOpenCE(false)} onCreateDt={handleChangeDt} />
