@@ -37,8 +37,8 @@ export const request = async (
         for(const key in data) {
             if(data[key] != undefined)
                 url = url + key + "=" + data[key] + "&";
-            url = url.substring(0,url.length-1);
         }
+        url = url.substring(0,url.length-1);
         data = null;
     }
     const response = await network.request({ method, url, data })

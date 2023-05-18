@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import type { MenuProps } from "antd";
-import { Button, Input, Menu, Space, Tag, message, Table } from "antd";
+import { Button, Input, Menu, Space, Tag, message, Table, Spin } from 'antd';
 import { request } from "../../../utils/network";
 import { ProColumns, ProList, ProTable } from "@ant-design/pro-components";
 import Applysubmit from "./Applysubmit";
@@ -38,7 +38,7 @@ const Mentainasset=()=>{
     const [detailreason,setdetailreason] =useState<string>("");
     const [datailmessage,setdetailmessage] = useState<string>("");
     const [datailid,setdetailid] =useState<number>(-1);
-
+    const [spinloading, setspinloading] = useState<boolean>(false); 
     const columns: ProColumns<asset> []= [
         {        
             title: "资产名称",
@@ -104,6 +104,7 @@ const Mentainasset=()=>{
             });
     };
     const fetchlist=()=>{
+        setspinloading(true);
         request("/api/user/ns/possess","GET")
             .then((res)=>{
                 let size = res.assets.length;
@@ -127,8 +128,10 @@ const Mentainasset=()=>{
                 }
                 let useable :asset[] = tem.filter(item =>(item.state==="1"));
                 setuseable_assetlist(useable);
+                setspinloading(false);
             })
             .catch((err)=>{
+                setspinloading(false)
                 message.warning(err.message);
             });
     };
@@ -201,6 +204,7 @@ const Mentainasset=()=>{
 
     return (
         <div>
+            <Spin spinning={spinloading} size="large">
             <Applysubmit isOpen={IsDialogOpen1} onClose={()=>{setIsDialogOpen1(false);}} proassetlist={assetselected} onSuccess={handlesubmitsuccess} ></Applysubmit>
             <Applydetail isOpen={isdetalopen} onClose={()=>{setisdetailopen(false);}} id={datailid} reason={detailreason} message={datailmessage} > </Applydetail>
             <Title  level={3} style={{marginLeft:"2%"}} >
@@ -269,6 +273,7 @@ const Mentainasset=()=>{
                 headerTitle="您的维保申请列表"
                 dataSource={applylist}
             />
+            </Spin>
         </div>
     );
 };

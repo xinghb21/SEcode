@@ -350,7 +350,7 @@ const DelAsset = (() => {
                                 调拨选中资产
                             </Button>
                             <Button key="1" onClick={handleoutput} loading={outputloading} >
-                                导出部门内所有资产
+                                导出所有资产
                             </Button>
                         </div>
                     ];
