@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { request } from "../../utils/network";
 import { Space, Tag, message } from "antd";
-import { ProForm, ProFormDateRangePicker, ProFormSelect, ProFormText, ProList, QueryFilter, ProTable, ProColumns } from "@ant-design/pro-components";
-import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import { ProForm, ProFormDateRangePicker, ProFormSelect, ProFormText, QueryFilter, ProTable, ProColumns } from "@ant-design/pro-components";
+// import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import moment from "moment";
 
 interface History {
@@ -233,6 +233,7 @@ const AssetHistory = () => {
                 </QueryFilter>
             </div>
             <ProTable<History>
+                bordered={true}
                 //切换页面的实现在于pagination的配置，如下
                 pagination={{
                     current: pagenation.current,

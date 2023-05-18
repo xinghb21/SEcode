@@ -1,6 +1,6 @@
-import { Button,message} from "antd";
+import { Button, message } from "antd";
 import React from "react";
-import { ProColumns, ProFormDateRangePicker, ProFormDigitRange, ProList, ProTable } from "@ant-design/pro-components";
+import { ProColumns, ProFormDateRangePicker, ProFormDigitRange, ProTable } from "@ant-design/pro-components";
 import { useState } from "react";
 import { useEffect } from "react";
 import { request } from "../../utils/network";
@@ -42,6 +42,7 @@ type Userlist = {
     key: React.Key;
     name: string;
     number: number;
+    label: number;
 }
 
 type AssetDisplayType = {
@@ -71,6 +72,8 @@ type AssetDisplayType = {
     additionalinfo: string;//附加信息
     imageurl?: string;//图片url
     new_price?: number;//资产现价值
+    maintain?: Object[];//资产维保情况
+    process?: Object[];//资产处理情况
 }
 
 type AssetQueryType = {
@@ -183,7 +186,7 @@ const DelAsset = (() => {
             if (keys.length != 0) {
                 tmpassetsmap.set(pagenation.current, keys.map(key => {
                     let tmpitem = assets.find(data => data.key === key);
-                    if (tmpitem!=undefined) {
+                    if (tmpitem != undefined) {
                         return { key: tmpitem.key, assetname: tmpitem.name };
                     }
                     else {
@@ -256,7 +259,15 @@ const DelAsset = (() => {
                     page: page,
                 })
                 .then((res) => {
-                    setAssets(res.data);
+                    setAssets(res.data.map((item) => {
+                        return {
+                            name: item.name,
+                            key: item.key,
+                            category: item.assetclass,
+                            description: item.description,
+                            type: item.type,
+                        };
+                    }));
                     setpagenation({
                         current: page,
                         pageSize: 10,
@@ -281,7 +292,7 @@ const DelAsset = (() => {
                     message.warning(err.message);
                 });
         }
-        let keysList=Array.from(selectedRowKeysContainer.keys());
+        let keysList = Array.from(selectedRowKeysContainer.keys());
         //如果不存在这个page
         if (!(keysList.includes(page))) {
             // console.log("不存在"+page);
@@ -295,7 +306,7 @@ const DelAsset = (() => {
         else {
             // console.log("存在"+page);
             let templist = selectedRowKeysContainer.get(page);
-            if (templist!=null) {
+            if (templist != null) {
                 setSelectedRowKeys(templist);
             }
             else {
@@ -343,14 +354,25 @@ const DelAsset = (() => {
                         res.data.key = row.key;
                         if (res.data.type == false) {
                             res.data.number_idle = res.data.status == 0 ? 1 : 0;
-                            if (res.data.user != null) res.data.userlist = [{ key: res.data.user, name: res.data.user, number: 1 }];
+                            if (res.data.user != null) res.data.userlist = [{ key: res.data.user, name: res.data.user, number: 1 , label: res.data.status}];
                         } else {
                             res.data.userlist = [];
-                            res.data.userlist = res.data.usage.map((item) => {
+                            let tmp1 = res.data.usage.map((item) => {
                                 return Object.entries(item).map(([key, value]) => {
-                                    return { key: key, name: key, number: value };
+                                    return { key: key, name: key, number: value, label: 1 };
                                 })[0];
                             });
+                            let tmp2 = res.data.maintain.map((item) => {
+                                return Object.entries(item).map(([key, value]) => {
+                                    return { key: key, name: key, number: value, label: 2 };
+                                })[0];
+                            });
+                            let tmp3 = res.data.process.map((item) => {
+                                return Object.entries(item).map(([key, value]) => {
+                                    return { key: key, name: key, number: value, label: 5 };
+                                })[0];
+                            });
+                            res.data.userlist = [...tmp1, ...tmp2, ...tmp3];
                         }
                         if (res.data.haspic == true)
                             res.data.imageurl = client.signatureUrl(res.data.entity + "/" + res.data.department + "/" + res.data.name);
@@ -422,7 +444,15 @@ const DelAsset = (() => {
                                 page: 1,
                             })
                             .then((res) => {
-                                setAssets(res.data);
+                                setAssets(res.data.map((item) => {
+                                    return {
+                                        name: item.name,
+                                        key: item.key,
+                                        category: item.assetclass,
+                                        description: item.description,
+                                        type: item.type,
+                                    };
+                                }));
                                 setpagenation({
                                     current: 1,
                                     pageSize: 10,
@@ -525,6 +555,7 @@ const DelAsset = (() => {
                 </QueryFilter>
             </div>
             <ProTable<Asset>
+                bordered={true}
                 pagination={{
                     current: pagenation.current,
                     pageSize: pagenation.pageSize,

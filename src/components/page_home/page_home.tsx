@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Avatar, Button, Card, Col, Descriptions, Divider, Row, Space, Typography, Upload, message } from "antd";
 import { request } from "../../utils/network";
-import { LoadingOutlined, PlusOutlined, UserOutlined } from "@ant-design/icons";
+import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { UploadChangeParam } from "antd/es/upload";
 import type { RcFile, UploadProps } from "antd/es/upload";
 import type { UploadFile } from "antd/es/upload/interface";
@@ -108,8 +108,9 @@ const Page_home = (prop: ClickProps) => {
                 .catch((err) => {
                     message.error(err.message);
                 });
-            let url = client.signatureUrl(user.entity + "/" + user.department + "/" + user.username);
-            setImageUrl(url);
+            if(user.entity == "") setImageUrl(client.signatureUrl(user.username));
+            else if (user.department == "") setImageUrl(client.signatureUrl(user.entity + "/" + user.username));
+            else setImageUrl(client.signatureUrl(user.entity + "/" + user.department + "/" + user.username));
             setLoading(false);
         }
     };
@@ -138,8 +139,11 @@ const Page_home = (prop: ClickProps) => {
                 else res.identity = "员工";
                 setUser(res);
                 let url = undefined;
-                if(res.head === true)
-                    url = client.signatureUrl(res.entity + "/" + res.department + "/" + res.username);
+                if(res.head === true) {
+                    if(res.entity == "") url = client.signatureUrl(res.username);
+                    else if (res.department == "") url = client.signatureUrl(res.entity + "/" + res.username);
+                    else url = client.signatureUrl(res.entity + "/" + res.department + "/" + res.username);
+                }
                 setImageUrl(url);
                 request("/api/feishu/getfeishuinfo/", "GET").then((res) => {
                     setFeishu(res.info);
@@ -164,21 +168,32 @@ const Page_home = (prop: ClickProps) => {
                         <Descriptions.Item label="Department">{user.department}</Descriptions.Item>
                         <Descriptions.Item label="Entity">{user.entity}</Descriptions.Item>
                         {(feishu.isbound === true) ? 
-                            <Descriptions.Item label="飞书账号">{feishu.mobile}<Button onClick={()=>{
-                                request("/api/feishu/unbind", "DELETE")
-                                    .then((res)=>{
-                                        setFeishu({
-                                            name: "",
-                                            mobile: "",
-                                            isbound: false,
-                                        });
-                                    })
-                                    .catch((err) => {
-                                        message.error(err.message);
-                                    });
-                            }}>解除绑定</Button></Descriptions.Item> : 
-                            <Descriptions.Item label="飞书账号">未绑定<Button href={"https://passport.feishu.cn/suite/passport/oauth/authorize?client_id=cli_a4b17e84d0f8900e&redirect_uri="+SITE_CONFIG.FRONTEND+"/bind&response_type=code"}
-                            >绑定账号</Button></Descriptions.Item>}
+                            <Descriptions.Item label="飞书账号">
+                                <Space>
+                                    {feishu.mobile}
+                                    <Button onClick={()=>{
+                                        request("/api/feishu/unbind", "DELETE")
+                                            .then((res)=>{
+                                                setFeishu({
+                                                    name: "",
+                                                    mobile: "",
+                                                    isbound: false,
+                                                });
+                                            })
+                                            .catch((err) => {
+                                                message.error(err.message);
+                                            });
+                                    }}>解除绑定</Button>
+                                </Space>
+                            </Descriptions.Item> : 
+                            <Descriptions.Item label="飞书账号">
+                                <Space>
+                                    未绑定
+                                    <Button href={"https://passport.feishu.cn/suite/passport/oauth/authorize?client_id=cli_a4b17e84d0f8900e&redirect_uri="+SITE_CONFIG.FRONTEND+"/bind&response_type=code"}>
+                                        绑定账号
+                                    </Button>
+                                </Space>
+                            </Descriptions.Item>}
                     </Descriptions>
                 </div>
                 <div style={{marginTop: "5%", width: "30%"}} key={1}>
@@ -194,7 +209,7 @@ const Page_home = (prop: ClickProps) => {
                                     onChange={handleChange}
                                     onPreview={onPreview}
                                     data={{
-                                        key: user.entity + "/" + user.department + "/" + user.username,
+                                        key: user.entity == "" ? user.username : (user.department == "" ? user.entity + "/" + user.username : user.entity + "/" + user.department + "/" + user.username),
                                         policy: policyBase64,
                                         OSSAccessKeyId: accessKeyId,
                                         success_action_status: 200,

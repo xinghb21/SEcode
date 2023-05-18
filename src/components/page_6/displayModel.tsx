@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import moment from "moment";
 import html2canvas from "html2canvas";
+import { ColumnsType } from "antd/es/table";
 
 interface History {
     key: React.Key;
@@ -53,6 +54,7 @@ type Userlist = {
     key: React.Key;
     name: string;
     number: number;
+    label: number;
 }
 
 type AssetDisplayType = {
@@ -82,6 +84,8 @@ type AssetDisplayType = {
     additionalinfo: string;//附加信息
     imageurl?: string;//图片url
     new_price?: number;//资产现价值
+    maintain?: Object[];//资产维保情况
+    process?: Object[];//资产处理情况
 }
 
 
@@ -226,6 +230,41 @@ const DisplayModel = (props: ModelProps) => {
             message.warning("请确认修改");
         }
     };
+
+    const column: ColumnsType<Userlist> = [
+        {
+            title: "使用人",
+            dataIndex: "name",
+            key: "name",
+            width: "30%",
+            align: "center",
+        },
+        {
+            title: "类型",
+            dataIndex: "type",
+            key: "type",
+            width: "40%",
+            align: "center",
+            render: (text, record) => {
+                if(record.label == 1) {
+                    return <Tag color="green">资产使用中</Tag>;
+                } else if(record.label == 2) {
+                    return <Tag color="blue">资产维保中</Tag>;
+                } else if(record.label == 5) {
+                    return <Tag color="red">资产处理中</Tag>;
+                }
+            },
+        },
+        {
+            title: "操作数量",
+            dataIndex: "number",
+            key: "number",
+            width: "30%",
+            align: "center",
+        }
+
+    ];
+
     const handleprint=()=>{
         const canvas = document.getElementById("labeltoprint");
         if(canvas){
@@ -336,6 +375,13 @@ const DisplayModel = (props: ModelProps) => {
                         editable: () => {if(assetDisplay.type == false) {return false;} else {return true;}},
                     },
                     {
+                        title: "资产清退数量",
+                        dataIndex: "number_expire",
+                        key: "number_expire",
+                        valueType: "digit",
+                        editable: false,
+                    },
+                    {
                         title: "资产描述",
                         dataIndex: "description",
                         key: "description",
@@ -403,9 +449,9 @@ const DisplayModel = (props: ModelProps) => {
             <ProCard title="资产使用情况" headerBordered>
                 <Table 
                     dataSource={assetDisplay.userlist}
+                    columns={column}
+                    rowKey="id"
                 >
-                    <Table.Column title="使用人" dataIndex="name" key="name"></Table.Column>
-                    <Table.Column title="使用数量" dataIndex="number" key="number"></Table.Column>
                 </Table>
             </ProCard>
             <Divider></Divider>
