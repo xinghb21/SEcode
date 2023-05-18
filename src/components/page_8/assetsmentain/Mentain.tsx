@@ -113,7 +113,7 @@ const Mentainasset=()=>{
                     Object.entries(state).forEach(([k, v]) => {
                         if(v!==0){
                             tem.push({
-                                key:res.assets[i].name+" "+k,
+                                key:res.assets[i].name+" "+k+(v as string),
                                 id:res.assets[i].id,
                                 name:res.assets[i].name,
                                 type:res.assets[i].type,

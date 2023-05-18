@@ -62,7 +62,7 @@ const Applysubmit=(props:DialogProps)=>{
                                 return (
                                     <div>
                                         <div>
-                                            {"维保数量: "+row.count}
+                                            {"维保数量: "+row.applycount}
                                         </div>
                                         <div>
                                             {"资产编号："+row.id}

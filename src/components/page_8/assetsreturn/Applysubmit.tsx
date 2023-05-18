@@ -59,7 +59,7 @@ const Applysubmit=(props:DialogProps)=>{
                                 return (
                                     <div>
                                         <div>
-                                            {"退库数量: "+row.count}
+                                            {"退库数量: "+row.applycount}
                                         </div>
                                         <div>
                                             {"资产编号："+row.id}
