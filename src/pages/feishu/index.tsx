@@ -11,9 +11,10 @@ import { request } from "../../utils/network";
 import { useRouter } from "next/router";
 import React from "react";
 import { useEffect, useState } from "react";
-import { Skeleton, message } from "antd";
+import { Skeleton, Spin, message } from "antd";
 import { Md5 } from "ts-md5";
 
+import SITE_CONFIG from "../../settings";
 
 const Feishu = () => {
 
@@ -25,8 +26,7 @@ const Feishu = () => {
         if (!router.isReady) {
             return;
         }
-        let env = (process.env.NODE_ENV == "production" ? "https://aplus-frontend-aplus.app.secoder.net/feishu":"http://localhost:3000/feishu");
-        let url = "/api/feishu/code?code=" + query.code + "&redirect=" + env;
+        let url = "/api/feishu/code?code=" + query.code + "&redirect=" + SITE_CONFIG.FRONTEND + "/feishu";
         request(url, "GET")
             .then((res) => {
                 request("/api/feishu/isbound", "GET")
@@ -46,10 +46,12 @@ const Feishu = () => {
                         } 
                     })
                     .catch((err) => {
+                        setLoad(false);
                         message.warning(err.message);
                     });
             })
             .catch((err) => {
+                setLoad(false);
                 message.warning(err.message);
             });
         setTimeout(() => {
@@ -58,7 +60,7 @@ const Feishu = () => {
     }, [router, query]);
 
     return (
-        <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
+        load ? <Spin tip="Loading..."></Spin> : <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
             <ProConfigProvider hashed={false}>
                 <div style={{ backgroundColor: "white" }}>
                     <LoginForm

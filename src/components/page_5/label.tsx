@@ -18,7 +18,7 @@ interface Attributes{
 const Label = ( () => {
     const [used, setUsed] = useState<string[]>([]);
     const [attributes, setAttributes] = useState<string[]>([]);
-    const [text, setText] = React.useState("https://aplus-frontend-aplus.app.secoder.net/");
+    const [text, setText] = React.useState("https://frontend-feature-aplus.app.secoder.net/blankmobile");
     const [refreshing, setRefreshing] = useState<boolean>(true);
     const router = useRouter();
     const query = router.query;

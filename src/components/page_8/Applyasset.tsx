@@ -33,6 +33,8 @@ const Applyasset=()=>{
     const [useable_assetslist,setuseable_assetlist]=useState<asset[]>([]);
     const [IsDialogOpen1,setIsDialogOpen1]=useState<boolean>(false);
     const [assetselected,setassetselected]= useState<asset[]>([]);
+    const [selectids,setSelectedids] = useState<Map<number,React.Key[]>>(new Map());
+    const [selectassets,setselectassets] = useState<Map<number,asset[]>>(new Map());
     const [applylist,setapplylsit]=useState<applys[]>([]);
     const [isdetalopen,setisdetailopen]=useState<boolean>(false);
     const [detailreason,setdetailreason] =useState<string>("");

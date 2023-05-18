@@ -291,7 +291,7 @@ const User: React.FC = () => {
                                     </Text>
                                 </Space>
                             </Space>
-                            <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, height:"90%" }}>
+                            <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, height:"100%", background: colorBgContainer, borderRadius: 10 }}>
                                 {PageList[page]}
                             </div>
                         </Content>
@@ -321,7 +321,7 @@ const User: React.FC = () => {
                                         </Text>
                                     </Space>
                                 </Space>
-                                <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, height:"90%"}}>
+                                <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5, height:"100%", background: colorBgContainer, borderRadius: 10 }}>
                                     {PageList[page]}
                                 </div>
                             </Content>
@@ -348,7 +348,7 @@ const User: React.FC = () => {
                                     </Text>
                                 </Space>
                             </Space>
-                            <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5,height:"90%",}}>
+                            <div style={{ paddingLeft: 24, paddingRight: 24, paddingTop: 5, paddingBottom: 5,height:"100%", background: colorBgContainer, borderRadius: 10 }}>
                                 {PageList[page]}
                             </div>
                         </Content>

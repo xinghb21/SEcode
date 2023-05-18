@@ -118,12 +118,12 @@ const Exchangeasset=()=>{
                     Object.entries(state).forEach(([k, v]) => {
                         if(v!==0){
                             tem.push({
-                                key:res.assets[i].name+" "+k,
+                                key:res.assets[i].name + " " + (v as string) ,
                                 id:res.assets[i].id,
                                 name:res.assets[i].name,
                                 type:res.assets[i].type,
                                 count:v,
-                                applycount:v,
+                                applycount:1,
                                 state:k,
                             });
                         }
@@ -145,7 +145,7 @@ const Exchangeasset=()=>{
     const onChange = (inputvalue:string,name:string)=>{
         let index=useable_assetslist.findIndex((obj)=>{return obj.name === name;});
         if( (+inputvalue) > useable_assetslist[index].count){
-            message.warning("数量超额，请重新输入");
+            message.error("数量超额，请重新输入");
         }
         useable_assetslist[index].applycount= + inputvalue;
         
@@ -201,7 +201,7 @@ const Exchangeasset=()=>{
             setIsDialogOpen1(true);
             setassetselected(useable_assetslist.filter((obj)=>{return selectedRowKeys.find((key)=>{return key == obj.key;}) != null; }));
         }else{
-            message.warning("转移的资产数量超额或为0");
+            message.error("转移的资产数量超额或为0");
         }
     };
 

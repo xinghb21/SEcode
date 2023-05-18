@@ -1,8 +1,7 @@
 import React from "react";
-import { Avatar, List, Space, Button, Tag, message } from "antd";
-import { ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProList, QueryFilter } from "@ant-design/pro-components";
+import { Avatar, List, Space, Button, Tag, message, Typography } from "antd";
+import { ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProList, QueryFilter, ProTable, ProColumns } from "@ant-design/pro-components";
 import { Progress } from "antd";
-import type { ReactText } from "react";
 import { useState } from "react";
 import { BUILD_ID_FILE } from "next/dist/shared/lib/constants";
 import {useEffect} from "react";
@@ -12,12 +11,14 @@ import Column from "antd/es/table/Column";
 import Pagination from "antd";
 import moment from "moment";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+const { Text } = Typography;
 interface log{
     key:React.Key,
     id:number,
     content:string,
-    time:string,
-    type:number
+    time:number,
+    type:number,
+    range:string[]
 }
 const Page_3 = () => {
     const [loglist,setloglist]=useState<log[]>([]);
@@ -77,47 +78,113 @@ const Page_3 = () => {
                 message.warning(error.message);
             });
     };
+    const columns: ProColumns<log>[] = [
+        {
+            title: "序号",
+            width: 30,
+            dataIndex: "id",
+            hideInSearch: true,
+            ellipsis: true,
+            sorter: (a, b) => a.id - b.id,
+        },
+        {
+            title: "内容",
+            dataIndex: "content",
+            width: 80,
+            ellipsis: true,
+            hideInSearch: true,
+        },
+        {
+            title: "类型",
+            width: 80,
+            dataIndex: "type",
+            hideInSearch: true,
+            filters: true,
+            onFilter: true,
+            ellipsis: true,
+            // align: 'center',
+            valueEnum: {
+                1: { text: <Tag color="blue" key={1}>{"员工登录"}</Tag>},
+                2: { text: <Tag color="green" key={2}>{"部门结构变化"}</Tag>},
+                3: { text: <Tag color="orange" key={3}>{"员工信息变化"}</Tag>},
+            },
+        },
+        {
+            title: "创建时间",
+            width: 80,
+            key: "showTime",
+            dataIndex: "time",
+            valueType: "date",
+            ellipsis: true,
+            sorter: (a, b) => a.time - b.time,
+            hideInSearch: true,
+            render: (_,row) =>{
+                return(
+                    <div style={{display:"flex",flexDirection:"column"}}>
+                        {moment(row.time,"X").format("YYYY-MM-DD-HH:mm:ss")}
+                    </div>
+                );
+            },
+        },
+        {
+            title: "时间",
+            dataIndex: "range",
+            valueType: "dateRange",
+            hideInTable: true,
+            search: {
+                transform: (value) => {
+                    return {
+                        startTime: value[0],
+                        endTime: value[1],
+                    };
+                },
+            },
+        },
+    ];
     return (
         <div>
-            <ProList<log,Params>
+            <ProTable<log,Params>
                 //切换页面的实现在于pagination的配置，如下
                 pagination={{current:pagenation.current,pageSize:pagenation.pageSize,onChange:handleFetch,total:pagenation.total}}
-                metas={{
-                    title: {dataIndex:"id",},
-                    description: {
-                        render: (_,row) => {
-                            return (
-                                <div>
-                                    {row.content}
-                                </div>
-                            );
-                        },
-                    },
-                    subTitle: {
-                        render: (_, row) => {
-                            return (
-                                <Space size={0}>
-                                    {(row.type===1)?<Tag color="blue" key={row.id}>{"员工登录"}</Tag>
-                                        :((row.type===2)?<Tag color="green" key={row.id}>{"部门结构变化"}</Tag>:<Tag color="yellow" key={row.id}>{"员工信息变化"}</Tag>)  
-                                    }
-                                </Space>
-                            );
-                        },
-                        search: false,
-                    },
-                    extra: {
-                        render: (_,row) =>{
-                            return(
-                                <div style={{display:"flex",flexDirection:"column"}}>
-                                    <p>Happen at:{moment(row.time,"X").format("YYYY-MM-DD-HH:mm:ss")}</p>
-                                </div>
-                            );
-                        },
-                    },
+                columns={columns}
+                request={(params, sorter, filter) => {
+                    // 表单搜索项会从 params 传入，传递给后端接口。
+                    console.log("hello world");
+                    console.log(params);
+                    let success:boolean = true;
+                    request("api/user/es/getlogs","GET",{page:params.current,from:params.startTime,to:params.endTime})
+                        .then((res)=>{
+                            setloglist(res.info.map((val)=>{
+                                return {
+                                    key:val.id,
+                                    id:val.id,
+                                    content:val.content,
+                                    type:val.type,
+                                    time:val.time,
+                                };
+                            }));
+                            setpagenation({
+                                current: (params.current)?params.current:1,
+                                pageSize: 10,
+                                total: res.count,
+                            });
+                            success = true;
+                        // message.success("查询成功");
+                        })
+                        .catch((err)=>{
+                            success = false;
+                            message.warning(err.message);
+                        });
+                    return Promise.resolve({
+                        data: [],
+                        success: success,
+                    });
                 }}
                 rowKey="key"
-                headerTitle="业务实体操作日志"
+                headerTitle=
+                    {<Text ellipsis={true}>{"📝业务实体操作日志"}</Text>}
                 dataSource={loglist}
+                dateFormatter="string"
             />
         </div>
     );
