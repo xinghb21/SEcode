@@ -435,7 +435,12 @@ const Userlist =( () => {
                     });
                 }}
                 rowKey="key"
-                pagination={{current:pagenation.current,pageSize:pagenation.pageSize,total:pagenation.total}}
+                pagination={{
+                    current:pagenation.current,
+                    pageSize:pagenation.pageSize,
+                    total:pagenation.total,
+                    showSizeChanger:false
+                }}
                 search={{
                     labelWidth: "auto",
                 }}

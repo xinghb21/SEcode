@@ -244,7 +244,13 @@ const Asyncbd = () => {
     return (
         isSpinning?<Spin tip="Loading..."></Spin>:<>
             <ProTable<AsyncTask,Params>
-                pagination={{current:pagenation.current,pageSize:pagenation.pageSize,onChange:handleFetch,total:pagenation.total}}
+                pagination={{
+                    current:pagenation.current,
+                    pageSize:pagenation.pageSize,
+                    onChange:handleFetch,
+                    total:pagenation.total,
+                    showSizeChanger:false
+                }}
                 columns={columns}
                 rowKey="key"
                 headerTitle={

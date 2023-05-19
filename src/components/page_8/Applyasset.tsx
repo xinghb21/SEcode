@@ -260,7 +260,13 @@ const Applyasset = () => {
                                 ];
                             }}
                             bordered={true}
-                            pagination={{ current: pagenation.current, pageSize: pagenation.pageSize, onChange: handleFetch, total: pagenation.total }}
+                            pagination={{ 
+                                current: pagenation.current, 
+                                pageSize: pagenation.pageSize, 
+                                onChange: handleFetch, 
+                                total: pagenation.total,
+                                showSizeChanger:false 
+                            }}
                             columns={columns}
                             search={false}
                             options={false}

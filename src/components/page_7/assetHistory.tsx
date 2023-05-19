@@ -252,7 +252,8 @@ const AssetHistory = () => {
                         current: pagenation.current,
                         pageSize: pagenation.pageSize,
                         onChange: handleFetch,
-                        total: pagenation.total
+                        total: pagenation.total,
+                        showSizeChanger:false
                     }}
                     search={false}
                     options={false}

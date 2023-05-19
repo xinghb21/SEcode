@@ -121,33 +121,6 @@ const ClearAsset = (() => {
                 <ProTable<AssetDisplayType>
                     bordered={true}
                     pagination={{ pageSize: 10 }}
-                    // metas={{
-                    //     title: { dataIndex: "assetname" },
-                    //     description: {
-                    //         render: (_, row) => {
-                    //             return (
-                    //                 <>
-                    //                     <div>
-                    //                         资产类型{row.assetclass}
-                    //                     </div>
-                    //                     <div>
-                    //                         资产编号{row.key}
-                    //                     </div>
-                    //                     <div>
-                    //                         所属部门{row.department}
-                    //                     </div>
-                    //                     <div>
-                    //                         资产数量{row.number}
-                    //                     </div>
-
-                    //                 </>
-                    //             );
-                    //         }
-                    //     },
-                    //     avatar: {},
-                    //     extra: {},
-                    //     actions: {},
-                    // }}
                     options={{ reload: false }}
                     search={false}
                     rowKey="key"
