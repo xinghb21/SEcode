@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Form, Input, Button, Divider, Space, Modal, message } from "antd";
+import { Form, Input, Button, Divider, Space, Modal, message, Typography } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { request } from "../utils/network";
@@ -8,6 +8,7 @@ import { Md5 } from "ts-md5";
 import Circle from "./background";
 import Head from "next/head";
 import SITE_CONFIG from "../settings";
+const { Title } = Typography;
 
 interface LoginFormProps {
     username: string,
@@ -52,37 +53,58 @@ const LoginForm = (props: LoginFormProps) => {
                     position: "absolute", left: "50%", top: "50%",
                     transform: "translate(-50%, -50%)"
                 }}>
-                    <h1 className="login-title">Login</h1>
+                    <Title level={1} className="login-title" style={{marginBottom: "24%"}}>Login</Title>
                     <Form onFinish={handleSubmit}
                         name="basic"
                         initialValues={{ remember: true }}>
 
                         <Form.Item name="username" rules={[{ required: true, message: "请输入用户名" }]}>
-                            <Input prefix={<UserOutlined />} placeholder="用户名" />
+                            <div className="group">
+                                <input type="text" className="input"/>
+                                <span className="highlight"></span>
+                                <span className="bar"></span>
+                                <label>Username</label>
+                            </div>
                         </Form.Item>
 
-                        <Space size={"large"} direction="vertical">
+                        <Form.Item name="password" rules={[{ required: true, message: "请输入密码" }]}>
+                            <div className="group">
+                                <input type="password" className="input"/>
+                                <span className="highlight"></span>
+                                <span className="bar"></span>
+                                <label>Password</label>
+                            </div>
+                        </Form.Item>
 
-                            <Form.Item name="password" rules={[{ required: true, message: "请输入密码" }]}>
-                                <Input.Password prefix={<LockOutlined />} type="password" placeholder="密码"
-                                    iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)} />
-                            </Form.Item>
+                        <Modal open={!correct} onOk={() => setPassword(true)} onCancel={() => setPassword(true)} centered>
+                            {error}
+                        </Modal>
 
-                            <Modal open={!correct} onOk={() => setPassword(true)} onCancel={() => setPassword(true)} centered>
-                                {error}
-                            </Modal>
-
-                            <Form.Item>
-                                <Button type="primary" htmlType="submit" loading={loading} block shape='round'>
-                                    登录
-                                </Button>
-                            </Form.Item>
-
-                        </Space>
-
+                        <Form.Item>
+                            <button className="cssbuttons-io-button"> 
+                                    Get started
+                                <div className="icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                                        <path fill="none" d="M0 0h24v24H0z"></path>
+                                        <path fill="currentColor" d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path>
+                                    </svg>
+                                </div>
+                            </button>
+                        </Form.Item>
                     </Form>
                     <Divider >Or</Divider>
-                    <Button block shape='round' href={"https://passport.feishu.cn/suite/passport/oauth/authorize?client_id=cli_a4b17e84d0f8900e&redirect_uri="+SITE_CONFIG.FRONTEND+"/feishu"+"&response_type=code"}>使用飞书登录</Button>
+                    <button className="cssbuttons-io-button" onClick={() => {
+                        window.location.href = "https://passport.feishu.cn/suite/passport/oauth/authorize?client_id=cli_a4b17e84d0f8900e&redirect_uri="+SITE_CONFIG.FRONTEND+"/feishu"+"&response_type=code";
+                        return null;
+                    }}> 
+                            With Feishu
+                        <div className="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                                <path fill="none" d="M0 0h24v24H0z"></path>
+                                <path fill="currentColor" d="M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z"></path>
+                            </svg>
+                        </div>
+                    </button>
                 </div>
             </div>
             <div>
