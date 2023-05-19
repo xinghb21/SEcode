@@ -2,13 +2,13 @@ import { request } from "../../utils/network";
 import { useRouter } from "next/router";
 import React from "react";
 import { useEffect, useState } from "react";
-import { Form, Skeleton, Spin, message } from "antd";
+import { Form, Skeleton, Spin, Typography, message } from "antd";
 import { Md5 } from "ts-md5";
 
 import SITE_CONFIG from "../../settings";
-import Title from "antd/es/typography/Title";
 import Head from "next/head";
 import Circle from "../background";
+const { Title } = Typography;
 
 const Feishu = () => {
 
