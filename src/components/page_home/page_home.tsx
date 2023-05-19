@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Avatar, Button, Card, Col, Descriptions, Divider, Row, Space, Typography, Upload, message } from "antd";
 import { request } from "../../utils/network";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { UploadChangeParam } from "antd/es/upload";
 import type { RcFile, UploadProps } from "antd/es/upload";
 import type { UploadFile } from "antd/es/upload/interface";

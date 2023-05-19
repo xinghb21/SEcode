@@ -28,7 +28,6 @@ const Page_3 = () => {
         pageSize: 10, // 每页显示条数
         total: 0, // 总记录数
     });
-
     useEffect((()=>{
         request("/api/user/es/getlogs","GET",{page:1})
             .then((res) => {
@@ -104,9 +103,7 @@ const Page_3 = () => {
             title: "类型",
             width: 80,
             dataIndex: "type",
-            hideInSearch: true,
-            filters: true,
-            onFilter: true,
+            hideInSearch: false,
             ellipsis: true,
             // align: 'center',
             valueEnum: {
@@ -153,12 +150,13 @@ const Page_3 = () => {
                 //切换页面的实现在于pagination的配置，如下
                 pagination={{current:pagenation.current,pageSize:pagenation.pageSize,onChange:handleFetch,total:pagenation.total}}
                 columns={columns}
+                options={false}
                 request={(params, sorter, filter) => {
                     // 表单搜索项会从 params 传入，传递给后端接口。
                     console.log("hello world");
                     console.log(params);
                     let success:boolean = true;
-                    request("api/user/es/getlogs","GET",{page:params.current,from:params.startTime,to:params.endTime})
+                    request("api/user/es/getlogs","GET",{page:params.current,from:params.startTime,to:params.endTime,type:params.type})
                         .then((res)=>{
                             setloglist(res.info.map((val)=>{
                                 return {
