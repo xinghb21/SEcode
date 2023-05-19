@@ -1,4 +1,4 @@
-import { Avatar, List, Space, Button, Tag, message, Tooltip, Typography, Spin } from "antd";
+import { Avatar, List, Space, Button, Tag, message, Tooltip, Typography, Spin, Popconfirm } from "antd";
 import React from "react";
 import { ProColumns, ProForm, ProFormSelect, ProFormText, ProList, ProTable, QueryFilter, TableDropdown } from "@ant-design/pro-components";
 import { Progress } from "antd";
@@ -93,9 +93,9 @@ const Userlist =( () => {
     const [isappOpen,setappopen]=useState<boolean>(false);
     const [ismanageopen,setmanage]=useState<boolean>(false);
     const [manageappname,setmanagename]=useState<string>("");
-    const [ searchname , setsearchname ] = useState<any>("");
-    const [ searchdepartment,setsearchdepart ] = useState<any>("");
-    const [ searchidentity,setsearchidentity ] = useState<any>("");
+    const [ searchname , setsearchname ] = useState<any>();
+    const [ searchdepartment,setsearchdepart ] = useState<any>();
+    const [ searchidentity,setsearchidentity ] = useState<any>();
     const [pagenation,setpagenation] = useState({
         current: 1, // 当前页码
         pageSize: 10, // 每页显示条数
@@ -122,6 +122,8 @@ const Userlist =( () => {
                 setpagenation({current: pagenation.current,pageSize:pagenation.pageSize,total:res.count});
                 setuserlist(temptable);
                 if(castnum===1){
+                    let entity = localStorage.getItem("entity");
+                    setentityname(entity?entity:"");
                     request("api/entity/getalldep","GET").then((res)=>{
                         let departs:department_to_show[]=[];
                         let size=res.data.length;
@@ -319,34 +321,34 @@ const Userlist =( () => {
 
     });
     const delete_users=(()=>{
-        if (window.confirm("确认删除所选人员？")){
-            //在这里添加后端通信，删除业务实体，并更改前端
-            let i=0;
-            const size= selectedRowKeys.length;
-            let deleteuser:User_to_show[]=[];
-            let deletedusername:string[]=[];
-            //删除列表
-            for (i ;i<size;i++){
-                let tobedeleteuser=(userlist).find((obj)=>{return obj.key===selectedRowKeys.at(i);});
+
+        //在这里添加后端通信，删除业务实体，并更改前端
+        let i=0;
+        const size= selectedRowKeys.length;
+        let deleteuser:User_to_show[]=[];
+        let deletedusername:string[]=[];
+        //删除列表
+        for (i ;i<size;i++){
+            let tobedeleteuser=(userlist).find((obj)=>{return obj.key===selectedRowKeys.at(i);});
+            if(tobedeleteuser != null ){
                 if(tobedeleteuser != null ){
-                    if(tobedeleteuser != null ){
-                        //console.log("suscess");
-                        deleteuser.push(tobedeleteuser);
-                        deletedusername.push(tobedeleteuser.username);
-                        //console.log(tobedeleteentity);
-                    }
+                    //console.log("suscess");
+                    deleteuser.push(tobedeleteuser);
+                    deletedusername.push(tobedeleteuser.username);
+                    //console.log(tobedeleteentity);
                 }
             }
-            request("/api/user/es/batchdelete","DELETE",{names:deletedusername})
-                .then((res)=>{
-                    let i=castnum+1;
-                    setcastnum(i);
-                    setSelectedRowKeys([]);
-                })
-                .catch((err)=>{
-                    message.warning(err.message);
-                });
         }
+        request("/api/user/es/batchdelete","DELETE",{names:deletedusername})
+            .then((res)=>{
+                let i=castnum+1;
+                setcastnum(i);
+                setSelectedRowKeys([]);
+            })
+            .catch((err)=>{
+                message.warning(err.message);
+            });
+        
     });
     const lock=((name:string)=>{
         request("api/user/es/lock","POST",{name:name})
@@ -402,7 +404,7 @@ const Userlist =( () => {
                     setsearchname(params.username);
                     setsearchdepart(params.departmentname);
                     setsearchidentity(params.character);
-                    request("api/user/es/searchuser","POST",{page:params.page,username:params.username,department:params.departmentname,identity:params.character})
+                    request("api/user/es/searchuser","POST",{page:params.current,username:params.username,department:params.departmentname,identity:params.character})
                         .then((res)=>{
                             let size1:number=(res.data).length;
                             let i=0;
@@ -448,7 +450,17 @@ const Userlist =( () => {
                     <Button key="3" type="primary" onClick={()=>{setIsDialogOpen2(true);}}>
                     创建企业员工
                     </Button>,
-                    <Button key="2" type="default" danger={true} onClick={delete_users} disabled={!hasSelected}> 删除选中人员</Button>,                        
+                    <Popconfirm
+                        title="删除选中人员"
+                        description="您确定要删除选中的人员吗?"
+                        onConfirm={delete_users}
+                        onCancel={()=>{}}
+                        okText="Yes"
+                        cancelText="No"
+                        key={"delete confirm"}
+                    >
+                        <Button type="link" key="2" danger={true} disabled={!hasSelected} >删除选中人员</Button>
+                    </Popconfirm>                       
                 ]}
             />
         </div>
