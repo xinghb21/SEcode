@@ -1,20 +1,14 @@
-import {
-    LockOutlined,
-    UserOutlined,
-} from "@ant-design/icons";
-import {
-    LoginForm,
-    ProFormText,
-    ProConfigProvider,
-} from "@ant-design/pro-components";
 import { request } from "../../utils/network";
 import { useRouter } from "next/router";
 import React from "react";
 import { useEffect, useState } from "react";
-import { Skeleton, Spin, message } from "antd";
+import { Form, Skeleton, Spin, message } from "antd";
 import { Md5 } from "ts-md5";
 
 import SITE_CONFIG from "../../settings";
+import Title from "antd/es/typography/Title";
+import Head from "next/head";
+import Circle from "../background";
 
 const Feishu = () => {
 
@@ -40,31 +34,41 @@ const Feishu = () => {
                                     router.push("/user");
                                 })
                                 .catch((err) => {
-                                    alert(err);
+                                    message.warning(err.message);
                                     router.push("/");
                                 });
-                        } 
+                        } else {
+                            setLoad(false);
+                            message.warning("请绑定系统帐号");
+                        }
                     })
                     .catch((err) => {
-                        setLoad(false);
                         message.warning(err.message);
+                        router.push("/");
                     });
             })
             .catch((err) => {
-                setLoad(false);
                 message.warning(err.message);
+                router.push("/");
             });
         setTimeout(() => {
             setLoad(false);
-        }, 2000);
+        }, 1000000);
     }, [router, query]);
 
     return (
-        load ? <Spin tip="Loading..."></Spin> : <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
-            <ProConfigProvider hashed={false}>
-                <div style={{ backgroundColor: "white" }}>
-                    <LoginForm
-                        title="绑定系统帐号"
+        <Skeleton loading={load} active round paragraph={{ rows: 5 }}>
+            <Head>
+                <title>Aplus</title>
+            </Head>
+            <div className="login-background" />
+            <div className="login-box"> 
+                <div style={{
+                    position: "absolute", left: "50%", top: "50%",
+                    transform: "translate(-50%, -50%)"
+                }}>
+                    <Title level={1} className="login-title" style={{marginBottom: "24%"}}>绑定系统账号</Title>
+                    <Form
                         onFinish={async (form) => {
                             request("/api/feishu/binduser", "POST", {
                                 name: form.username,
@@ -90,37 +94,30 @@ const Feishu = () => {
                         
                         }}
                     >
-                        <ProFormText
-                            name="username"
-                            fieldProps={{
-                                size: "large",
-                                prefix: <UserOutlined className={"prefixIcon"} />,
-                            }}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "请输入用户名!",
-                                },
-                            ]}
-                        />
-                        <ProFormText.Password
-                            name="password"
-                            fieldProps={{
-                                size: "large",
-                                prefix: <LockOutlined className={"prefixIcon"} />,
-                            }}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "请输入密码！",
-                                },
-                            ]}
-                        />
-                    </LoginForm>
+                        <Form.Item name="username" rules={[{ required: true, message: "请输入用户名" }]}>
+                            <div className="group">
+                                <input type="text" className="input"/>
+                                <span className="highlight"></span>
+                                <span className="bar"></span>
+                                <label>Username</label>
+                            </div>
+                        </Form.Item>
+
+                        <Form.Item name="password" rules={[{ required: true, message: "请输入密码" }]}>
+                            <div className="group">
+                                <input type="password" className="input"/>
+                                <span className="highlight"></span>
+                                <span className="bar"></span>
+                                <label>Password</label>
+                            </div>
+                        </Form.Item>
+                    </Form>
                 </div>
-            </ProConfigProvider>
+            </div>
+            <div>
+                <Circle />
+            </div>
         </Skeleton>
-    
     );
 };
 
