@@ -99,10 +99,20 @@ const TbdDrawer = () => {
         if(router.isReady === false) return;
         console.log(query);
         console.log(query.id);
-        fetchtbdData();
-        //获取部门下的资产类别
-        fetchDepart();
-        fetchAsset();
+        request(
+            "/api/feishu/fslogin",
+            "POST",
+            {
+                openid: query.openid
+            }
+        ).then((res) => {
+            fetchtbdData();
+            //获取部门下的资产类别
+            fetchDepart();
+            fetchAsset();
+        }).catch((err) => {
+            message.warning(err.message);
+        });
     }), [router, query]);
 
     const showModal = () => {

@@ -1,4 +1,4 @@
-import { Avatar, List, Space, Button, Tag, message, Tooltip, Typography } from "antd";
+import { Avatar, List, Space, Button, Tag, message, Tooltip, Typography, Spin } from "antd";
 import React from "react";
 import { ProColumns, ProForm, ProFormSelect, ProFormText, ProList, ProTable, QueryFilter, TableDropdown } from "@ant-design/pro-components";
 import { Progress } from "antd";
@@ -75,6 +75,7 @@ interface User_app{
 const userlists:User_to_show[]=[{key:1,username:"11",departmentname:"111",entityname:"1111",character:3,whetherlocked:true,lockedapp:"111111111111"},{key:2,username:"12",departmentname:"112",entityname:"1111",character:4,whetherlocked:false,lockedapp:"1111111111"},{key:3,username:"112",departmentname:"111111",entityname:"1111111",character:4,whetherlocked:false,lockedapp:"11111221111111"}];
 
 const Userlist =( () => {
+    const [isSpinning, setSpnning] = useState(false);
     const [usertable,setusertable] = useState<TableListItem[]>([]);
     const [castnum,setcastnum]=useState<number>(1);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -93,6 +94,7 @@ const Userlist =( () => {
     const [ismanageopen,setmanage]=useState<boolean>(false);
     const [manageappname,setmanagename]=useState<string>("");
     useEffect((()=>{
+        setSpnning(true);
         request("api/user/es/checkall","GET")
             .then((res)=>{
                 let initiallist:User_to_show[]=[];
@@ -115,11 +117,13 @@ const Userlist =( () => {
                         }
                         setdepartmentlist(departs);
                     }).catch((err)=>{
+                        setSpnning(false);
                         message.warning(err.message);
                     });
                 }
             })
             .catch((err)=>{
+                setSpnning(false);
                 message.warning(err.message);
             });
         request("api/user/es/searchuser","POST")
@@ -140,8 +144,12 @@ const Userlist =( () => {
                 }
                 setusertable(temptable);
                 // message.success("查询成功");
+                setTimeout(() => {
+                    setSpnning(false);
+                }, 500);
             })
             .catch((err)=>{
+                setSpnning(false);
                 message.warning(err.message);
             });
 
@@ -160,6 +168,9 @@ const Userlist =( () => {
             width: 80,
             copyable: true,
             ellipsis: true,
+            request: async () => {
+                console.log(departmentlsit);
+                return departmentlsit;},
         // valueEnum: departmentlsit.map((item)=>{return {text:item.label,value:item.value};}),
         // align: 'center',
         // sorter: (a, b) => a.containers - b.containers,
@@ -398,7 +409,7 @@ const Userlist =( () => {
             });
     });
     return (
-        <div >
+        isSpinning?<Spin tip="Loading..."></Spin>:<div >
             <Appmanage isOpen={ismanageopen} username={manageappname} onClose={()=>{setmanage(false);}}>  </Appmanage>
             <CreateUser isOpen={isDialogOpen1} onClose={()=>setIsDialogOpen1(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser>
             <CreateUser2 isOpen={isDialogOpen2} onClose={()=>setIsDialogOpen2(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser2>
