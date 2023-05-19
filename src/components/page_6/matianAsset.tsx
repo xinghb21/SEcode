@@ -24,8 +24,8 @@ const MatainAssets = () => {
     const [applylist, setapplylist] = useState<Apply[]>([]);
     const [applyid, setapplyid] = useState<number>(-1);
     const [nowassetslist, setnowassetslist] = useState<Asset[]>([]);
-    const [isSpinning,setIsSpinning]=useState<boolean>(false);//Spin状态
-    const [isSpinning2,setIsSpinning2]=useState<boolean>(false);//Spin状态
+    const [isSpinning, setIsSpinning] = useState<boolean>(false);//Spin状态
+    const [isSpinning2, setIsSpinning2] = useState<boolean>(false);//Spin状态
     const fetchapplylist = () => {
         setIsSpinning(true);
         request("/api/user/ep/getallmatain", "GET")
@@ -104,15 +104,23 @@ const MatainAssets = () => {
                         dataSource={applylist}
                         renderItem={(item) => (
                             <List.Item
-
                                 key={item.id}
                                 extra={
-                                    <Button onClick={() => { fetchassetlist(item.id); }}> 处理 </Button>
+                                    <>
+                                        <Button style={{ marginRight: 5 }} onClick={() => {
+                                            setIsSpinning2(true);
+                                            setnowassetslist([]);
+                                            setapplyid(-1);
+                                            setTimeout(() => {
+                                                setIsSpinning2(false);
+                                            }, 500);
+                                        }}> 取消 </Button>
+                                        <Button onClick={() => { fetchassetlist(item.id); }}> 处理 </Button>
+                                    </>
                                 }
                             >
                                 <List.Item.Meta
-                                    title={<p>{item.id}</p>}
-                                    description={<p>此维保申请的id为{item.id}</p>}
+                                    title={<p>申请ID：{item.id}</p>}
                                 />
                             </List.Item>
                         )}
@@ -145,7 +153,11 @@ const MatainAssets = () => {
                             >
                                 <List.Item.Meta
                                     title={<p>{item.name}</p>}
-                                    description={<p>此资产的id为{item.id}</p>}
+                                    description={
+                                        <>
+                                            <p>此资产的id为{item.id}</p>
+                                        </>
+                                    }
                                 />
                             </List.Item>
                         )}
