@@ -8,6 +8,7 @@ import { Md5 } from "ts-md5";
 import Circle from "./background";
 import Head from "next/head";
 import SITE_CONFIG from "../settings";
+import ReactCanvasNest from "react-canvas-nest"; 
 const { Title } = Typography;
 
 interface LoginFormProps {
@@ -81,8 +82,8 @@ const LoginForm = (props: LoginFormProps) => {
                         </Modal>
 
                         <Form.Item>
-                            <button className="cssbuttons-io-button"> 
-                                    Get started
+                            <button className="cssbuttons-io-button" style={{paddingLeft: "40%"}}> 
+                                    登录
                                 <div className="icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
                                         <path fill="none" d="M0 0h24v24H0z"></path>
@@ -97,7 +98,7 @@ const LoginForm = (props: LoginFormProps) => {
                         window.location.href = "https://passport.feishu.cn/suite/passport/oauth/authorize?client_id=cli_a4b17e84d0f8900e&redirect_uri="+SITE_CONFIG.FRONTEND+"/feishu"+"&response_type=code";
                         return null;
                     }}> 
-                            With Feishu
+                            飞书登录
                         <div className="icon">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
                                 <path fill="none" d="M0 0h24v24H0z"></path>

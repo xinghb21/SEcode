@@ -89,7 +89,6 @@ const Feishu = () => {
                                 }) 
                                 .catch((err) => {
                                     message.warning(err.message);
-                                    alert(err);
                                 });
                         
                         }}

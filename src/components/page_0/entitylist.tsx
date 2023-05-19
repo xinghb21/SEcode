@@ -1,4 +1,4 @@
-import { Button, message } from "antd";
+import { Button, Popconfirm, message } from "antd";
 import React from "react";
 import { ProList, ProTable } from "@ant-design/pro-components";
 import { useState } from "react";
@@ -114,46 +114,44 @@ const Entitylist = (() => {
 
     });
     const delete_entity = (() => {
-        if (window.confirm("确认删除所选业务实体？")) {
-            //在这里添加后端通信，删除业务实体，并更改前端
-            let i = 0;
-            const size = selectedRowKeys.length;
-            let deleteentities: Entity[] = [];
-            let deleteentityname: string[] = [];
-            for (i; i < size; i++) {
-                let tobedeleteentity = (Entitylist).find((obj) => { return obj.key === selectedRowKeys.at(i); });
+        //在这里添加后端通信，删除业务实体，并更改前端
+        let i = 0;
+        const size = selectedRowKeys.length;
+        let deleteentities: Entity[] = [];
+        let deleteentityname: string[] = [];
+        for (i; i < size; i++) {
+            let tobedeleteentity = (Entitylist).find((obj) => { return obj.key === selectedRowKeys.at(i); });
+            if (tobedeleteentity != null) {
                 if (tobedeleteentity != null) {
-                    if (tobedeleteentity != null) {
-                        console.log("suscess");
-                        deleteentities.push(tobedeleteentity);
-                        deleteentityname.push(tobedeleteentity.entityname);
-                        console.log(tobedeleteentity);
-                    }
+                    console.log("suscess");
+                    deleteentities.push(tobedeleteentity);
+                    deleteentityname.push(tobedeleteentity.entityname);
+                    console.log(tobedeleteentity);
                 }
             }
-            request("/api/entity/deleteall", "DELETE", { name: deleteentityname })
-                .then((res) => {
-                    console.log(deleteentities.length);
-                    console.log(deleteentities);
-                    let remained_Entities: Entity[] = [];
-                    let j = 0;
-                    let length_before = Entitylist.length;
-                    for (j; j < length_before; j++) {
-                        let fuck = (deleteentities).find((obj) => { return obj.entityname === Entitylist[j].entityname; });
-                        console.log(fuck);
-                        if (fuck != null) {
-                        } else {
-                            remained_Entities.push(Entitylist[j]);
-                        }
-                    }
-                    console.log(remained_Entities);
-                    setEntitylist(remained_Entities);
-                    setSelectedRowKeys([]);
-                })
-                .catch((err) => {
-                    message.warning(err.message);
-                });
         }
+        request("/api/entity/deleteall", "DELETE", { name: deleteentityname })
+            .then((res) => {
+                console.log(deleteentities.length);
+                console.log(deleteentities);
+                let remained_Entities: Entity[] = [];
+                let j = 0;
+                let length_before = Entitylist.length;
+                for (j; j < length_before; j++) {
+                    let fuck = (deleteentities).find((obj) => { return obj.entityname === Entitylist[j].entityname; });
+                    console.log(fuck);
+                    if (fuck != null) {
+                    } else {
+                        remained_Entities.push(Entitylist[j]);
+                    }
+                }
+                console.log(remained_Entities);
+                setEntitylist(remained_Entities);
+                setSelectedRowKeys([]);
+            })
+            .catch((err) => {
+                message.warning(err.message);
+            });
     });
     return (
         <div >
@@ -165,35 +163,19 @@ const Entitylist = (() => {
                         <Button key="1" type="primary" onClick={() => { setIsDialogOpen(true); }}>
                             创建业务实体
                         </Button>,
-                        <Button key="2" type="default" danger={true} onClick={delete_entity} disabled={!hasSelected}> 删除选中业务实体</Button>,
+                        <Popconfirm
+                            title="确认删除所选业务实体？"
+                            onConfirm={delete_entity}
+                            okText="确认"
+                            cancelText="取消"
+                        >
+                            <Button key="2" type="default" danger={true} disabled={!hasSelected}> 删除选中业务实体</Button>
+                        </Popconfirm>,
                     ];
                 }}
                 pagination={{
                     pageSize: 10,
                 }}
-                // metas={{
-                //     title: { dataIndex: "entityname", },
-                //     description: {
-                //         render: (_, row) => {
-                //             return (
-                //                 <div>
-                //                     {(row.admingname === "") ? "暂无系统管理员" : ("系统管理员 :  " + row.admingname)}
-                //                 </div>
-                //             );
-                //         },
-                //     },
-                //     actions: {
-                //         dataIndex: "admingname",
-                //         render: (_, row) => {
-                //             return (
-                //                 //这里的回调函数可能有问题
-                //                 <Button style={((row.admingname) === "") ? { display: "block" } : { display: "none" }} onClick={() => { assign(row.entityname); }} >
-                //                     创建并委派企业系统管理员
-                //                 </Button>
-                //             );
-                //         },
-                //     },
-                // }}
                 rowKey="key"
                 headerTitle="业务实体列表"
                 rowSelection={rowSelection}

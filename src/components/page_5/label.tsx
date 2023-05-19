@@ -71,7 +71,6 @@ const Label = ( () => {
                 message.success("保存成功");
             })
             .catch((err) => {
-                alert(err);
                 message.warning(err.message);
             });
     };

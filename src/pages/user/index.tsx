@@ -288,7 +288,7 @@ const User: React.FC = () => {
                         </Sider>
                         <div style={{width: "100%"}}>
                             <Layout className="site-layout">
-                                <Content style={{ margin: "0 16px", zIndex: 2 }}>
+                                <Content style={{ margin: "0 16px", zIndex: 2, opacity: 0.85 }}>
                                     <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
                                         
                                         {identity == 3 ? <><Ep_Message /><TbdDrawer /><Asyncbd/></> : <NSTbdDrawer />}
@@ -337,7 +337,7 @@ const User: React.FC = () => {
                             </Sider>
                             <div style={{width: "100%"}}>
                                 <Layout className="site-layout">
-                                    <Content style={{ margin: "0 16px", zIndex: 2 }}>
+                                    <Content style={{ margin: "0 16px", zIndex: 2, opacity: 0.85 }}>
                                         <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
                                         
                                             <Asyncbd/>
@@ -384,7 +384,7 @@ const User: React.FC = () => {
                         </Sider>
                         <div style={{width: "100%"}}>
                             <Layout className="site-layout">
-                                <Content style={{ margin: "0 16px", zIndex: 2 }}>
+                                <Content style={{ margin: "0 16px", zIndex: 2, opacity: 0.85 }}>
                                     <Space style={{ margin: 5, display: "flex", justifyContent: "flex-end", alignItems: "center" }} >
                                         <Space align="center">
                                             <Avatar icon={<UserOutlined />} />

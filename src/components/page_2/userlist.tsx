@@ -267,8 +267,6 @@ const Userlist =( () => {
                 })
                 .catch((err)=>{
                     message.warning(err.message);
-                    setIsDialogOpen1(false);
-                    setIsDialogOpen2(false);
                 });
         }else{
             message.warning("用户名或部门为空");

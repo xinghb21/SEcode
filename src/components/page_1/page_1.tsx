@@ -1,5 +1,5 @@
 import CreateES from "./createES";
-import { Button, Space, Table, message, Spin, Descriptions } from "antd";
+import { Button, Space, Table, message, Spin, Descriptions, Popconfirm } from "antd";
 import { request } from "../../utils/network";
 import { Md5 } from "ts-md5";
 import type { ColumnsType } from "antd/es/table";
@@ -46,7 +46,7 @@ const EStable=()=> {
         {
             title: "系统管理员",
             dataIndex: "username",
-            render:(_,row)=>{return (row.username==""?<a>暂无资产管理员</a>:<a>{row.username}</a>);}
+            render:(_,row)=>{return (row.username==""?<div>暂无资产管理员</div>:<div>{row.username}</div>);}
         },
         {
             title: "操作",
@@ -54,13 +54,41 @@ const EStable=()=> {
             render: (_, row) => (
                 (row.username=="")?
                     <Space size="middle">
-                        <a onClick={()=>{ setassignentity(row.entity);setIsuserDialogopen(true);} } style={{color:"green"}} > {"委派系统管理员"}</a>
-                        <a onClick={()=>{delete_entity(row.entity);}} style={{color:"red"}}>删除业务实体</a>
+                        <Popconfirm
+                            title="确认委派系统管理员？"
+                            onConfirm={() => { setassignentity(row.entity);setIsuserDialogopen(true); }}
+                            okText="确认"
+                            cancelText="取消"
+                        >
+                            <a style={{color:"green"}} > {"委派系统管理员"}</a>
+                        </Popconfirm>
+                        <Popconfirm
+                            title="确认删除所选业务实体？"
+                            onConfirm={() => { delete_entity(row.entity); }}
+                            okText="确认"
+                            cancelText="取消"
+                        >
+                           <a style={{color:"red"}}>删除业务实体</a>
+                        </Popconfirm>
                     </Space>
                     :
                     <Space size="middle">
-                        <a onClick={()=>{start(row.entity);}} style={{color:"red"}}>{"删除系统管理员"}</a>
-                        <a onClick={()=>{delete_entity(row.entity);}}style={{color:"red"}} >删除业务实体</a>
+                        <Popconfirm
+                            title="确认删除所选系统管理员？"
+                            onConfirm={()=>{start(row.entity);}}
+                            okText="确认"
+                            cancelText="取消"
+                        >
+                            <a style={{color:"red"}}>{"删除系统管理员"}</a>
+                        </Popconfirm>
+                        <Popconfirm
+                            title="确认删除所选业务实体？"
+                            onConfirm={() => { delete_entity(row.entity); }}
+                            okText="确认"
+                            cancelText="取消"
+                        >
+                           <a style={{color:"red"}}>删除业务实体</a>
+                        </Popconfirm>
                     </Space>
             ),
         },
