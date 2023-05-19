@@ -1,4 +1,4 @@
-import { Avatar, List, Space, Button, Tag, message, Tooltip, Typography, Spin } from "antd";
+import { Avatar, List, Space, Button, Tag, message, Tooltip, Typography, Spin, Popconfirm } from "antd";
 import React from "react";
 import { ProColumns, ProForm, ProFormSelect, ProFormText, ProList, ProTable, QueryFilter, TableDropdown } from "@ant-design/pro-components";
 import { Progress } from "antd";
@@ -16,6 +16,7 @@ import CreateDE from "./CreateDE";
 import Manageapp from "./Manageapp";
 import Appmanage from "./Appmanage";
 import { ArrowDownOutlined, ArrowUpOutlined, DownOutlined, LockOutlined, PlusSquareOutlined, UnlockOutlined } from "@ant-design/icons";
+import Pagination from "antd";
 
 const { Text } = Typography;
 
@@ -76,7 +77,6 @@ const userlists:User_to_show[]=[{key:1,username:"11",departmentname:"111",entity
 
 const Userlist =( () => {
     const [isSpinning, setSpnning] = useState(false);
-    const [usertable,setusertable] = useState<TableListItem[]>([]);
     const [castnum,setcastnum]=useState<number>(1);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [isDialogOpen1, setIsDialogOpen1] = useState(false);
@@ -93,22 +93,37 @@ const Userlist =( () => {
     const [isappOpen,setappopen]=useState<boolean>(false);
     const [ismanageopen,setmanage]=useState<boolean>(false);
     const [manageappname,setmanagename]=useState<string>("");
+    const [ searchname , setsearchname ] = useState<any>();
+    const [ searchdepartment,setsearchdepart ] = useState<any>();
+    const [ searchidentity,setsearchidentity ] = useState<any>();
+    const [pagenation,setpagenation] = useState({
+        current: 1, // 当前页码
+        pageSize: 10, // 每页显示条数
+        total: 0, // 总记录数
+    });
     useEffect((()=>{
         setSpnning(true);
-        request("api/user/es/checkall","GET")
+        request("api/user/es/searchuser","POST",{page:pagenation.current,username:searchname,department:searchdepartment,identity:searchidentity})
             .then((res)=>{
-                let initiallist:User_to_show[]=[];
                 let size1:number=(res.data).length;
                 let i=0;
-                console.log(size1);
+                let temptable : User_to_show[] = [];
                 for (i;i<size1;i++){
-                    initiallist.push({key:res.data[i].name,username:res.data[i].name,departmentname:res.data[i].department,entityname:res.data[i].entity,character:res.data[i].identity as number,whetherlocked:res.data[i].locked,lockedapp:res.data[i].lockedapp});
+                    temptable.push({
+                        username:res.data[i].name,
+                        departmentname:res.data[i].department,
+                        character:(res.data[i].identity === 3)?3:4,
+                        whetherlocked:(res.data[i].locked)?true:false,
+                        lockedapp:res.data[i].lockedapp,
+                        entityname:res.data[i].entity,
+                        key: res.data[i].name +" "+res.data[i].department,
+                    });
                 }
-                setuserlist(initiallist);
-                console.log(initiallist);
-                let entitynames =localStorage.getItem("entityname")?localStorage.getItem("entityname"):"";
-                setentityname( entitynames?entitynames:"" );
+                setpagenation({current: pagenation.current,pageSize:pagenation.pageSize,total:res.count});
+                setuserlist(temptable);
                 if(castnum===1){
+                    let entity = localStorage.getItem("entity");
+                    setentityname(entity?entity:"");
                     request("api/entity/getalldep","GET").then((res)=>{
                         let departs:department_to_show[]=[];
                         let size=res.data.length;
@@ -121,29 +136,6 @@ const Userlist =( () => {
                         message.warning(err.message);
                     });
                 }
-            })
-            .catch((err)=>{
-                setSpnning(false);
-                message.warning(err.message);
-            });
-        request("api/user/es/searchuser","POST")
-            .then((res)=>{
-                let size1:number=(res.data).length;
-                let i=0;
-                let temptable : TableListItem[] = [];
-    
-                for (i;i<size1;i++){
-                    temptable.push({key:res.data[i].name,
-                        name:res.data[i].name,
-                        department:res.data[i].department,
-                        job:(res.data[i].identity === 3)?"ep":"em",
-                        status:(res.data[i].locked)?"locked":"unlocked",
-                        lockedapp:res.data[i].lockedapp,
-                        entity:res.data[i].entity
-                    });
-                }
-                setusertable(temptable);
-                // message.success("查询成功");
                 setTimeout(() => {
                     setSpnning(false);
                 }, 500);
@@ -154,18 +146,16 @@ const Userlist =( () => {
             });
 
     }),[castnum]);
-    const columns: ProColumns<TableListItem>[] = [
+    const columns: ProColumns<User_to_show>[] = [
         {
             title: "用户名",
-            width: 80,
-            dataIndex: "name",
+            dataIndex: "username",
             copyable: true,
             ellipsis: true,
         },
         {
             title: "部门",
-            dataIndex: "department",
-            width: 80,
+            dataIndex: "departmentname",
             copyable: true,
             ellipsis: true,
             request: async () => {
@@ -177,11 +167,8 @@ const Userlist =( () => {
         },
         {
             title: "状态",
-            width: 80,
-            dataIndex: "status",
+            dataIndex: "whetherlocked",
             hideInSearch: true,
-            filters: true,
-            onFilter: true,
             ellipsis: true,
             // align: 'center',
             valueEnum: {
@@ -189,20 +176,20 @@ const Userlist =( () => {
                 locked: { text: "被锁定", status: "Error" },
             },
             render: (text, row) => [
-                (row.status === "unlocked")?
+                (!row.whetherlocked)?
                     (<div>
-                        <Tag color="green" key={row.status}>正常</Tag>
+                        <Tag color="green" key={row.username}>正常</Tag>
                         <span>
                             <Tooltip placement="bottom" title={<span>点击锁定</span>}>
-                                <UnlockOutlined style={{ marginLeft: 10 }} onClick={() => lock(row.name)} />
+                                <UnlockOutlined style={{ marginLeft: 10 }} onClick={() => lock(row.username)} />
                             </Tooltip>
                         </span>
                     </div>):
                     (<div>
-                        <Tag color="red" key={row.status}>被锁定</Tag>
+                        <Tag color="red" key={row.username}>被锁定</Tag>
                         <span>
                             <Tooltip placement="bottom" title={<span>点击解锁</span>}>
-                                <LockOutlined style={{ marginLeft: 10 }} onClick={() => unlock(row.name)} />
+                                <LockOutlined style={{ marginLeft: 10 }} onClick={() => unlock(row.username)} />
                             </Tooltip>
                         </span>
                     </div>)
@@ -211,18 +198,11 @@ const Userlist =( () => {
         {
             title: "职位",
             width: 80,
-            dataIndex: "job",
-            hideInSearch: true,
-            filters: true,
-            onFilter: true,
+            dataIndex: "character",
             ellipsis: true,
             // align: 'center',
-            valueEnum: {
-                em: { text: "👨‍🔧普通员工"},
-                ep: { text: "💼资产管理员"},
-            },
             render: (text, row) => [
-                (row.job === "em")?
+                (row.character === 4)?
                     (<div>
                         <span>👨‍🔧普通员工</span>
                         <span>
@@ -247,20 +227,20 @@ const Userlist =( () => {
             width: 80,
             key: "option",
             render: (text, row, _) => [
-                <Button key="outer" onClick={()=>{assign({key:row.name,username: row.name , Department:row.department});}} >调整部门</Button>,
+                <Button key="outer" onClick={()=>{assign({key:row.username,username: row.username , Department:row.departmentname});}} >调整部门</Button>,
                 <TableDropdown
                     key="actionGroup"
                     onSelect={(key) => {
                         if(key === "app"){
-                            setmanagename(row.name);
+                            setmanagename(row.username);
                             setmanage(true);
                         }else if(key === "reset"){
-                            setresetname(row.name);
+                            setresetname(row.username);
                             setisreset(true);
                         }else if(key === "lock"){
-                            lock(row.name);
+                            lock(row.username);
                         }else if(key === "unlock"){
-                            unlock(row.name);
+                            unlock(row.username);
                         }else if(key === "down"){
                             changepos(row);
                         }else if(key === "up"){
@@ -270,22 +250,18 @@ const Userlist =( () => {
                     menus={[
                         { key: "app", name: "管理应用" },
                         { key: "reset", name: "重置密码" },
-                        (row.status === "unlocked")?{ key: "lock", name: "锁定" }:{ key: "unlock", name: "解锁" },
-                        (row.job === "ep")?{ key: "down", name: "降职" }:{ key: "up", name: "升职" },
+                        (!row.whetherlocked)?{ key: "lock", name: "锁定" }:{ key: "unlock", name: "解锁" },
+                        (row.character === 3)?{ key: "down", name: "降职" }:{ key: "up", name: "升职" },
                     ]}
                 />,
             ],
         },
     ];
-
-
-    
-
     const handleCreateUser = (user: UserRegister) => {
         if( user.username!== "" && user.department !== ""){
             request("api/user/createuser","POST",{name:user.username,password:user.password,entity:user.entityname,department:user.department,identity:user.identity})
                 .then((res)=>{
-                    setusertable([...usertable,{key:user.username,name:user.username,department:user.department,job:(user.identity=== 3)?"ep":"em",status:"unlocked",entity:user.entityname,lockedapp:(user.identity===3?"000001110":"000000001")}]);
+                    setcastnum(castnum+1);
                     setIsDialogOpen1(false);
                     setIsDialogOpen2(false);
                 })
@@ -345,34 +321,34 @@ const Userlist =( () => {
 
     });
     const delete_users=(()=>{
-        if (window.confirm("确认删除所选人员？")){
-            //在这里添加后端通信，删除业务实体，并更改前端
-            let i=0;
-            const size= selectedRowKeys.length;
-            let deleteuser:User_to_show[]=[];
-            let deletedusername:string[]=[];
-            //删除列表
-            for (i ;i<size;i++){
-                let tobedeleteuser=(userlist).find((obj)=>{return obj.key===selectedRowKeys.at(i);});
+
+        //在这里添加后端通信，删除业务实体，并更改前端
+        let i=0;
+        const size= selectedRowKeys.length;
+        let deleteuser:User_to_show[]=[];
+        let deletedusername:string[]=[];
+        //删除列表
+        for (i ;i<size;i++){
+            let tobedeleteuser=(userlist).find((obj)=>{return obj.key===selectedRowKeys.at(i);});
+            if(tobedeleteuser != null ){
                 if(tobedeleteuser != null ){
-                    if(tobedeleteuser != null ){
-                        //console.log("suscess");
-                        deleteuser.push(tobedeleteuser);
-                        deletedusername.push(tobedeleteuser.username);
-                        //console.log(tobedeleteentity);
-                    }
+                    //console.log("suscess");
+                    deleteuser.push(tobedeleteuser);
+                    deletedusername.push(tobedeleteuser.username);
+                    //console.log(tobedeleteentity);
                 }
             }
-            request("/api/user/es/batchdelete","DELETE",{names:deletedusername})
-                .then((res)=>{
-                    let i=castnum+1;
-                    setcastnum(i);
-                    setSelectedRowKeys([]);
-                })
-                .catch((err)=>{
-                    message.warning(err.message);
-                });
         }
+        request("/api/user/es/batchdelete","DELETE",{names:deletedusername})
+            .then((res)=>{
+                let i=castnum+1;
+                setcastnum(i);
+                setSelectedRowKeys([]);
+            })
+            .catch((err)=>{
+                message.warning(err.message);
+            });
+        
     });
     const lock=((name:string)=>{
         request("api/user/es/lock","POST",{name:name})
@@ -396,12 +372,12 @@ const Userlist =( () => {
                 message.warning(err.message);
             });
     });
-    const changepos=((changeuser:TableListItem)=>{
-        request("api/user/es/changeidentity","POST",{name:changeuser.name,new:((changeuser.job==="ep")?4:3),department:changeuser.department,entity:changeuser.entity})
+    const changepos=((changeuser:User_to_show)=>{
+        request("api/user/es/changeidentity","POST",{name:changeuser.username,new:changeuser.character,department:changeuser.departmentname,entity:changeuser.entityname})
             .then((res)=>{
                 let i=castnum+1;
                 setcastnum(i);
-                let messages:string="成功将"+changeuser.name+"改为"+((changeuser.job==="em")?"资产管理员":"普通员工");
+                let messages:string="成功将"+changeuser.username+"改为"+((changeuser.character===3)?"资产管理员":"普通员工");
                 message.success(messages);
             })
             .catch((err)=>{
@@ -416,32 +392,36 @@ const Userlist =( () => {
             <Resetpassword isOpen={isrest} onClose={()=>{setisreset(false);}} username={resetname} onCreateUser={reset} ></Resetpassword>
             <CreateDE isOpen={isDEOpen} onClose={()=>{setisDEOpen(false);}} username={apdDEname} departmentlist={departmentlsit} onCreateUser={handleapdDE}  olddepartment={olddepartment}></CreateDE>
             <Manageapp isOpen={isappOpen} onClose={()=>{setappopen(false);}} username={appapduser?.username} applist={appapduser?.oldapplist} identity={appapduser.identity} Onok={()=>{setappopen(false);let i=castnum+1;setcastnum(i);}}></Manageapp>
-            <ProTable<TableListItem>
+            <ProTable<User_to_show>
                 rowSelection={rowSelection}
                 columns={columns}
                 request={(params, sorter, filter) => {
                     // 表单搜索项会从 params 传入，传递给后端接口。
+                    setSelectedRowKeys([]);
                     console.log("hello world");
                     console.log(params);
-                    let tableListDataSource: TableListItem[] = [];
                     let success:boolean = true;
-                    request("api/user/es/searchuser","POST",{username:params.name,department:params.department,identity:(params.job)?((params.job === "ep")?3:4):undefined})
+                    setsearchname(params.username);
+                    setsearchdepart(params.departmentname);
+                    setsearchidentity(params.character);
+                    request("api/user/es/searchuser","POST",{page:params.current,username:params.username,department:params.departmentname,identity:params.character})
                         .then((res)=>{
                             let size1:number=(res.data).length;
                             let i=0;
-                            let temptable : TableListItem[] = [];
-
+                            let temptable : User_to_show[] = [];
                             for (i;i<size1;i++){
-                                temptable.push({key:res.data[i].name,
-                                    name:res.data[i].name,
-                                    department:res.data[i].department,
-                                    job:(res.data[i].identity === 3)?"ep":"em",
-                                    status:(res.data[i].locked)?"locked":"unlocked",
+                                temptable.push({
+                                    username:res.data[i].name,
+                                    departmentname:res.data[i].department,
+                                    character:(res.data[i].identity === 3)?3:4,
+                                    whetherlocked:(res.data[i].locked)?true:false,
                                     lockedapp:res.data[i].lockedapp,
-                                    entity:res.data[i].entity
+                                    entityname:res.data[i].entity,
+                                    key: res.data[i].name +" "+res.data[i].department,
                                 });
                             }
-                            setusertable(temptable);
+                            setpagenation({current:params.page,pageSize:pagenation.pageSize,total:res.count});
+                            setuserlist(temptable);
                             success = true;
                         // message.success("查询成功");
                         })
@@ -455,14 +435,12 @@ const Userlist =( () => {
                     });
                 }}
                 rowKey="key"
-                pagination={{
-                    showQuickJumper: true,
-                }}
+                pagination={{current:pagenation.current,pageSize:pagenation.pageSize,total:pagenation.total}}
                 search={{
                     labelWidth: "auto",
                 }}
                 dateFormatter="string"
-                dataSource={usertable}
+                dataSource={userlist}
                 headerTitle=
                     {<Text ellipsis={true}>{"员工列表"}</Text>}
                 toolBarRender={() => [
@@ -472,7 +450,17 @@ const Userlist =( () => {
                     <Button key="3" type="primary" onClick={()=>{setIsDialogOpen2(true);}}>
                     创建企业员工
                     </Button>,
-                    <Button key="2" type="default" danger={true} onClick={delete_users} disabled={!hasSelected}> 删除选中人员</Button>,                        
+                    <Popconfirm
+                        title="删除选中人员"
+                        description="您确定要删除选中的人员吗?"
+                        onConfirm={delete_users}
+                        onCancel={()=>{}}
+                        okText="Yes"
+                        cancelText="No"
+                        key={"delete confirm"}
+                    >
+                        <Button type="link" key="2" danger={true} disabled={!hasSelected} >删除选中人员</Button>
+                    </Popconfirm>                       
                 ]}
             />
         </div>
