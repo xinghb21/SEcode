@@ -21,7 +21,7 @@ const Processbar = (props:barprops)=>{
     let counttime = 0;
     var timer = setInterval(function(){
         counttime = counttime +1;
-        if(counttime > 5){
+        if(counttime > 10){
             clearInterval(timer);
         }else{
             request("/api/async/getprocess","POST",{taskid:props.taskid}).then(function(res){
