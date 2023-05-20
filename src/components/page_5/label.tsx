@@ -1,4 +1,4 @@
-﻿import { Avatar, List, Space, Button, message,Input, QRCode ,Modal ,Col, Row ,Descriptions ,Checkbox, Divider } from "antd";
+﻿import { Avatar, List, Space, Button, message, Input, QRCode, Modal, Col, Row, Descriptions, Checkbox, Divider, Spin } from "antd";
 import React from "react";
 import {ProFormDatePicker, ProList} from "@ant-design/pro-components";
 import { useState } from "react";
@@ -19,7 +19,7 @@ const Label = ( () => {
     const [used, setUsed] = useState<string[]>([]);
     const [attributes, setAttributes] = useState<string[]>([]);
     const [text, setText] = React.useState("https://frontend-feature-aplus.app.secoder.net/blankmobile");
-    const [refreshing, setRefreshing] = useState<boolean>(true);
+    const [refreshing, setRefreshing] = useState<boolean>(false);
     const router = useRouter();
     const query = router.query;
 
@@ -79,8 +79,8 @@ const Label = ( () => {
     const optionsWithDisabled = ["资产名称","业务实体","部门"];
     const availableOptions = [...optionsWithDisabled,"资产类别","上级资产","挂账人","价格","使用年限","创建时间","描述", ...attributes];
 
-    return refreshing ? (<p></p>) :
-        (
+    return (
+        <Spin spinning={refreshing} >
             <div>
                 <Divider orientation="left" >标签预览</Divider>
                 <div
@@ -143,7 +143,8 @@ const Label = ( () => {
                     </Row>
                 </div>
             </div>
-        );
+        </Spin>
+    );
 }
 );
 

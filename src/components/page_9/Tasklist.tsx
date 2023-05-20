@@ -199,6 +199,7 @@ const Asyncbd = () => {
             dataIndex: "range",
             valueType: "dateRange",
             hideInTable: true,
+            
             search: {
                 transform: (value) => {
                     return {
@@ -243,61 +244,67 @@ const Asyncbd = () => {
         },
     ];
     return (
-        isSpinning?<Spin tip="Loading..."></Spin>:<>
-            <ProTable<AsyncTask,Params>
-                pagination={{current:pagenation.current,pageSize:pagenation.pageSize,onChange:handleFetch,total:pagenation.total,showSizeChanger:false}}
-                columns={columns}
-                rowKey="key"
-                headerTitle={
-                    <Text ellipsis={true}>{"业务实体内异步导入导出任务"}</Text>
-                }
-                dataSource={tasklist}
-                dateFormatter="string"
-                request={(params, sorter, filter) => {
-                    // 表单搜索项会从 params 传入，传递给后端接口。
-                    console.log("hello world");
-                    console.log(params);
-                    let success:boolean = true;
-                    //获取任务
-                    request("/api/async/esgetalltask", "GET",{page:params.current,from:params.startTime,to:params.endTime,person:params.person})
-                        .then((res) => {
-                            let tasks:AsyncTask[] = res.info;
-                            if(tasks){
+        <>
+            <Spin spinning={isSpinning}>
+                <ProTable<AsyncTask,Params>
+                    pagination={{current:pagenation.current,pageSize:pagenation.pageSize,onChange:handleFetch,total:pagenation.total,showSizeChanger:false}}
+                    columns={columns}
+                    rowKey="key"
+                    headerTitle={
+                        <Text ellipsis={true}>{"业务实体内异步导入导出任务"}</Text>
+                    }
+                    dataSource={tasklist}
+                    dateFormatter="string"
+                    request={(params, sorter, filter) => {
+                        // 表单搜索项会从 params 传入，传递给后端接口。
+                        console.log("hello world");
+                        console.log(params);
+                        let success:boolean = true;
+                        setSpnning(true);
+                        //获取任务
+                        request("/api/async/esgetalltask", "GET",{page:params.current,from:params.startTime,to:params.endTime,person:params.person})
+                            .then((res) => {
+                                let tasks:AsyncTask[] = res.info;
                                 if(tasks){
-                                    settasklist(tasks);
+                                    if(tasks){
+                                        settasklist(tasks);
+                                    }
                                 }
-                            }
-                            setpagenation({
-                                current: (params.current)?params.current:1,
-                                pageSize: 10,
-                                total: res.count,
+                                setpagenation({
+                                    current: (params.current)?params.current:1,
+                                    pageSize: 10,
+                                    total: res.count,
+                                });
+                                success = true;
+                                message.success("刷新成功");
+                                setSpnning(true);
+                            }).catch((err) => {
+                                success = false;
+                                message.warning(err.message);
                             });
-                            success = true;
-                        }).catch((err) => {
-                            success = false;
-                            message.warning(err.message);
+                        return Promise.resolve({
+                            data: [],
+                            success: success,
                         });
-                    return Promise.resolve({
-                        data: [],
-                        success: success,
-                    });
-                }}
-                toolBarRender={() => {
-                    return [
-                        <div key={"tool"}>
-                            <Space>
-                                <Button key="2" type="primary" onClick={()=>{handleoutput(false);}} loading={outputfail}>
-                                导出所有失败任务
-                                </Button>
-                                <Button key="1" onClick={()=>{handleoutput(true);}} loading={outputsuccess} >
-                                导出所有成功任务
-                                </Button>
-                            </Space>
-                        </div>
-                    ];
-                }}
-            />
+                    }}
+                    toolBarRender={() => {
+                        return [
+                            <div key={"tool"}>
+                                <Space>
+                                    <Button key="2" type="primary" onClick={()=>{handleoutput(false);}} loading={outputfail}>
+                                    导出所有失败任务
+                                    </Button>
+                                    <Button key="1" onClick={()=>{handleoutput(true);}} loading={outputsuccess} >
+                                    导出所有成功任务
+                                    </Button>
+                                </Space>
+                            </div>
+                        ];
+                    }}
+                />
+            </Spin>
         </>
+         
     );
 };
 export default Asyncbd;

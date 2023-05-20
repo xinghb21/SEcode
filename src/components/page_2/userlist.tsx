@@ -454,7 +454,7 @@ const Userlist =( () => {
                                 setuserlist(temptable);
                                 success = true;
                                 setSpnning(false);
-                                message.success("查询成功");
+                                message.success("刷新成功");
                             })
                             .catch((err)=>{
                                 success = false;

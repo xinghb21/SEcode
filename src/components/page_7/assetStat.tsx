@@ -342,7 +342,7 @@ const AssetStat = () => {
                 <div style={{ width: "50%" }}>
                     <div style={{ display: "flex", flexDirection: "row", alignItems: "end" }}>
                         <Title level={4}>资产部门分布</Title>
-                        <Button type="link" size="small" onClick={() => { setIsOpen(true); }}>查看详细</Button>
+                        <Button type="link" size="small" style={{display:"flow" , marginLeft:"auto"}}  onClick={() => { setIsOpen(true); }}>查看详细</Button>
                     </div>
                     <ReactECharts option={optionforDN} />
                 </div>

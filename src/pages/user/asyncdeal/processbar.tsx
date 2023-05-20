@@ -18,19 +18,22 @@ interface barprops{
 
 const Processbar = (props:barprops)=>{
     const [percent,setpercent] = useState<number>(10);
+    let counttime = 0;
     var timer = setInterval(function(){
-        request("/api/async/getprocess","POST",{taskid:props.taskid}).then(function(res){
-            setpercent(res.process);
-            if(res.process==100){
-                clearInterval(timer);
-                props.onover();
-            }
-        }).catch(function(e){
-            message.warning(e.message);
+        counttime = counttime +1;
+        if(counttime > 5){
             clearInterval(timer);
-            props.onover();
-        });
-    },2000);  
+        }else{
+            request("/api/async/getprocess","POST",{taskid:props.taskid}).then(function(res){
+                setpercent(res.process);
+                if(res.process===100){
+                    clearInterval(timer);
+                    props.onover();
+                }
+            }).catch(function(e){
+            });
+        }
+    },10000);  
     return (
         <div>
             <Progress type="circle" percent={percent}/>

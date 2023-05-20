@@ -30,6 +30,7 @@ const Page_3 = () => {
         total: 0, // 总记录数
     });
     useEffect((()=>{
+        setSpnning(true);
         request("/api/user/es/getlogs","GET",{page:1})
             .then((res) => {
             // 更新表格数据源和分页器状态
@@ -51,13 +52,8 @@ const Page_3 = () => {
                 setTimeout(() => {
                     setSpnning(false);
                 }, 500);
-                
-                setTimeout(() => {
-                    setSpnning(false);
-                }, 500);
             })
             .catch((error) => {
-                setSpnning(false);
                 setSpnning(false);
                 message.warning(error.message);
             });
@@ -67,6 +63,7 @@ const Page_3 = () => {
     const handleFetch = (page:number,pageSize:number) => {
         // 构造请求参数
         // 发送请求获取数据
+        setSpnning(true);
         request("/api/user/es/getlogs","GET",{page:page})
             .then((res) => {
             // 更新表格数据源和分页器状态
@@ -84,9 +81,11 @@ const Page_3 = () => {
                     pageSize: 10,
                     total: res.count,
                 });
+                setSpnning(false);
             })
             .catch((error) => {
                 message.warning(error.message);
+                setSpnning(false);
             });
     };
     const columns: ProColumns<log>[] = [
@@ -141,6 +140,7 @@ const Page_3 = () => {
             dataIndex: "range",
             valueType: "dateRange",
             hideInTable: true,
+            width:"200px",
             search: {
                 transform: (value) => {
                     return {
@@ -152,52 +152,57 @@ const Page_3 = () => {
         },
     ];
     return (
-        isSpinning?<Spin tip="Loading..."></Spin>:<div>
-            <ProTable<log,Params>
+        <div>
+            <Spin  spinning={isSpinning}  >
+                <ProTable<log,Params>
                 //切换页面的实现在于pagination的配置，如下
-                pagination={{current:pagenation.current,pageSize:pagenation.pageSize,onChange:handleFetch,total:pagenation.total,showSizeChanger:false}}
-                columns={columns}
-                options={false}
+                    pagination={{current:pagenation.current,pageSize:pagenation.pageSize,total:pagenation.total,showSizeChanger:false}}
+                    columns={columns}
+                    options={false}
 
-                request={(params, sorter, filter) => {
+                    request={(params, sorter, filter) => {
                     // 表单搜索项会从 params 传入，传递给后端接口。
-                    console.log("hello world");
-                    console.log(params);
-                    let success:boolean = true;
-                    request("api/user/es/getlogs","GET",{page:params.current,from:params.startTime,to:params.endTime,type:params.type})
-                        .then((res)=>{
-                            setloglist(res.info.map((val)=>{
-                                return {
-                                    key:val.id,
-                                    id:val.id,
-                                    content:val.content,
-                                    type:val.type,
-                                    time:val.time,
-                                };
-                            }));
-                            setpagenation({
-                                current: (params.current)?params.current:1,
-                                pageSize: 10,
-                                total: res.count,
+                        console.log("hello world");
+                        console.log(params);
+                        let success:boolean = true;
+                        setSpnning(true);
+                        request("api/user/es/getlogs","GET",{page:params.current,from:params.startTime,to:params.endTime,type:params.type})
+                            .then((res)=>{
+                            
+                                setloglist(res.info.map((val)=>{
+                                    return {
+                                        key:val.id,
+                                        id:val.id,
+                                        content:val.content,
+                                        type:val.type,
+                                        time:val.time,
+                                    };
+                                }));
+                                setpagenation({
+                                    current: (params.current)?params.current:1,
+                                    pageSize: 10,
+                                    total: res.count,
+                                });
+                                success = true;
+                                setSpnning(false);
+                                message.success("刷新成功");
+                            })
+                            .catch((err)=>{
+                                success = false;
+                                message.warning(err.message);
                             });
-                            success = true;
-                            message.success("查询成功");
-                        })
-                        .catch((err)=>{
-                            success = false;
-                            message.warning(err.message);
+                        return Promise.resolve({
+                            data: [],
+                            success: success,
                         });
-                    return Promise.resolve({
-                        data: [],
-                        success: success,
-                    });
-                }}
-                rowKey="key"
-                headerTitle=
-                    {<Text ellipsis={true}>{"📝业务实体操作日志"}</Text>}
-                dataSource={loglist}
-                dateFormatter="string"
-            />
+                    }}
+                    rowKey="key"
+                    headerTitle=
+                        {<Text ellipsis={true}>{"📝业务实体操作日志"}</Text>}
+                    dataSource={loglist}
+                    dateFormatter="string"
+                />
+            </Spin>
         </div>
     );
 };
