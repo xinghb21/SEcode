@@ -262,6 +262,13 @@ const AddAsset = () => {
                     };
                     fileAsset.push(resAsset);
                 }
+                for(let i = 0; i < fileAsset.length; i++) {
+                    if(assets.filter(item => item.key === fileAsset[i].key).length > 0){
+                        message.error("资产名称重复");
+                        check = false;
+                        break;
+                    }
+                }
                 if(check) {
                     setAsset(assets => assets.concat(fileAsset));
                     message.success("导入成功");
