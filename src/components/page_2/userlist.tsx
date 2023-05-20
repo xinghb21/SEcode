@@ -160,6 +160,19 @@ const Userlist =( () => {
             copyable: true,
             ellipsis: true,
             width:"20%",
+            request:async ()=>{
+                let departs:department_to_show[]=[];
+                request("api/entity/getalldep","GET")
+                    .then((res)=>{
+                        let size=res.data.length;
+                        for(let i=0;i<size;i++){
+                            departs.push({value:res.data[i] ,label:res.data[i]});
+                        }})
+                 .catch((err)=>{
+                    message.warning(err.message);
+                 });
+                 return departs;
+            },
         // valueEnum: departmentlsit.map((item)=>{return {text:item.label,value:item.value};}),
         // align: 'center',
         // sorter: (a, b) => a.containers - b.containers,
