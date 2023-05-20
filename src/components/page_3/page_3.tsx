@@ -132,7 +132,6 @@ const Page_3 = () => {
                 return(
                     <div style={{display:"flex",flexDirection:"column"}}>
                         {moment(row.time,"X").format("YYYY-MM-DD HH:mm:ss")}
-                        {moment(row.time,"X").format("YYYY-MM-DD HH:mm:ss")}
                     </div>
                 );
             },
@@ -165,7 +164,6 @@ const Page_3 = () => {
                     console.log("hello world");
                     console.log(params);
                     let success:boolean = true;
-                    request("api/user/es/getlogs","GET",{page:params.current,from:params.startTime,to:params.endTime,type:params.type});
                     request("api/user/es/getlogs","GET",{page:params.current,from:params.startTime,to:params.endTime,type:params.type})
                         .then((res)=>{
                             setloglist(res.info.map((val)=>{
@@ -183,7 +181,7 @@ const Page_3 = () => {
                                 total: res.count,
                             });
                             success = true;
-                        // message.success("查询成功");
+                            message.success("查询成功");
                         })
                         .catch((err)=>{
                             success = false;

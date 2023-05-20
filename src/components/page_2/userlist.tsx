@@ -195,16 +195,13 @@ const Userlist =( () => {
                         <span>
                             <Tooltip placement="bottom" title={<span>点击锁定</span>}>
                                 <UnlockOutlined style={{ marginLeft: 10 }} onClick={() => lock(row.username)} />
-                                <UnlockOutlined style={{ marginLeft: 10 }} onClick={() => lock(row.username)} />
                             </Tooltip>
                         </span>
                     </div>):
                     (<div>
                         <Tag color="red" key={row.username}>被锁定</Tag>
-                        <Tag color="red" key={row.username}>被锁定</Tag>
                         <span>
                             <Tooltip placement="bottom" title={<span>点击解锁</span>}>
-                                <LockOutlined style={{ marginLeft: 10 }} onClick={() => unlock(row.username)} />
                                 <LockOutlined style={{ marginLeft: 10 }} onClick={() => unlock(row.username)} />
                             </Tooltip>
                         </span>
@@ -248,7 +245,6 @@ const Userlist =( () => {
             width: "20%",
             key: "option",
             render: (text, row, _) => [
-                <Button key="outer" onClick={()=>{assign({key:row.username,username: row.username , Department:row.departmentname});}} >调整部门</Button>,
                 <Button key="outer" onClick={()=>{assign({key:row.username,username: row.username , Department:row.departmentname});}} >调整部门</Button>,
                 <TableDropdown
                     key="actionGroup"
