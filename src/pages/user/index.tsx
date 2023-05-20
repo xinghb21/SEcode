@@ -50,7 +50,7 @@ import Returnasset from "../../components/page_8/assetsreturn/Returnasset";
 import Exchangeasset from "../../components/page_8/exchange/Exchangeasset";
 import ReactCanvasNest from "react-canvas-nest"; 
 import Head from "next/head";
-import Head from "next/head";
+
 
 const { Text } = Typography;
 

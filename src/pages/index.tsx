@@ -6,7 +6,7 @@ import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { request } from "../utils/network";
 import { Md5 } from "ts-md5";
 import Circle from "./background";
-import Head from "next/head";
+
 import Head from "next/head";
 import SITE_CONFIG from "../settings";
 import ReactCanvasNest from "react-canvas-nest"; 
