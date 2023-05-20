@@ -191,7 +191,6 @@ const Userlist =( () => {
                 (!row.whetherlocked)?
                     (<div>
                         <Tag color="green" key={row.username}>正常</Tag>
-                        <Tag color="green" key={row.username}>正常</Tag>
                         <span>
                             <Tooltip placement="bottom" title={<span>点击锁定</span>}>
                                 <UnlockOutlined style={{ marginLeft: 10 }} onClick={() => lock(row.username)} />
@@ -225,7 +224,10 @@ const Userlist =( () => {
                         <span>👨‍🔧普通员工</span>
                         <span>
                             <Tooltip placement="bottom" title={<span>升职为资产管理员</span>}>
-                                <ArrowUpOutlined  style={{ marginLeft: 10 }} onClick={() => changepos(row)} />
+                                <ArrowUpOutlined  style={{ marginLeft: 10 }} onClick={() => {                            
+                                    let temp = row;
+                                    temp.character=3;
+                                    changepos(temp);}} />
                             </Tooltip>
                         </span>
                     </div>):
@@ -233,7 +235,11 @@ const Userlist =( () => {
                         <span>💼资产管理员</span>
                         <span>
                             <Tooltip placement="bottom" title={<span>降职为普通员工</span>}>
-                                <ArrowDownOutlined style={{ marginLeft: 10 }} onClick={() => changepos(row)} />
+                                <ArrowDownOutlined style={{ marginLeft: 10 }} onClick={() => {                            
+                                    let temp = row;
+                                    temp.character=4;
+                                    changepos(temp);
+                                }} />
                             </Tooltip>
                         </span>
                     </div>)
@@ -251,17 +257,13 @@ const Userlist =( () => {
                     onSelect={(key) => {
                         if(key === "app"){
                             setmanagename(row.username);
-                            setmanagename(row.username);
                             setmanage(true);
                         }else if(key === "reset"){
-                            setresetname(row.username);
                             setresetname(row.username);
                             setisreset(true);
                         }else if(key === "lock"){
                             lock(row.username);
-                            lock(row.username);
                         }else if(key === "unlock"){
-                            unlock(row.username);
                             unlock(row.username);
                         }else if(key === "down"){
                             let temp = row;
@@ -423,6 +425,7 @@ const Userlist =( () => {
                 <ProTable<User_to_show>
                     rowSelection={rowSelection}
                     columns={columns}
+                    options={false}
                     request={(params, sorter, filter) => {
                         // 表单搜索项会从 params 传入，传递给后端接口。
                         setSelectedRowKeys([]);

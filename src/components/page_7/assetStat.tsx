@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Modal, Row, Select, Statistic, message } from "antd";
+import { Button, Col, Modal, Row, Select, Spin, Statistic, message } from "antd";
 import { request } from "../../utils/network";
 import ReactECharts from "echarts-for-react";
 import { Typography } from "antd";
@@ -48,6 +48,11 @@ const AssetStat = () => {
     //资产净值统计
     const [totalDepNV, setTDNV] = useState(0);
     //资产部门详细
+    const [isSpinning1, setIsSpinning1] = useState(false);
+    const [isSpinning2, setIsSpinning2] = useState(false);
+    const [isSpinning3, setIsSpinning3] = useState(false);
+    const [isSpinning4, setIsSpinning4] = useState(false);
+    const [isSpinning5, setIsSpinning5] = useState(false);
 
     useEffect((() => {
         fetchtData();
@@ -62,12 +67,22 @@ const AssetStat = () => {
     }), [depart]);
 
     const fetchtData = () => {
+        setIsSpinning1(true);
+        setIsSpinning2(true);
+        setIsSpinning3(true);
+        setIsSpinning4(true);
         request("/api/user/ep/as/atotal", "GET").then((res) => {
             setET(res.info.entryNumber);
             setQTT(res.info.quantTypeNumber);
             setQNT(res.info.quantTotalNumber);
+            setTimeout(() => {
+                setIsSpinning1(false);
+            }, 500);
         }).catch((err) => {
             message.warning(err.message);
+            setTimeout(() => {
+                setIsSpinning1(false);
+            }, 500);
         });
         request("/api/user/ep/as/astatotal", "GET").then((res) => {
             setFN(res.info.freeNumber);
@@ -76,8 +91,14 @@ const AssetStat = () => {
             setTFN(res.info.totfixNumber);
             setPFN(res.info.partfixNumber);
             setTBF(res.info.tbfixNumber);
+            setTimeout(() => {
+                setIsSpinning2(false);
+            }, 500);
         }).catch((err) => {
             message.warning(err.message);
+            setTimeout(() => {
+                setIsSpinning2(false);
+            }, 500);
         });
         request("/api/user/ep/as/totalnvalue", "GET").then((res) => {
             setTNV(res.info.totalnetvalue);
@@ -99,8 +120,14 @@ const AssetStat = () => {
                     return item.netvalue;
                 }
             }));
+            setTimeout(() => {
+                setIsSpinning4(false);
+            }, 500);
         }).catch((err) => {
             message.warning(err.message);
+            setTimeout(() => {
+                setIsSpinning4(false);
+            }, 500);
         });
         request("/api/user/ep/as/departasset", "GET").then((res) => {
             setDS(res.info.map((item) => {
@@ -109,11 +136,18 @@ const AssetStat = () => {
             setDL(res.info.map((item) => {
                 return item.name;
             }));
+            setTimeout(() => {
+                setIsSpinning3(false);
+            }, 500);
         }).catch((err) => {
             message.warning(err.message);
+            setTimeout(() => {
+                setIsSpinning3(false);
+            }, 500);
         });
     };
     const fetchDepData = () => {
+        setIsSpinning5(true);
         request("/api/user/ep/as/subas", "GET", {
             department: depart
         }).then((res) => {
@@ -133,8 +167,14 @@ const AssetStat = () => {
             }));
             //资产净值统计
             setTDNV(res.info.totalnetvalue.totalnetvalue);
+            setTimeout(() => {
+                setIsSpinning5(false);
+            }, 500);
         }).catch((err) => {
             message.warning(err.message);
+            setTimeout(() => {
+                setIsSpinning5(false);
+            }, 500);
         });
     };
     //资产状态统计
@@ -322,36 +362,53 @@ const AssetStat = () => {
     return (
         <>
             <div style={{ width: "100%", height: "20%" }}>
-                <Row gutter={16}>
-                    <Col span={12}>
-                        <Statistic title="数量型资产类别数量" value={quantTypetotal} />
-                    </Col>
-                    <Col span={12}>
-                        <Statistic title="条目型资产总数量" value={entrytotal} />
-                    </Col>
-                    <Col span={12}>
-                        <Statistic title="数量型资产总数量" value={quantNumtotal} />
-                    </Col>
-                </Row>
+                <Spin spinning={isSpinning1}>
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Statistic title="数量型资产类别数量" value={quantTypetotal} />
+                        </Col>
+                        <Col span={12}>
+                            <Statistic title="条目型资产总数量" value={entrytotal} />
+                        </Col>
+                        <Col span={12}>
+                            <Statistic title="数量型资产总数量" value={quantNumtotal} />
+                        </Col>
+                    </Row>
+                </Spin>
             </div>
             <div style={{ width: "100%", height: "40%", display: "flex", flexDirection: "row" }}>
+
                 <div style={{ width: "50%" }}>
-                    <Title level={4}>资产状态分布</Title>
-                    <ReactECharts option={optionforSN} />
+                    <Spin spinning={isSpinning2}>
+                        <Title level={4}>资产状态分布</Title>
+                        <ReactECharts option={optionforSN} />
+                    </Spin>
                 </div>
+
+
                 <div style={{ width: "50%" }}>
-                    <div style={{ display: "flex", flexDirection: "row", alignItems: "end" }}>
-                        <Title level={4}>资产部门分布</Title>
-                        <Button type="link" size="small" style={{display:"flow" , marginLeft:"auto"}}  onClick={() => { setIsOpen(true); }}>查看详细</Button>
-                    </div>
-                    <ReactECharts option={optionforDN} />
+                    <Spin spinning={isSpinning3}>
+                        <div style={{ display: "flex", flexDirection: "row", alignItems: "end" }}>
+
+                            <Title level={4}>资产部门分布</Title>
+                            <Button type="link" size="small" style={{ display: "flow", marginLeft: "auto" }} 
+                                onClick={() => {
+                                    setIsOpen(true); 
+                                }}>查看详细</Button>
+
+                        </div>
+                        <ReactECharts option={optionforDN} />
+                    </Spin>
                 </div>
+
             </div>
             <div style={{ width: "100%", height: "40%" }}>
-                <Title level={4}>资产净值统计</Title>
-                <Statistic title="当前资产总净值 单位：元" value={totalNV} />
-                <Text type="secondary">{"更新时间：" + moment(Date.parse(new Date().toString())).format("YYYY-MM-DD HH:mm:ss") + " GMT+0800 (中国标准时间)"}</Text>
-                <ReactECharts option={optionforNV} />
+                <Spin spinning={isSpinning4}>
+                    <Title level={4}>资产净值统计</Title>
+                    <Statistic title="当前资产总净值 单位：元" value={totalNV} />
+                    <Text type="secondary">{"更新时间：" + moment(Date.parse(new Date().toString())).format("YYYY-MM-DD HH:mm:ss") + " GMT+0800 (中国标准时间)"}</Text>
+                    <ReactECharts option={optionforNV} />
+                </Spin>
             </div>
             <Modal
                 style={{
@@ -364,58 +421,60 @@ const AssetStat = () => {
                 onCancel={() => { setIsOpen(false); }}
                 title="资产部门分布详细">
                 <div>
-                    <div style={{ display: "flex", flexDirection: "row", alignItems: "end" }}>
-                        <Title level={5} style={{ marginTop: 5, marginRight: 20 }}>选择下属部门</Title>
-                        <Select
-                            value={depart}
-                            options={departeList.map((item) => {
-                                return {
-                                    value: item,
-                                    label: item,
-                                };
-                            })}
-                            style={{ minWidth: "30%" }}
-                            onChange={(value) => { setD(value); }}></Select>
-                    </div>
-                    <div style={{ width: "100%", height: "40%" }}>
-                        <Title level={4}>资产净值统计</Title>
-                        <Statistic title="当前资产总净值 单位：元" value={totalDepNV} />
-                        <Text type="secondary">{"更新时间：" + moment(Date.parse(new Date().toString())).format("YYYY-MM-DD HH:mm:ss") + " GMT+0800 (中国标准时间)"}</Text>
-                    </div>
-                    <div style={{ width: "100%", height: "20%" }}>
-                        <Title level={4}>资产数量统计</Title>
-                        <Row gutter={16}>
-                            <Col span={12}>
-                                <Statistic title="数量型资产类别数量" value={quantDepTypetotal} />
-                            </Col>
-                            <Col span={12}>
-                                <Statistic title="条目型资产总数量" value={entryDeptotal} />
-                            </Col>
-                            <Col span={12}>
-                                <Statistic title="数量型资产总数量" value={quantDepNumtotal} />
-                            </Col>
-                        </Row>
-                    </div>
-                    <div>
+                    <Spin spinning={isSpinning5}>
+                        <div style={{ display: "flex", flexDirection: "row", alignItems: "end" }}>
+                            <Title level={5} style={{ marginTop: 5, marginRight: 20 }}>选择下属部门</Title>
+                            <Select
+                                value={depart}
+                                options={departeList.map((item) => {
+                                    return {
+                                        value: item,
+                                        label: item,
+                                    };
+                                })}
+                                style={{ minWidth: "30%" }}
+                                onChange={(value) => { setD(value); }}></Select>
+                        </div>
+                        <div style={{ width: "100%", height: "40%" }}>
+                            <Title level={4}>资产净值统计</Title>
+                            <Statistic title="当前资产总净值 单位：元" value={totalDepNV} />
+                            <Text type="secondary">{"更新时间：" + moment(Date.parse(new Date().toString())).format("YYYY-MM-DD HH:mm:ss") + " GMT+0800 (中国标准时间)"}</Text>
+                        </div>
+                        <div style={{ width: "100%", height: "20%" }}>
+                            <Title level={4}>资产数量统计</Title>
+                            <Row gutter={16}>
+                                <Col span={12}>
+                                    <Statistic title="数量型资产类别数量" value={quantDepTypetotal} />
+                                </Col>
+                                <Col span={12}>
+                                    <Statistic title="条目型资产总数量" value={entryDeptotal} />
+                                </Col>
+                                <Col span={12}>
+                                    <Statistic title="数量型资产总数量" value={quantDepNumtotal} />
+                                </Col>
+                            </Row>
+                        </div>
                         <div>
-                            <Title level={4}>资产状态分布</Title>
-                            <ReactECharts style={{
-                                height: "300px",
-                                width: "600px",
-                                margin: "0 auto",
-                            }} option={optionforDSN} />
-                        </div>
-                        <div >
-                            <div style={{ display: "flex", flexDirection: "row", alignItems: "end" }}>
-                                <Title level={4}>资产部门分布</Title>
+                            <div>
+                                <Title level={4}>资产状态分布</Title>
+                                <ReactECharts style={{
+                                    height: "300px",
+                                    width: "600px",
+                                    margin: "0 auto",
+                                }} option={optionforDSN} />
                             </div>
-                            <ReactECharts style={{
-                                height: "300px",
-                                width: "400px",
-                                margin: "0 auto",
-                            }} option={optionforDDN} />
+                            <div >
+                                <div style={{ display: "flex", flexDirection: "row", alignItems: "end" }}>
+                                    <Title level={4}>资产部门分布</Title>
+                                </div>
+                                <ReactECharts style={{
+                                    height: "300px",
+                                    width: "400px",
+                                    margin: "0 auto",
+                                }} option={optionforDDN} />
+                            </div>
                         </div>
-                    </div>
+                    </Spin>
                 </div>
             </Modal>
         </>

@@ -33,7 +33,7 @@ const Processbar = (props:barprops)=>{
             }).catch(function(e){
             });
         }
-    },10000);  
+    },5000);  
     return (
         <div>
             <Progress type="circle" percent={percent}/>

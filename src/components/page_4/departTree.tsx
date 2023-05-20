@@ -389,7 +389,7 @@ const Dtree = () => {
                         onChange: handleFetch,
                         total: pagenation.total,
                         showSizeChanger: false,
-                    }} bordered={true} columns={columns} dataSource={Depusers} search={false} style={{ height: "100%", width: "100%" }} />
+                    }} bordered={true} columns={columns} options={false} dataSource={Depusers} search={false} style={{ height: "100%", width: "100%" }} />
                 </Spin>
             </div>
             <CtCeDT title={"创建下属部门"} subtitle={"部门名称："} isOpen={isDialogOpenCT} onClose={() => setIsDialogOpenCT(false)} onCreateDt={handleCreateDt} />

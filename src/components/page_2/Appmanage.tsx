@@ -1,4 +1,4 @@
-import {  Button, message, Modal } from "antd";
+import { Button, message, Modal, Popconfirm, Spin } from "antd";
 import React from "react";
 import { ProList} from "@ant-design/pro-components";
 import { useState } from "react";
@@ -21,12 +21,15 @@ const Appmagage=(props:DialogProps)=>{
     const [applists,setapplist]=useState<app[]>([]);
     const [dialogopen1,setIsDialogOpen1]=useState<boolean>(false);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+    const [isspin,setspin] = useState<boolean>(false);
     useEffect((()=>{
         if(props.username!==""){
+
             fetchlist();
         }
     }),[props.username]);
     const fetchlist=()=>{
+        setspin(true);
         request("api/user/es/getonesapp","GET",{name:props.username})
             .then((res)=>{
                 let temp:app[]=[];
@@ -36,8 +39,10 @@ const Appmagage=(props:DialogProps)=>{
                     temp.push({key:res.info[i].name,name:res.info[i].name,urlvalue:res.info[i].urlvalue});
                 }
                 setapplist(temp);
+                setspin(false);
             })
             .catch((err)=>{
+                setspin(false);
                 message.warning(err.message);
             });
     };   
@@ -64,38 +69,52 @@ const Appmagage=(props:DialogProps)=>{
         }
     };
     return (
-        <Modal  title="应用列表管理" onOk={()=>{props.onClose();}} onCancel={()=>{props.onClose();}} open={props.isOpen}  >
-            <Addapp isOpen={dialogopen1} username={props.username} onClose={()=>{ setIsDialogOpen1(false);fetchlist(); }}></Addapp>
-            <ProList<app>
-                toolBarRender={() => {
-                    return [
-                        <Button key="1" type="primary" onClick={()=>{setIsDialogOpen1(true);}}>
-                            添加应用
-                        </Button>,
-                        <Button key="2" type="default" danger={true} onClick={delete_apps} disabled={!hasSelected}> 删除选中应用</Button>,                        
-                    ];
-                }}
-                pagination={{
-                    pageSize: 6,
-                }}
-                metas={{
-                    title: {dataIndex:"name",},
-                    description: {
-                        render: (_,row) => {
-                            return (
-                                <div>
-                                    {"URL: "+row.urlvalue}
-                                </div>
-                            );
+        <Spin spinning={isspin}>
+            <Modal  title="应用列表管理" onOk={()=>{props.onClose();}} onCancel={()=>{props.onClose();}} open={props.isOpen}  >
+                <Addapp isOpen={dialogopen1} username={props.username} onClose={()=>{ setIsDialogOpen1(false);fetchlist(); }}></Addapp>
+            
+                <ProList<app>
+                    toolBarRender={() => {
+                        return [
+                            <Button key="1" type="primary" onClick={()=>{setIsDialogOpen1(true);}}>
+                                添加应用
+                            </Button>,
+                            <Popconfirm
+                                title="删除应用"
+                                description="您确定要删除选中应用吗?"
+                                onConfirm={delete_apps}
+                                onCancel={()=>{}}
+                                okText="Yes"
+                                cancelText="No"
+                                key={"delete confirm"}
+                                disabled={!hasSelected}
+                            >
+                                <Button key="2" type="default" danger={true} disabled={!hasSelected}> 删除选中应用</Button>
+                            </Popconfirm>,                        
+                        ];
+                    }}
+                    pagination={{
+                        pageSize: 6,
+                    }}
+                    metas={{
+                        title: {dataIndex:"name",},
+                        description: {
+                            render: (_,row) => {
+                                return (
+                                    <div>
+                                        {"URL: "+row.urlvalue}
+                                    </div>
+                                );
+                            },
                         },
-                    },
-                }}
-                rowKey="key"
-                headerTitle="该员工应用列表"
-                rowSelection={rowSelection}
-                dataSource={applists}
-            />
-        </Modal>
+                    }}
+                    rowKey="key"
+                    headerTitle="该员工应用列表"
+                    rowSelection={rowSelection}
+                    dataSource={applists}
+                />
+            </Modal>
+        </Spin>
     );
 };
 

@@ -277,7 +277,7 @@ const Asyncbd = () => {
                                 });
                                 success = true;
                                 message.success("刷新成功");
-                                setSpnning(true);
+                                setSpnning(false);
                             }).catch((err) => {
                                 success = false;
                                 message.warning(err.message);

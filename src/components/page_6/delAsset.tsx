@@ -234,7 +234,6 @@ const DelAsset = (() => {
         request("/api/async/newouttask", "POST")
             .then((res) => {
                 setoupputloading(false);
-                message.success("导出成功，请前往任务中心下载");
             })
             .catch((err) => {
                 message.warning(err.message);
