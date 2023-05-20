@@ -175,6 +175,7 @@ const Entitylist = (() => {
                 }}
                 pagination={{
                     pageSize: 10,
+                    showSizeChanger:false,
                 }}
                 rowKey="key"
                 headerTitle="业务实体列表"

@@ -278,6 +278,7 @@ const DisplayModel = (props: ModelProps) => {
                     eleLink.style.display = "none";
                     //字符内容转变成blob地址
                     eleLink.href = imgData;
+                    eleLink.download = "assetpic";
                     //触发点击
                     document.body.appendChild(eleLink);
                     eleLink.click();

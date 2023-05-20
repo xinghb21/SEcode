@@ -148,7 +148,7 @@ const Page_3 = () => {
         isSpinning?<Spin tip="Loading..."></Spin>:<div>
             <ProTable<log,Params>
                 //切换页面的实现在于pagination的配置，如下
-                pagination={{current:pagenation.current,pageSize:pagenation.pageSize,onChange:handleFetch,total:pagenation.total}}
+                pagination={{current:pagenation.current,pageSize:pagenation.pageSize,onChange:handleFetch,total:pagenation.total,showSizeChanger:false}}
                 columns={columns}
                 options={false}
                 request={(params, sorter, filter) => {

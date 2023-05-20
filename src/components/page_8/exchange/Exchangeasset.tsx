@@ -6,6 +6,7 @@ import { ProColumns, ProList, ProTable } from "@ant-design/pro-components";
 import Exchangesubmit from "./Exchangesubmit";
 import Exchangedetail from "./Exchangedetail";
 import { Typography } from "antd";
+import Buttonwithloading from "../Buttonwithloading";
 
 const { Title } = Typography;
 
@@ -117,13 +118,22 @@ const Exchangeasset=()=>{
                     let statenum="";
                     Object.entries(state).forEach(([k, v]) => {
                         if(v!==0){
+                            let tempapply = 1;
+                            let tempasset = useable_assetslist.filter((obj)=>{
+                                return(
+                                    obj.key === ( res.assets[i].name+" "+k+(v as string) )
+                                );
+                            });
+                            if(tempasset.length !== 0){
+                                tempapply = tempasset[0].applycount; 
+                            }
                             tem.push({
-                                key:res.assets[i].name + " " + (v as string) ,
+                                key:res.assets[i].name+" "+k+(v as string),
                                 id:res.assets[i].id,
                                 name:res.assets[i].name,
                                 type:res.assets[i].type,
                                 count:v,
-                                applycount:1,
+                                applycount:tempapply,
                                 state:k,
                             });
                         }
@@ -131,9 +141,11 @@ const Exchangeasset=()=>{
                 }
                 let useable :asset[] = tem.filter(item =>(item.state==="1"));
                 setuseable_assetlist(useable);
+                setSelectedRowKeys([]);
                 setspinloading(false);
             })
             .catch((err)=>{
+                setSelectedRowKeys([]);
                 message.warning(err.message);
                 setspinloading(false);
             });
@@ -224,6 +236,7 @@ const Exchangeasset=()=>{
                     }}
                     pagination={{
                         pageSize: 5,
+                        showSizeChanger:false,
                     }}
                     columns={columns}
                     search={false}
@@ -232,6 +245,7 @@ const Exchangeasset=()=>{
                     headerTitle="正在使用的资产列表"
                     rowSelection={rowSelection}
                     dataSource={useable_assetslist}
+                    
                 />
                 <ProList<applys>
                     pagination={{
@@ -268,7 +282,7 @@ const Exchangeasset=()=>{
                                 return (
                                     <div>
                                         <Button onClick={()=>{setdetailid(row.id);setdetailmessage(row.message);setdetailreason(row.reason);setisdetailopen(true);}}>查看详情</Button>
-                                        <Button onClick={()=>{handledelete(row.id);}}disabled={(row.state === 0)} > 删除 </Button>
+                                        <Buttonwithloading disable={row.state === 0 } onhandleclick={()=>{handledelete(row.id);}} ></Buttonwithloading>
                                     </div>
                                 );
                             },
