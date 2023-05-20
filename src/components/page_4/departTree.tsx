@@ -46,13 +46,6 @@ const columns: ProColumns<Depuser>[] = [
         width: 80,
         dataIndex: "identity",
         hideInSearch: true,
-        filters: true,
-        onFilter: true,
-        // align: 'center',
-        valueEnum: {
-            4: { text: "普通员工"},
-            3: { text: "资产管理员"},
-        },
     },
 ];
 
@@ -80,6 +73,7 @@ const Dtree = () => {
         pageSize: 10, // 每页显示条数
         total: 0, // 总记录数
     });
+    const [department, setDepartment] = useState("");
     //选中的keys
     const [myselectedkeys, setkeys] = useState<{ checked: string[], halfChecked: string[] }>({ checked: [], halfChecked: [] });
     useEffect(() => {
@@ -93,8 +87,10 @@ const Dtree = () => {
     useEffect(() => {
         if (myselectedkeys.checked.length == 0)
             setUser([]);
-        else if (myselectedkeys.checked.length == 1)
+        else if (myselectedkeys.checked.length == 1) {
             fetchDepart(myselectedkeys.checked[0]);
+            setDepartment(myselectedkeys.checked[0]);
+        }
     }, [myselectedkeys]);
 
 
@@ -331,6 +327,32 @@ const Dtree = () => {
             });
     };
 
+    const handleFetch = (page, pageSize) => {
+        request("/api/user/es/staffs", "GET",
+            {
+                department: department,
+                page: page,
+            })
+            .then((res) => {
+                let oriUser: Depuser[] = res.info.map((val) => ({
+                    key: val.id,
+                    id: val.id,
+                    username: val.username,
+                    identity: (val.number == 3) ? "💼资产管理员" : "👨‍🔧员工",
+                }));
+                setUser(oriUser);
+                setpagenation({
+                    current: page,
+                    pageSize: 10,
+                    total: res.count,
+                });
+                // console.log("newUser"+Depusers);
+            })
+            .catch((err) => {
+                message.warning(err.message);
+            });
+    };
+
     return (
         <div style={{ display: "flex", flex: "flex-start", flexDirection: "row", height: "100%", width: "100%" }}>
             <div style={{ width: "40%", height: "100%" }}>
@@ -353,7 +375,12 @@ const Dtree = () => {
                 </div>
             </div>
             
-            <ProTable<Depuser> bordered={true} columns={columns} dataSource={Depusers} search={false} style={{ height: "100%", width: "70%" }} />
+            <ProTable<Depuser> pagination={{
+                    current: pagenation.current,
+                    pageSize: pagenation.pageSize,
+                    onChange: handleFetch,
+                    total: pagenation.total
+                }} bordered={true} columns={columns} dataSource={Depusers} search={false} style={{ height: "100%", width: "70%" }} />
             <CtCeDT title={"创建下属部门"} subtitle={"部门名称："} isOpen={isDialogOpenCT} onClose={() => setIsDialogOpenCT(false)} onCreateDt={handleCreateDt} />
             <CtCeDT title={"修改部门名称"} subtitle={"新名称："} isOpen={isDialogOpenCE} onClose={() => setIsDialogOpenCE(false)} onCreateDt={handleChangeDt} />
         </div>
