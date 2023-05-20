@@ -1,5 +1,5 @@
 import { ModalForm, ProForm, ProFormDigit, ProFormMoney, ProFormSelect, ProFormText, ProList } from "@ant-design/pro-components";
-import { Button, Form, Input, Modal, Space, Table, Upload, UploadFile, UploadProps, message } from "antd";
+import { Button, Form, Input, Modal, Space, Spin, Table, Upload, UploadFile, UploadProps, message, Skeleton } from 'antd';
 import React, { useEffect, useState } from "react";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { request } from "../../utils/network";
@@ -16,7 +16,7 @@ import * as XLSX from "xlsx/xlsx.mjs";
 
 const md = new MarkdownIt();
 
-interface Asset{
+interface Asset {
 
     key: React.Key;
     name: string;
@@ -34,7 +34,7 @@ interface Asset{
 
 }
 
-interface Excel{
+interface Excel {
 
     资产名称: string;
     资产种类: string;
@@ -69,7 +69,7 @@ const policyText = {
 };
 const policyBase64 = Base64.encode(JSON.stringify(policyText));
 const bytes = CryptoJS.HmacSHA1(policyBase64, accessSecret, { asBytes: true });
-const signature = bytes.toString(CryptoJS.enc.Base64); 
+const signature = bytes.toString(CryptoJS.enc.Base64);
 
 
 const columns: ColumnsType<Asset> = [
@@ -104,6 +104,7 @@ const AddAsset = () => {
     const [detail, setDetail] = useState(false);
     const [loading, setLoading] = useState(false);
     const [imgList, setImgList] = useState<UploadFile[]>([]);
+    const [isSpinning, setIsSpinning] = useState<boolean>(false);
 
     //markdown
     const handleChange = (content: string) => {
@@ -132,6 +133,7 @@ const AddAsset = () => {
     let additions: Addition[] = [];
 
     useEffect(() => {
+        setIsSpinning(true);
         request("/api/asset/assetclass", "GET")
             .then((res) => {
                 setLabel(res.data);
@@ -156,13 +158,16 @@ const AddAsset = () => {
                 setDepart(res.department);
                 setEntity(res.entity);
             });
+        setTimeout(() => {
+            setIsSpinning(false);
+        }, 500);
     }, []);
 
     const rowSelection = {
         selectedRowKeys,
         onChange: (keys: React.Key[]) => setSelectedRowKeys(keys),
     };
-      
+
     const StrListToProFormText: React.FC<Props> = ({ strList }) => {
         return (
             <>
@@ -182,7 +187,7 @@ const AddAsset = () => {
 
     const onSubmit = (() => {
         //与后端交互，实现批量添加
-
+        setIsSpinning(true);
         setLoading(true);
         const newAssets = assets.filter(item => !selectedRowKeys.includes(item.key));
         const selectedAssert = selectedRowKeys.map(key => {
@@ -200,16 +205,20 @@ const AddAsset = () => {
                 message.warning(err.message);
                 setLoading(false);
             });
+        setTimeout(() => {
+            setIsSpinning(false);
+        }, 500);
     });
 
 
     //excel
     const onImportExcel = (file: RcFile) => {
-        if(fileList.some(f => f.name === file.name)) {
+        setIsSpinning(true);
+        if (fileList.some(f => f.name === file.name)) {
             message.error("文件已上传");
             return false;
         }
-        let resData : Excel[] = [];// 存储获取到的数据
+        let resData: Excel[] = [];// 存储获取到的数据
         // 通过FileReader对象读取文件
         const fileReader = new FileReader();
         fileReader.readAsBinaryString(file);  //二进制
@@ -228,20 +237,20 @@ const AddAsset = () => {
                 }
                 let check: Boolean = true;
                 let fileAsset: Asset[] = [];
-                for(let i = 0; i < resData.length; i++) {
-                    if(!("资产名称" in resData[i])) {
+                for (let i = 0; i < resData.length; i++) {
+                    if (!("资产名称" in resData[i])) {
                         message.error("文件中缺少资产名称，请参照模板规范");
                         check = false;
                         break;
-                    } else if(!("资产种类" in resData[i])) {
+                    } else if (!("资产种类" in resData[i])) {
                         message.error("文件中缺少资产种类，请参照模板规范");
                         check = false;
                         break;
-                    } else if(!("资产使用年限" in resData[i])) {
+                    } else if (!("资产使用年限" in resData[i])) {
                         message.error("文件中缺少资产使用年限，请参照模板规范");
                         check = false;
                         break;
-                    } else if(!("资产价值" in resData[i])) {
+                    } else if (!("资产价值" in resData[i])) {
                         message.error("文件中缺少资产价值，请参照模板规范");
                         check = false;
                         break;
@@ -256,9 +265,9 @@ const AddAsset = () => {
                         description: resData[i].资产描述,
                         parent: resData[i].上级资产名称,
                         belonging: resData[i].挂账人,
-                        number: resData[i].资产数量? resData[i].资产数量: 1,
+                        number: resData[i].资产数量 ? resData[i].资产数量 : 1,
                         hasimage: false,
-                        
+
                     };
                     fileAsset.push(resAsset);
                 }
@@ -280,10 +289,13 @@ const AddAsset = () => {
                 return false;
             }
         };
+        setTimeout(() => {
+            setIsSpinning(false);
+        }, 500);
     };
 
     return (
-        <div style={{margin: 24}}>
+        <div style={{ margin: 24 }}>
             <Space size="middle">
                 <ModalForm
                     autoFocusFirstInput
@@ -297,18 +309,18 @@ const AddAsset = () => {
                         </Button>
                     }
                     onFinish={async (values: any) => {
-                        if(assets.filter(item => item.key === values.assetname).length > 0){
+                        if (assets.filter(item => item.key === values.assetname).length > 0) {
                             message.error("资产名称重复");
                             return false;
                         }
                         additions.splice(0);
-                        for(let i = 0; i < addition.length; i++) {
-                            additions.push({key: addition[i], value: values[addition[i]]});
+                        for (let i = 0; i < addition.length; i++) {
+                            additions.push({ key: addition[i], value: values[addition[i]] });
                         }
 
                         let hasImage: boolean = false;
 
-                        if(imgList.length > 0) {
+                        if (imgList.length > 0) {
                             hasImage = true;
                             let file = imgList[0];
                             handleUpload(file, values.assetname).then(
@@ -322,9 +334,9 @@ const AddAsset = () => {
                             setImgList([]);
                         }
 
-                        const asset : Asset = {
+                        const asset: Asset = {
 
-                            key : values.assetname,
+                            key: values.assetname,
                             name: values.assetname,
                             description: values.description,
                             category: values.category,
@@ -336,7 +348,7 @@ const AddAsset = () => {
                             addtional: additions,
                             additionalinfo: value,
                             hasimage: hasImage,
-                            
+
                         };
                         setAsset([...assets, asset]);
                         setValue("");
@@ -352,12 +364,12 @@ const AddAsset = () => {
                             placeholder="请输入名称"
                             rules={[{ required: true, message: "请输入名称！" }]}
                         />
-                        <ProFormText 
-                            width="md" 
-                            name="description" 
-                            label="资产描述" 
+                        <ProFormText
+                            width="md"
+                            name="description"
+                            label="资产描述"
                             initialValue={""}
-                            placeholder="请输入描述" 
+                            placeholder="请输入描述"
                         />
                     </ProForm.Group>
                     <ProForm.Group>
@@ -397,17 +409,17 @@ const AddAsset = () => {
                     </ProForm.Group>
                     <ProForm.Group>
                         <ProFormText
-                            width="md" 
-                            name="belonging" 
-                            label="挂账人" 
+                            width="md"
+                            name="belonging"
+                            label="挂账人"
                             initialValue={""}
                         />
                     </ProForm.Group>
                     <ProForm.Group>
-                        <StrListToProFormText strList={addition}/>
+                        <StrListToProFormText strList={addition} />
                     </ProForm.Group>
                     <ProForm.Group>
-                        <Upload 
+                        <Upload
                             // action={host}
                             accept="image/*"
                             maxCount={1}
@@ -416,9 +428,9 @@ const AddAsset = () => {
                                 return false;
                             }}
                             onChange={(info) => {
-                                if(info.file.status == "done")
+                                if (info.file.status == "done")
                                     setImage(info.file.name);
-                                if(info.file.status == "removed")
+                                if (info.file.status == "removed")
                                     setImage("");
                             }}
                             onRemove={(file: UploadFile) => {
@@ -442,7 +454,7 @@ const AddAsset = () => {
                         </Upload>
                     </ProForm.Group>
                     <ProForm.Group>
-                        <div style={{marginTop: 20}}>
+                        <div style={{ marginTop: 20 }}>
                             <Space direction="vertical">
                                 <div>补充说明</div>
                                 <ReactQuill
@@ -458,7 +470,7 @@ const AddAsset = () => {
                         </div>
                     </ProForm.Group>
                 </ModalForm>
-                <Upload 
+                <Upload
                     beforeUpload={onImportExcel}
                     showUploadList={false}
                     accept=".xlsx">
@@ -479,16 +491,19 @@ const AddAsset = () => {
                     <p>非必要属性：资产描述、资产数量、上级资产名称、挂账人</p>
                 </Modal>
             </Space>
-            <div style={{marginTop: 24}}>
-                <Table rowSelection={rowSelection} columns={columns} dataSource={assets} bordered={true}/>
-                <Space>
-                    <Button type="primary" style={{marginTop:10}} onClick={() => {setSelectedRowKeys(assets.map((item) => {return item.key;}))}}>
-                        全选
-                    </Button>
-                    <Button type="primary" onClick={onSubmit} disabled={!hasSelected} loading={loading} style={{marginTop:10}}>
-                        提交
-                    </Button>
-                </Space>
+            <div style={{ marginTop: 24 }}>
+                <Spin spinning={isSpinning} tip={"加载中"}>
+                    <Table rowSelection={rowSelection} columns={columns} dataSource={assets} bordered={true} />
+                    <Space>
+                        <Button type="primary" style={{marginTop:10}} onClick={() => {setSelectedRowKeys(assets.map((item) => {return item.key;}))}}>
+                            全选
+                        </Button>
+                        
+                    <Button type="primary" onClick={onSubmit} disabled={!hasSelected} loading={loading} style={{ marginTop: 10 }}>
+                            提交
+                        </Button>
+                    </Space>
+                </Spin>
             </div>
         </div>
     );

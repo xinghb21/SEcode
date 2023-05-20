@@ -1,4 +1,5 @@
 import { Avatar, List, Space, Button, Tag, message, Tooltip, Typography, Spin, Popconfirm } from "antd";
+import { Avatar, List, Space, Button, Tag, message, Tooltip, Typography, Spin, Popconfirm } from "antd";
 import React from "react";
 import { ProColumns, ProForm, ProFormSelect, ProFormText, ProList, ProTable, QueryFilter, TableDropdown } from "@ant-design/pro-components";
 import { Progress } from "antd";
@@ -16,6 +17,7 @@ import CreateDE from "./CreateDE";
 import Manageapp from "./Manageapp";
 import Appmanage from "./Appmanage";
 import { ArrowDownOutlined, ArrowUpOutlined, DownOutlined, LockOutlined, PlusSquareOutlined, UnlockOutlined } from "@ant-design/icons";
+import Pagination from "antd";
 import Pagination from "antd";
 
 const { Text } = Typography;
@@ -157,6 +159,7 @@ const Userlist =( () => {
         {
             title: "部门",
             dataIndex: "departmentname",
+            dataIndex: "departmentname",
             copyable: true,
             ellipsis: true,
             width:"20%",
@@ -190,18 +193,23 @@ const Userlist =( () => {
             },
             render: (text, row) => [
                 (!row.whetherlocked)?
+                (!row.whetherlocked)?
                     (<div>
+                        <Tag color="green" key={row.username}>正常</Tag>
                         <Tag color="green" key={row.username}>正常</Tag>
                         <span>
                             <Tooltip placement="bottom" title={<span>点击锁定</span>}>
+                                <UnlockOutlined style={{ marginLeft: 10 }} onClick={() => lock(row.username)} />
                                 <UnlockOutlined style={{ marginLeft: 10 }} onClick={() => lock(row.username)} />
                             </Tooltip>
                         </span>
                     </div>):
                     (<div>
                         <Tag color="red" key={row.username}>被锁定</Tag>
+                        <Tag color="red" key={row.username}>被锁定</Tag>
                         <span>
                             <Tooltip placement="bottom" title={<span>点击解锁</span>}>
+                                <LockOutlined style={{ marginLeft: 10 }} onClick={() => unlock(row.username)} />
                                 <LockOutlined style={{ marginLeft: 10 }} onClick={() => unlock(row.username)} />
                             </Tooltip>
                         </span>
@@ -220,6 +228,7 @@ const Userlist =( () => {
             },
             // align: 'center',
             render: (text, row) => [
+                (row.character === 4)?
                 (row.character === 4)?
                     (<div>
                         <span>👨‍🔧普通员工</span>
@@ -246,18 +255,23 @@ const Userlist =( () => {
             key: "option",
             render: (text, row, _) => [
                 <Button key="outer" onClick={()=>{assign({key:row.username,username: row.username , Department:row.departmentname});}} >调整部门</Button>,
+                <Button key="outer" onClick={()=>{assign({key:row.username,username: row.username , Department:row.departmentname});}} >调整部门</Button>,
                 <TableDropdown
                     key="actionGroup"
                     onSelect={(key) => {
                         if(key === "app"){
                             setmanagename(row.username);
+                            setmanagename(row.username);
                             setmanage(true);
                         }else if(key === "reset"){
+                            setresetname(row.username);
                             setresetname(row.username);
                             setisreset(true);
                         }else if(key === "lock"){
                             lock(row.username);
+                            lock(row.username);
                         }else if(key === "unlock"){
+                            unlock(row.username);
                             unlock(row.username);
                         }else if(key === "down"){
                             let temp = row;
@@ -283,6 +297,7 @@ const Userlist =( () => {
         if( user.username!== "" && user.department !== ""){
             request("api/user/createuser","POST",{name:user.username,password:user.password,entity:user.entityname,department:user.department,identity:user.identity})
                 .then((res)=>{
+                    setcastnum(castnum+1);
                     setcastnum(castnum+1);
                     setIsDialogOpen1(false);
                     setIsDialogOpen2(false);
@@ -369,6 +384,34 @@ const Userlist =( () => {
                 message.warning(err.message);
             });
         
+
+        //在这里添加后端通信，删除业务实体，并更改前端
+        let i=0;
+        const size= selectedRowKeys.length;
+        let deleteuser:User_to_show[]=[];
+        let deletedusername:string[]=[];
+        //删除列表
+        for (i ;i<size;i++){
+            let tobedeleteuser=(userlist).find((obj)=>{return obj.key===selectedRowKeys.at(i);});
+            if(tobedeleteuser != null ){
+                if(tobedeleteuser != null ){
+                    //console.log("suscess");
+                    deleteuser.push(tobedeleteuser);
+                    deletedusername.push(tobedeleteuser.username);
+                    //console.log(tobedeleteentity);
+                }
+            }
+        }
+        request("/api/user/es/batchdelete","DELETE",{names:deletedusername})
+            .then((res)=>{
+                let i=castnum+1;
+                setcastnum(i);
+                setSelectedRowKeys([]);
+            })
+            .catch((err)=>{
+                message.warning(err.message);
+            });
+        
     });
     const lock=((name:string)=>{
         request("api/user/es/lock","POST",{name:name})
@@ -394,9 +437,12 @@ const Userlist =( () => {
     });
     const changepos=((changeuser:User_to_show)=>{
         request("api/user/es/changeidentity","POST",{name:changeuser.username,new:changeuser.character,department:changeuser.departmentname,entity:changeuser.entityname})
+    const changepos=((changeuser:User_to_show)=>{
+        request("api/user/es/changeidentity","POST",{name:changeuser.username,new:changeuser.character,department:changeuser.departmentname,entity:changeuser.entityname})
             .then((res)=>{
                 let i=castnum+1;
                 setcastnum(i);
+                let messages:string="成功将"+changeuser.username+"改为"+((changeuser.character===3)?"资产管理员":"普通员工");
                 let messages:string="成功将"+changeuser.username+"改为"+((changeuser.character===3)?"资产管理员":"普通员工");
                 message.success(messages);
             })
