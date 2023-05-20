@@ -8,6 +8,7 @@ import { request } from "../../utils/network";
 import AssignEs from "./assign";
 import { Md5 } from "ts-md5";
 import { ColumnsType } from "antd/es/table";
+import { NoFormStyle } from "antd/es/form/context";
 interface Entity {
     key: React.Key;
     entityname: string;
@@ -168,6 +169,7 @@ const Entitylist = (() => {
                             onConfirm={delete_entity}
                             okText="确认"
                             cancelText="取消"
+                            key={"nmsl"}
                         >
                             <Button key="2" type="default" danger={true} disabled={!hasSelected}> 删除选中业务实体</Button>
                         </Popconfirm>,

@@ -1,5 +1,4 @@
 import { Avatar, List, Space, Button, Tag, message, Tooltip, Typography, Spin, Popconfirm } from "antd";
-import { Avatar, List, Space, Button, Tag, message, Tooltip, Typography, Spin, Popconfirm } from "antd";
 import React from "react";
 import { ProColumns, ProForm, ProFormSelect, ProFormText, ProList, ProTable, QueryFilter, TableDropdown } from "@ant-design/pro-components";
 import { Progress } from "antd";
@@ -17,7 +16,7 @@ import CreateDE from "./CreateDE";
 import Manageapp from "./Manageapp";
 import Appmanage from "./Appmanage";
 import { ArrowDownOutlined, ArrowUpOutlined, DownOutlined, LockOutlined, PlusSquareOutlined, UnlockOutlined } from "@ant-design/icons";
-import Pagination from "antd";
+
 import Pagination from "antd";
 
 const { Text } = Typography;
@@ -74,8 +73,6 @@ interface User_app{
     oldapplist:string;
     identity:number;
 }
-
-const userlists:User_to_show[]=[{key:1,username:"11",departmentname:"111",entityname:"1111",character:3,whetherlocked:true,lockedapp:"111111111111"},{key:2,username:"12",departmentname:"112",entityname:"1111",character:4,whetherlocked:false,lockedapp:"1111111111"},{key:3,username:"112",departmentname:"111111",entityname:"1111111",character:4,whetherlocked:false,lockedapp:"11111221111111"}];
 
 const Userlist =( () => {
     const [isSpinning, setSpnning] = useState(false);
@@ -159,7 +156,6 @@ const Userlist =( () => {
         {
             title: "部门",
             dataIndex: "departmentname",
-            dataIndex: "departmentname",
             copyable: true,
             ellipsis: true,
             width:"20%",
@@ -171,10 +167,10 @@ const Userlist =( () => {
                         for(let i=0;i<size;i++){
                             departs.push({value:res.data[i] ,label:res.data[i]});
                         }})
-                 .catch((err)=>{
-                    message.warning(err.message);
-                 });
-                 return departs;
+                    .catch((err)=>{
+                        message.warning(err.message);
+                    });
+                return departs;
             },
         // valueEnum: departmentlsit.map((item)=>{return {text:item.label,value:item.value};}),
         // align: 'center',
@@ -192,7 +188,6 @@ const Userlist =( () => {
                 locked: { text: "被锁定", status: "Error" },
             },
             render: (text, row) => [
-                (!row.whetherlocked)?
                 (!row.whetherlocked)?
                     (<div>
                         <Tag color="green" key={row.username}>正常</Tag>
@@ -228,7 +223,6 @@ const Userlist =( () => {
             },
             // align: 'center',
             render: (text, row) => [
-                (row.character === 4)?
                 (row.character === 4)?
                     (<div>
                         <span>👨‍🔧普通员工</span>
@@ -357,34 +351,7 @@ const Userlist =( () => {
     });
     const delete_users=(()=>{
 
-        //在这里添加后端通信，删除业务实体，并更改前端
-        let i=0;
-        const size= selectedRowKeys.length;
-        let deleteuser:User_to_show[]=[];
-        let deletedusername:string[]=[];
-        //删除列表
-        for (i ;i<size;i++){
-            let tobedeleteuser=(userlist).find((obj)=>{return obj.key===selectedRowKeys.at(i);});
-            if(tobedeleteuser != null ){
-                if(tobedeleteuser != null ){
-                    //console.log("suscess");
-                    deleteuser.push(tobedeleteuser);
-                    deletedusername.push(tobedeleteuser.username);
-                    //console.log(tobedeleteentity);
-                }
-            }
-        }
-        request("/api/user/es/batchdelete","DELETE",{names:deletedusername})
-            .then((res)=>{
-                let i=castnum+1;
-                setcastnum(i);
-                setSelectedRowKeys([]);
-            })
-            .catch((err)=>{
-                message.warning(err.message);
-            });
         
-
         //在这里添加后端通信，删除业务实体，并更改前端
         let i=0;
         const size= selectedRowKeys.length;
@@ -437,12 +404,9 @@ const Userlist =( () => {
     });
     const changepos=((changeuser:User_to_show)=>{
         request("api/user/es/changeidentity","POST",{name:changeuser.username,new:changeuser.character,department:changeuser.departmentname,entity:changeuser.entityname})
-    const changepos=((changeuser:User_to_show)=>{
-        request("api/user/es/changeidentity","POST",{name:changeuser.username,new:changeuser.character,department:changeuser.departmentname,entity:changeuser.entityname})
             .then((res)=>{
                 let i=castnum+1;
                 setcastnum(i);
-                let messages:string="成功将"+changeuser.username+"改为"+((changeuser.character===3)?"资产管理员":"普通员工");
                 let messages:string="成功将"+changeuser.username+"改为"+((changeuser.character===3)?"资产管理员":"普通员工");
                 message.success(messages);
             })
@@ -542,4 +506,4 @@ const Userlist =( () => {
 }
 );
 
-export default Userlist;
+export default Userlist ;

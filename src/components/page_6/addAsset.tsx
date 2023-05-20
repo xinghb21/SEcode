@@ -1,5 +1,5 @@
 import { ModalForm, ProForm, ProFormDigit, ProFormMoney, ProFormSelect, ProFormText, ProList } from "@ant-design/pro-components";
-import { Button, Form, Input, Modal, Space, Spin, Table, Upload, UploadFile, UploadProps, message, Skeleton } from 'antd';
+import { Button, Form, Input, Modal, Space, Spin, Table, Upload, UploadFile, UploadProps, message, Skeleton } from "antd";
 import React, { useEffect, useState } from "react";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { request } from "../../utils/network";
@@ -495,11 +495,11 @@ const AddAsset = () => {
                 <Spin spinning={isSpinning} tip={"加载中"}>
                     <Table rowSelection={rowSelection} columns={columns} dataSource={assets} bordered={true} />
                     <Space>
-                        <Button type="primary" style={{marginTop:10}} onClick={() => {setSelectedRowKeys(assets.map((item) => {return item.key;}))}}>
+                        <Button type="primary" style={{marginTop:10}} onClick={() => {setSelectedRowKeys(assets.map((item) => {return item.key;}));}}>
                             全选
                         </Button>
                         
-                    <Button type="primary" onClick={onSubmit} disabled={!hasSelected} loading={loading} style={{ marginTop: 10 }}>
+                        <Button type="primary" onClick={onSubmit} disabled={!hasSelected} loading={loading} style={{ marginTop: 10 }}>
                             提交
                         </Button>
                     </Space>

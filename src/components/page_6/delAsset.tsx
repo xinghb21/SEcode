@@ -43,7 +43,6 @@ type Userlist = {
     name: string;
     number: number;
     label: number;
-    label: number;
 }
 
 type AssetDisplayType = {

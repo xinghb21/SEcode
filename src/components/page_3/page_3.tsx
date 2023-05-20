@@ -1,6 +1,5 @@
 import React from "react";
 import { Avatar, List, Space, Button, Tag, message, Typography, Spin } from "antd";
-import { Avatar, List, Space, Button, Tag, message, Typography, Spin } from "antd";
 import { ProForm, ProFormDatePicker, ProFormSelect, ProFormText, ProList, QueryFilter, ProTable, ProColumns } from "@ant-design/pro-components";
 import { Progress } from "antd";
 import { useState } from "react";
@@ -22,7 +21,7 @@ interface log{
     range:string[]
 }
 const Page_3 = () => {
-    const [isSpinning, setSpnning] = useState(false);
+
     const [isSpinning, setSpnning] = useState(false);
     const [loglist,setloglist]=useState<log[]>([]);
     const [pagenation,setpagenation] = useState({
@@ -111,7 +110,7 @@ const Page_3 = () => {
             width: 80,
             dataIndex: "type",
             hideInSearch: false,
-            hideInSearch: false,
+
             ellipsis: true,
             // align: 'center',
             valueEnum: {
@@ -155,19 +154,18 @@ const Page_3 = () => {
     ];
     return (
         isSpinning?<Spin tip="Loading..."></Spin>:<div>
-        isSpinning?<Spin tip="Loading..."></Spin>:<div>
             <ProTable<log,Params>
                 //切换页面的实现在于pagination的配置，如下
                 pagination={{current:pagenation.current,pageSize:pagenation.pageSize,onChange:handleFetch,total:pagenation.total,showSizeChanger:false}}
                 columns={columns}
                 options={false}
-                options={false}
+
                 request={(params, sorter, filter) => {
                     // 表单搜索项会从 params 传入，传递给后端接口。
                     console.log("hello world");
                     console.log(params);
                     let success:boolean = true;
-                    request("api/user/es/getlogs","GET",{page:params.current,from:params.startTime,to:params.endTime,type:params.type})
+                    request("api/user/es/getlogs","GET",{page:params.current,from:params.startTime,to:params.endTime,type:params.type});
                     request("api/user/es/getlogs","GET",{page:params.current,from:params.startTime,to:params.endTime,type:params.type})
                         .then((res)=>{
                             setloglist(res.info.map((val)=>{

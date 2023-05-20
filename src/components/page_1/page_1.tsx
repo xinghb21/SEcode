@@ -68,7 +68,7 @@ const EStable=()=> {
                             okText="确认"
                             cancelText="取消"
                         >
-                           <a style={{color:"red"}}>删除业务实体</a>
+                            <a style={{color:"red"}}>删除业务实体</a>
                         </Popconfirm>
                     </Space>
                     :
@@ -87,7 +87,7 @@ const EStable=()=> {
                             okText="确认"
                             cancelText="取消"
                         >
-                           <a style={{color:"red"}}>删除业务实体</a>
+                            <a style={{color:"red"}}>删除业务实体</a>
                         </Popconfirm>
                     </Space>
             ),
