@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Modal, Input } from "antd";
 import React from "react";
+import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 
 interface User{
     key: React.Key;
@@ -40,7 +41,7 @@ const AssignEs=(props: DialogProps) =>{
             </div>
             <div>
                 <label>密码:</label>
-                <Input type="password" value={newpassword} onChange={(e) => setPassword(e.target.value)} />
+                <Input.Password type="password" value={newpassword} onChange={(e) => setPassword(e.target.value)} iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}/>
             </div>
             <div>
                 <label>所属业务实体:</label>

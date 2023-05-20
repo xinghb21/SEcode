@@ -47,6 +47,7 @@ const NSTbdDrawer = () => {
     const [isTBD, setTBD] = useState(false);//true即有待办任务，false相反
     const [dopen, setDOpen] = useState(false);
     const [assetTypes, setAssetTypes] = useState<assetType[]>([]);
+    const [loading, setLoading] = useState(false);
 
     const showDrawer = () => {
         setDOpen(true);
@@ -284,10 +285,12 @@ const NSTbdDrawer = () => {
                             setassetdisData(messages.filter((item) => item.id === record.id)[0]);
                             showModal();
                         }}> 查看</Button> 
-                        <Button type="default" danger onClick={() => {
+                        <Button loading={loading} type="default" danger onClick={() => {
+                            setLoading(true);
                             request(`/api/user/ns/deletemsg?id=${record.id}`, "DELETE", {
                             }).then((res) => {
                                 message.success("删除成功");
+                                setLoading(false);
                                 setMessage(messages.filter((item) => item.id !== record.id));
                             }).catch((err) => {
                                 message.warning(err.message);

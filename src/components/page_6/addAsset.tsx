@@ -262,6 +262,13 @@ const AddAsset = () => {
                     };
                     fileAsset.push(resAsset);
                 }
+                for(let i = 0; i < fileAsset.length; i++) {
+                    if(assets.filter(item => item.key === fileAsset[i].key).length > 0){
+                        message.error("资产名称重复");
+                        check = false;
+                        break;
+                    }
+                }
                 if(check) {
                     setAsset(assets => assets.concat(fileAsset));
                     message.success("导入成功");
@@ -474,9 +481,14 @@ const AddAsset = () => {
             </Space>
             <div style={{marginTop: 24}}>
                 <Table rowSelection={rowSelection} columns={columns} dataSource={assets} bordered={true}/>
-                <Button type="primary" onClick={onSubmit} disabled={!hasSelected} loading={loading} style={{marginTop:10}}>
-                    提交
-                </Button>
+                <Space>
+                    <Button type="primary" style={{marginTop:10}} onClick={() => {setSelectedRowKeys(assets.map((item) => {return item.key;}))}}>
+                        全选
+                    </Button>
+                    <Button type="primary" onClick={onSubmit} disabled={!hasSelected} loading={loading} style={{marginTop:10}}>
+                        提交
+                    </Button>
+                </Space>
             </div>
         </div>
     );
