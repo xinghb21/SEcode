@@ -164,12 +164,13 @@ const Entitylist = (() => {
                             创建业务实体
                         </Button>,
                         <Popconfirm
+                            key="2"
                             title="确认删除所选业务实体？"
                             onConfirm={delete_entity}
                             okText="确认"
                             cancelText="取消"
                         >
-                            <Button key="2" type="default" danger={true} disabled={!hasSelected}> 删除选中业务实体</Button>
+                            <Button  type="default" danger={true} disabled={!hasSelected}> 删除选中业务实体</Button>
                         </Popconfirm>,
                     ];
                 }}

@@ -482,7 +482,7 @@ const AddAsset = () => {
             <div style={{marginTop: 24}}>
                 <Table rowSelection={rowSelection} columns={columns} dataSource={assets} bordered={true}/>
                 <Space>
-                    <Button type="primary" style={{marginTop:10}} onClick={() => {setSelectedRowKeys(assets.map((item) => {return item.key;}))}}>
+                    <Button type="primary" style={{marginTop:10}} onClick={() => {setSelectedRowKeys(assets.map((item) => {return item.key;}));}}>
                         全选
                     </Button>
                     <Button type="primary" onClick={onSubmit} disabled={!hasSelected} loading={loading} style={{marginTop:10}}>
