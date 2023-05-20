@@ -59,23 +59,27 @@ const LoginForm = (props: LoginFormProps) => {
                         name="basic"
                         initialValues={{ remember: true }}>
 
-                        <Form.Item name="username" rules={[{ required: true, message: "请输入用户名" }]}>
-                            <div className="group">
-                                <input type="text" className="input"/>
-                                <span className="highlight"></span>
-                                <span className="bar"></span>
-                                <label>Username</label>
-                            </div>
-                        </Form.Item>
+                        <Space direction="vertical" size="middle">
 
-                        <Form.Item name="password" rules={[{ required: true, message: "请输入密码" }]}>
-                            <div className="group">
-                                <input type="password" className="input"/>
-                                <span className="highlight"></span>
-                                <span className="bar"></span>
-                                <label>Password</label>
-                            </div>
-                        </Form.Item>
+                            <Form.Item name="username" rules={[{ required: true, message: "请输入用户名" }]}>
+                                <div className="group">
+                                    <input type="text" className="input"/>
+                                    <span className="highlight"></span>
+                                    <span className="bar"></span>
+                                    <label>Username</label>
+                                </div>
+                            </Form.Item>
+
+                            <Form.Item name="password" rules={[{ required: true, message: "请输入密码" }]}>
+                                <div className="group">
+                                    <input type="password" className="input"/>
+                                    <span className="highlight"></span>
+                                    <span className="bar"></span>
+                                    <label>Password</label>
+                                </div>
+                            </Form.Item>
+
+                        </Space>
 
                         <Modal open={!correct} onOk={() => setPassword(true)} onCancel={() => setPassword(true)} centered>
                             {error}
