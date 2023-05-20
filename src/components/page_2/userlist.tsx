@@ -152,15 +152,14 @@ const Userlist =( () => {
             dataIndex: "username",
             copyable: true,
             ellipsis: true,
+            width:"20%"
         },
         {
             title: "部门",
             dataIndex: "departmentname",
             copyable: true,
             ellipsis: true,
-            request: async () => {
-                console.log(departmentlsit);
-                return departmentlsit;},
+            width:"20%",
         // valueEnum: departmentlsit.map((item)=>{return {text:item.label,value:item.value};}),
         // align: 'center',
         // sorter: (a, b) => a.containers - b.containers,
@@ -168,6 +167,7 @@ const Userlist =( () => {
         {
             title: "状态",
             dataIndex: "whetherlocked",
+            width:"20%",
             hideInSearch: true,
             ellipsis: true,
             // align: 'center',
@@ -197,9 +197,14 @@ const Userlist =( () => {
         },
         {
             title: "职位",
-            width: 80,
+            width: "20%",
             dataIndex: "character",
             ellipsis: true,
+            
+            valueEnum:{
+                3:"资产管理员",
+                4:"企业员工",
+            },
             // align: 'center',
             render: (text, row) => [
                 (row.character === 4)?
@@ -224,7 +229,7 @@ const Userlist =( () => {
         {
             title: "操作",
             valueType: "option",
-            width: 80,
+            width: "20%",
             key: "option",
             render: (text, row, _) => [
                 <Button key="outer" onClick={()=>{assign({key:row.username,username: row.username , Department:row.departmentname});}} >调整部门</Button>,
@@ -242,16 +247,20 @@ const Userlist =( () => {
                         }else if(key === "unlock"){
                             unlock(row.username);
                         }else if(key === "down"){
-                            changepos(row);
+                            let temp = row;
+                            temp.character=4;
+                            changepos(temp);
                         }else if(key === "up"){
-                            changepos(row);
+                            let temp = row;
+                            temp.character=3;
+                            changepos(temp);
                         }
                     }}
                     menus={[
                         { key: "app", name: "管理应用" },
                         { key: "reset", name: "重置密码" },
                         (!row.whetherlocked)?{ key: "lock", name: "锁定" }:{ key: "unlock", name: "解锁" },
-                        (row.character === 3)?{ key: "down", name: "降职" }:{ key: "up", name: "升职" },
+                        ((row.character === 3))?{ key: "down", name: "降职" }:{ key: "up", name: "升职" },
                     ]}
                 />,
             ],
@@ -385,84 +394,92 @@ const Userlist =( () => {
             });
     });
     return (
-        isSpinning?<Spin tip="Loading..."></Spin>:<div >
+        <div >
+           
             <Appmanage isOpen={ismanageopen} username={manageappname} onClose={()=>{setmanage(false);}}>  </Appmanage>
             <CreateUser isOpen={isDialogOpen1} onClose={()=>setIsDialogOpen1(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser>
             <CreateUser2 isOpen={isDialogOpen2} onClose={()=>setIsDialogOpen2(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser2>
             <Resetpassword isOpen={isrest} onClose={()=>{setisreset(false);}} username={resetname} onCreateUser={reset} ></Resetpassword>
             <CreateDE isOpen={isDEOpen} onClose={()=>{setisDEOpen(false);}} username={apdDEname} departmentlist={departmentlsit} onCreateUser={handleapdDE}  olddepartment={olddepartment}></CreateDE>
             <Manageapp isOpen={isappOpen} onClose={()=>{setappopen(false);}} username={appapduser?.username} applist={appapduser?.oldapplist} identity={appapduser.identity} Onok={()=>{setappopen(false);let i=castnum+1;setcastnum(i);}}></Manageapp>
-            <ProTable<User_to_show>
-                rowSelection={rowSelection}
-                columns={columns}
-                request={(params, sorter, filter) => {
-                    // 表单搜索项会从 params 传入，传递给后端接口。
-                    setSelectedRowKeys([]);
-                    console.log("hello world");
-                    console.log(params);
-                    let success:boolean = true;
-                    setsearchname(params.username);
-                    setsearchdepart(params.departmentname);
-                    setsearchidentity(params.character);
-                    request("api/user/es/searchuser","POST",{page:params.current,username:params.username,department:params.departmentname,identity:params.character})
-                        .then((res)=>{
-                            let size1:number=(res.data).length;
-                            let i=0;
-                            let temptable : User_to_show[] = [];
-                            for (i;i<size1;i++){
-                                temptable.push({
-                                    username:res.data[i].name,
-                                    departmentname:res.data[i].department,
-                                    character:(res.data[i].identity === 3)?3:4,
-                                    whetherlocked:(res.data[i].locked)?true:false,
-                                    lockedapp:res.data[i].lockedapp,
-                                    entityname:res.data[i].entity,
-                                    key: res.data[i].name +" "+res.data[i].department,
-                                });
-                            }
-                            setpagenation({current:params.page,pageSize:pagenation.pageSize,total:res.count});
-                            setuserlist(temptable);
-                            success = true;
-                        // message.success("查询成功");
-                        })
-                        .catch((err)=>{
-                            success = false;
-                            message.warning(err.message);
+            <Spin spinning={isSpinning}>
+                <ProTable<User_to_show>
+                    rowSelection={rowSelection}
+                    columns={columns}
+                    request={(params, sorter, filter) => {
+                        // 表单搜索项会从 params 传入，传递给后端接口。
+                        setSelectedRowKeys([]);
+                        console.log("hello world");
+                        console.log(params);
+                        let success:boolean = true;
+                        setsearchname(params.username);
+                        setsearchdepart(params.departmentname);
+                        setsearchidentity(params.character);
+                        setSpnning(true);
+                        request("api/user/es/searchuser","POST",{page:params.current,username:params.username,department:params.departmentname,identity:params.character})
+                            .then((res)=>{
+                                    
+                                let size1:number=(res.data).length;
+                                let i=0;
+                                let temptable : User_to_show[] = [];
+                                for (i;i<size1;i++){
+                                    temptable.push({
+                                        username:res.data[i].name,
+                                        departmentname:res.data[i].department,
+                                        character:(res.data[i].identity === 3)?3:4,
+                                        whetherlocked:(res.data[i].locked)?true:false,
+                                        lockedapp:res.data[i].lockedapp,
+                                        entityname:res.data[i].entity,
+                                        key: res.data[i].name +" "+res.data[i].department,
+                                    });
+                                }
+                                setpagenation({current:params.page,pageSize:pagenation.pageSize,total:res.count});
+                                setuserlist(temptable);
+                                success = true;
+                                setSpnning(false);
+                                message.success("查询成功");
+                            })
+                            .catch((err)=>{
+                                success = false;
+                                setSpnning(false);
+                                message.warning(err.message);
+                            });
+                        return Promise.resolve({
+                            data: [],
+                            success: success,
                         });
-                    return Promise.resolve({
-                        data: [],
-                        success: success,
-                    });
-                }}
-                rowKey="key"
-                pagination={{current:pagenation.current,pageSize:pagenation.pageSize,total:pagenation.total}}
-                search={{
-                    labelWidth: "auto",
-                }}
-                dateFormatter="string"
-                dataSource={userlist}
-                headerTitle=
-                    {<Text ellipsis={true}>{"员工列表"}</Text>}
-                toolBarRender={() => [
-                    <Button key="1" type="primary" onClick={()=>{setIsDialogOpen1(true);}}>
-                    创建资产管理员
-                    </Button>,
-                    <Button key="3" type="primary" onClick={()=>{setIsDialogOpen2(true);}}>
-                    创建企业员工
-                    </Button>,
-                    <Popconfirm
-                        title="删除选中人员"
-                        description="您确定要删除选中的人员吗?"
-                        onConfirm={delete_users}
-                        onCancel={()=>{}}
-                        okText="Yes"
-                        cancelText="No"
-                        key={"delete confirm"}
-                    >
-                        <Button type="link" key="2" danger={true} disabled={!hasSelected} >删除选中人员</Button>
-                    </Popconfirm>                       
-                ]}
-            />
+                    }}
+                    rowKey="key"
+                    pagination={{current:pagenation.current,pageSize:pagenation.pageSize,total:pagenation.total,showSizeChanger:false}}
+                    search={{
+                        labelWidth: "auto",
+                    }}
+                    dateFormatter="string"
+                    dataSource={userlist}
+                    headerTitle=
+                        {<Text ellipsis={true}>{"员工列表"}</Text>}
+                    toolBarRender={() => [
+                        <Button key="1" type="primary" onClick={()=>{setIsDialogOpen1(true);}}>
+                            创建资产管理员
+                        </Button>,
+                        <Button key="3" type="primary" onClick={()=>{setIsDialogOpen2(true);}}>
+                            创建企业员工
+                        </Button>,
+                        <Popconfirm
+                            title="删除选中人员"
+                            description="您确定要删除选中的人员吗?"
+                            onConfirm={delete_users}
+                            onCancel={()=>{}}
+                            okText="Yes"
+                            cancelText="No"
+                            key={"delete confirm"}
+                            disabled={!hasSelected}
+                        >
+                            <Button type="link" key="2" danger={true} disabled={!hasSelected} >删除选中人员</Button>
+                        </Popconfirm>                       
+                    ]}
+                />
+            </Spin>
         </div>
     );
 }

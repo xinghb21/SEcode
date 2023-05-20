@@ -170,6 +170,7 @@ const EStable=()=> {
                     columns={columns} 
                     pagination={{
                         pageSize: 10,
+                        showSizeChanger:false,
                     }}
                     dataSource={users} 
                 />

@@ -112,7 +112,7 @@ const ClearAsset = (() => {
         <>
             <ProTable<AssetDisplayType>
                 bordered={true}
-                pagination={{ pageSize: 10 }}
+                pagination={{ pageSize: 10,showSizeChanger:false }}
                 // metas={{
                 //     title: { dataIndex: "assetname" },
                 //     description: {

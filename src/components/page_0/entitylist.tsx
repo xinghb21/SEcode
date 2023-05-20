@@ -170,6 +170,7 @@ const Entitylist = (() => {
                 }}
                 pagination={{
                     pageSize: 10,
+                    showSizeChanger:false,
                 }}
                 // metas={{
                 //     title: { dataIndex: "entityname", },

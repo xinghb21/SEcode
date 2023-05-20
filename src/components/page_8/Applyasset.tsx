@@ -8,6 +8,8 @@ import Applysubmit from "./applysubmit";
 import { ColumnsType } from "antd/es/table";
 import Applydetail from "./Applydetail";
 import { Typography } from "antd";
+import Buttonwithloading from "./Buttonwithloading";
+
 
 const { Title } = Typography;
 interface asset {
@@ -41,8 +43,12 @@ const Applyasset = () => {
     const [datailmessage, setdetailmessage] = useState<string>("");
     const [datailid, setdetailid] = useState<number>(-1);
     const [spinloading, setspinloading] = useState<boolean>(false);
-    const [currentrowselcet, setcurrentrowselect] = useState<React.Key[]>([]);
+    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [applynum, setapplynum] = useState<number>(0);
+
+
+
+
     const [pagenation, setpagenation] = useState({
         current: 1, // 当前页码
         pageSize: 10, // 每页显示条数
@@ -125,19 +131,29 @@ const Applyasset = () => {
         // 构造请求参数
         // 发送请求获取数据
         //判断是否重复请求数据
-
+        let emptylist = [];
+        setSelectedRowKeys(emptylist);
         setspinloading(true);
         request("/api/user/ns/getassets", "GET", { page: page })
             .then((res) => {
                 // 更新表格数据源和分页器状态
-                let tem = res.info.map((val) => {
+                let tem = res.info.map((val,index) => {
+                    let tempapply = 1;
+                    let tempasset = useable_assetslist.filter((obj)=>{
+                        return(
+                            obj.key === ( val.id+" "+(val.count as string) )
+                        );
+                    });
+                    if(tempasset.length != 0){
+                        tempapply = tempasset[0].applycount; 
+                    }
                     return ({
                         key: (val.id as string) + " " + (val.count as string),
                         id: val.id,
                         name: val.name,
                         type: val.type,
                         count: val.count,
-                        applycount: 1
+                        applycount: tempapply,
                     });
                 });
                 //去重
@@ -149,7 +165,7 @@ const Applyasset = () => {
                 });
                 //分页选取实现
                 setspinloading(false);
-                setcurrentrowselect([]);
+
             })
             .catch((error) => {
                 message.warning(error.message);
@@ -158,9 +174,10 @@ const Applyasset = () => {
     };
 
     const rowSelection = {
-        currentrowselcet,
+        selectedRowKeys,
+        hideDefaultSlections:true,
         onChange: (keys: React.Key[]) => {
-            setcurrentrowselect(keys);
+            setSelectedRowKeys(keys);
         },
     };
     //改变申请数量
@@ -180,7 +197,7 @@ const Applyasset = () => {
             message.warning("数量必须是一个数字");
         }
     };
-    const hasSelected = currentrowselcet.length > 0;
+    const hasSelected = selectedRowKeys.length > 0;
     const handlesubmitsuccess = () => {
         //在员工成功申请之后，重新刷新页面
         document.getElementsByName("inputnum").forEach((e) => {
@@ -188,10 +205,10 @@ const Applyasset = () => {
             console.log("set");
         });
 
-        setcurrentrowselect([]);
+        setSelectedRowKeys([]);
         setassetselected([]);
         setapplynum(applynum + 1);
-        console.log(currentrowselcet);
+        console.log(selectedRowKeys);
     };
     const handledelete = (rowid: number) => {
         request("/api/user/ns/deleteapplys", "DELETE", { id: rowid })
@@ -206,7 +223,7 @@ const Applyasset = () => {
     };
     //检查一遍申请的资产数量
     const checksubmit = () => {
-        let selectasset = useable_assetslist.filter((obj) => { return currentrowselcet.find((row) => { return row == obj.key; }) != null; });
+        let selectasset = useable_assetslist.filter((obj) => { return selectedRowKeys.find((row) => { return row == obj.key; }) != null; });
         let size = selectasset.length;
         let ans = true;
         let i = 0;
@@ -221,7 +238,7 @@ const Applyasset = () => {
     };
     const handlesubclick = () => {
         if (checksubmit()) {
-            let selectasset = useable_assetslist.filter((obj) => { return currentrowselcet.find((row) => { return row == obj.key; }) != null; });
+            let selectasset = useable_assetslist.filter((obj) => { return selectedRowKeys.find((row) => { return row == obj.key; }) != null; });
 
             setIsDialogOpen1(true);
             setassetselected(selectasset);
@@ -229,7 +246,9 @@ const Applyasset = () => {
             message.warning("申请的资产数量超额或为0");
         }
     };
+    
 
+ 
     return (
         <div style={{ height: "100%" }}>
             <Spin spinning={spinloading} size="large"  >
@@ -260,7 +279,7 @@ const Applyasset = () => {
                                 ];
                             }}
                             bordered={true}
-                            pagination={{ current: pagenation.current, pageSize: pagenation.pageSize, onChange: handleFetch, total: pagenation.total }}
+                            pagination={{ current: pagenation.current, pageSize: pagenation.pageSize, onChange: handleFetch, total: pagenation.total,showSizeChanger:false }}
                             columns={columns}
                             search={false}
                             options={false}
@@ -312,7 +331,7 @@ const Applyasset = () => {
                                         return (
                                             <div>
                                                 <Button onClick={() => { setdetailid(row.id); setdetailmessage(row.message); setdetailreason(row.reason); setisdetailopen(true); }}>查看详情</Button>
-                                                <Button onClick={() => { handledelete(row.id); }} disabled={(row.state === 0)} > 删除 </Button>
+                                                <Buttonwithloading disable={row.state === 0 } onhandleclick={()=>{handledelete(row.id);}} ></Buttonwithloading>
                                             </div>
                                         );
                                     },
