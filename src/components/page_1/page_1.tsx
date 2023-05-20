@@ -152,36 +152,35 @@ const EStable=()=> {
             });
     };
     const start = (entityname:string) => {
-        if (window.confirm("确认解雇改企业系统管理员？")){
-            //在这里加入删除的后端访问
-            let i=0;
-            let deleteenbtityname:string[]=[];
-            deleteenbtityname.push(entityname);
-            request("/api/entity/deletealladmins","DELETE",{entity:deleteenbtityname})
-                .then((res)=>{
-                    fetchlist();
-                })
-                .catch((err)=>{
-                    message.warning(err.message);
-                });
-        }
+
+        //在这里加入删除的后端访问
+        let i=0;
+        let deleteenbtityname:string[]=[];
+        deleteenbtityname.push(entityname);
+        request("/api/entity/deletealladmins","DELETE",{entity:deleteenbtityname})
+            .then((res)=>{
+                fetchlist();
+            })
+            .catch((err)=>{
+                message.warning(err.message);
+            });
+        
     };
 
     const delete_entity = ((name:string) => {
-        if (window.confirm("确认删除所选业务实体？")) {
-            //在这里添加后端通信，删除业务实体，并更改前端
-            let i = 0;
-            let deleteentityname: string[] = [];
-            deleteentityname.push(name);
-            request("/api/entity/deleteall", "DELETE", { name: deleteentityname })
-                .then((res) => {
-                    fetchlist();
-                    message.success("删除成功");
-                })
-                .catch((err) => {
-                    message.warning(err.message);
-                });
-        }
+        //在这里添加后端通信，删除业务实体，并更改前端
+        let i = 0;
+        let deleteentityname: string[] = [];
+        deleteentityname.push(name);
+        request("/api/entity/deleteall", "DELETE", { name: deleteentityname })
+            .then((res) => {
+                fetchlist();
+                message.success("删除成功");
+            })
+            .catch((err) => {
+                message.warning(err.message);
+            });
+        
     });
 
 
