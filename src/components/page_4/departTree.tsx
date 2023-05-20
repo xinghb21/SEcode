@@ -379,7 +379,8 @@ const Dtree = () => {
                     current: pagenation.current,
                     pageSize: pagenation.pageSize,
                     onChange: handleFetch,
-                    total: pagenation.total
+                    total: pagenation.total,
+                    showSizeChanger: false,
                 }} bordered={true} columns={columns} dataSource={Depusers} search={false} style={{ height: "100%", width: "70%" }} />
             <CtCeDT title={"创建下属部门"} subtitle={"部门名称："} isOpen={isDialogOpenCT} onClose={() => setIsDialogOpenCT(false)} onCreateDt={handleCreateDt} />
             <CtCeDT title={"修改部门名称"} subtitle={"新名称："} isOpen={isDialogOpenCE} onClose={() => setIsDialogOpenCE(false)} onCreateDt={handleChangeDt} />
