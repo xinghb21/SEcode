@@ -19,6 +19,7 @@ interface DialogProps{
     username:string;
     departmentlist:department_to_show[];
     olddepartment:string;
+    loading:boolean;
     onCreateUser: (newuser:User_DEpartment ) => void;
   }
 
@@ -44,12 +45,12 @@ const CreateDE=(props: DialogProps) =>{
         setdepartment(value.value);
     };
     return (
-        <Modal  title="更改员工部门" open={props.isOpen} okButtonProps={{loading:loading}} onOk={handleCreateUser} onCancel={props.onClose} >
+        <Modal  title="更改员工部门" open={props.isOpen} okButtonProps={{loading:props.loading}} onOk={handleCreateUser} onCancel={props.onClose} >
             <div style={{display:"flex",flexDirection:"column"}}>
                 <label>部门:</label>
                 <Select
                     labelInValue
-                    style={{ width: 120 }}
+                    style={{ minWidth: 180 }}
                     onChange={handleChange}
                     options={props.departmentlist}
                 />

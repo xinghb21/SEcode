@@ -52,24 +52,23 @@ const Appmagage=(props:DialogProps)=>{
     };
     const hasSelected = selectedRowKeys.length > 0;
     const  delete_apps=()=>{
-        if(window.confirm("确定删除所选应用？")){
 
-            let deleted:app[]=applists.filter((obj)=>{return selectedRowKeys.find((rowkey)=>{return rowkey === obj.key; }) != null; });
-            if (deleted.length>0){
-                request("api/user/es/deleteapps","DELETE",{username:props.username,appdeleted:deleted.map((val)=>{return val.name;})})
-                    .then((res)=>{
-                        message.success("删除成功");
-                        fetchlist();
-                        setSelectedRowKeys([]);
-                    })
-                    .catch((err)=>{
-                        message.warning(err.message);
-                    });
-            }
+        let deleted:app[]=applists.filter((obj)=>{return selectedRowKeys.find((rowkey)=>{return rowkey === obj.key; }) != null; });
+        if (deleted.length>0){
+            request("api/user/es/deleteapps","DELETE",{username:props.username,appdeleted:deleted.map((val)=>{return val.name;})})
+                .then((res)=>{
+                    message.success("删除成功");
+                    fetchlist();
+                    setSelectedRowKeys([]);
+                })
+                .catch((err)=>{
+                    message.warning(err.message);
+                });
         }
+        
     };
     return (
-        <Spin spinning={isspin}>
+        <Spin spinning={isspin} size="small">
             <Modal  title="应用列表管理" onOk={()=>{props.onClose();}} onCancel={()=>{props.onClose();}} open={props.isOpen}  >
                 <Addapp isOpen={dialogopen1} username={props.username} onClose={()=>{ setIsDialogOpen1(false);fetchlist(); }}></Addapp>
             

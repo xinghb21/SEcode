@@ -12,6 +12,7 @@ interface DialogProps{
     isOpen: boolean;
     onClose: () => void;
     username:string;
+    loading:boolean;
     onCreateUser: (newuser:User_Password ) => void;
   }
 
@@ -49,7 +50,7 @@ const Resetpassword=(props: DialogProps) =>{
     };
 
     return (
-        <Modal  title="重置员工密码" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} okButtonProps={{loading:loading}} >
+        <Modal  title="重置员工密码" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} okButtonProps={{loading:props.loading}} >
             <div>
                 <label>将员工{props.username}的密码重置为:</label>
                 <Input type="password" value={newpassword} onChange={(e) => setnewpassword(e.target.value)} />

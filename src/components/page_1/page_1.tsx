@@ -34,6 +34,10 @@ const EStable=()=> {
     const [spinloading , setspinloading] = useState (false);
     const [isuserDialogopen, setIsuserDialogopen] = useState(false);
     const [assignentity,setassignentity] = useState<string>("");
+    const [assignloading,setassignloading] = useState<boolean>(false);
+    const [enloading, setenloading ] = useState<boolean>(false);
+    const [ deenloading, setdeenloading ] = useState<boolean>(false);
+    const [ deesloading , setdeesloading ] = useState<boolean >(false);
     const columns: ProColumns<User> []= [
         {        
             title: "业务实体编号",
@@ -46,7 +50,7 @@ const EStable=()=> {
         {
             title: "系统管理员",
             dataIndex: "username",
-            render:(_,row)=>{return (row.username==""?<div>暂无资产管理员</div>:<div>{row.username}</div>);}
+            render:(_,row)=>{return (row.username==""?<div>暂无系统管理员</div>:<div>{row.username}</div>);}
         },
         {
             title: "操作",
@@ -63,7 +67,7 @@ const EStable=()=> {
                             <a style={{color:"green"}} > {"委派系统管理员"}</a>
                         </Popconfirm>
                         <Popconfirm
-                            title="确认删除所选业务实体？"
+                            title="确认删除该业务实体？"
                             onConfirm={() => { delete_entity(row.entity); }}
                             okText="确认"
                             cancelText="取消"
@@ -78,6 +82,7 @@ const EStable=()=> {
                             onConfirm={()=>{start(row.entity);}}
                             okText="确认"
                             cancelText="取消"
+                            okButtonProps={{loading:deesloading}}
                         >
                             <a style={{color:"red"}}>{"删除系统管理员"}</a>
                         </Popconfirm>
@@ -99,15 +104,19 @@ const EStable=()=> {
     const handleCreateUser = (user: User) => {
         //在这里向后端发送请求
         const userdata = { "name": user.username, "entity": user.entity, "password": Md5.hashStr(user.password) };
+        
         if(user.username!==""){
+            setassignloading(true);
             request("/api/entity/assgin", "POST", userdata)
                 .then((res) => {
                     setIsuserDialogopen(false);
                     message.success("创建成功");
+                    setassignloading(false);
                     fetchlist();
                 })
                 .catch((err) => {
                     setIsuserDialogopen(false);
+                    setassignloading(false);
                     message.warning("创建失败");
                 });
         }else{
@@ -118,13 +127,16 @@ const EStable=()=> {
     const handleCreateEntity = ((entitys: EntityRegister) => {
         //在这里实现后端通信，添加业务实体，不指派管理员，setEntitylist
         if(entitys.entityname !== ""){
+            setenloading(true);
             request("/api/entity/create", "POST", { name: entitys.entityname })
                 .then((res) => {
                     setIsentityDialogOpen(false);
                     fetchlist();
+                    setenloading(false);
                     message.success("创建成功");
                 })
                 .catch((err) => {
+                    setenloading(false);
                     setIsentityDialogOpen(false);
                     message.warning(err.message);
                 });
@@ -157,11 +169,14 @@ const EStable=()=> {
         let i=0;
         let deleteenbtityname:string[]=[];
         deleteenbtityname.push(entityname);
+        setdeesloading(true);
         request("/api/entity/deletealladmins","DELETE",{entity:deleteenbtityname})
             .then((res)=>{
                 fetchlist();
+                setdeesloading(false);
             })
             .catch((err)=>{
+                setdeesloading(false);
                 message.warning(err.message);
             });
         
@@ -172,12 +187,15 @@ const EStable=()=> {
         let i = 0;
         let deleteentityname: string[] = [];
         deleteentityname.push(name);
+        setdeenloading(true);
         request("/api/entity/deleteall", "DELETE", { name: deleteentityname })
             .then((res) => {
+                setdeenloading(false);
                 fetchlist();
                 message.success("删除成功");
             })
             .catch((err) => {
+                setdeenloading(false);
                 message.warning(err.message);
             });
         
@@ -201,8 +219,8 @@ const EStable=()=> {
                     }}
                     dataSource={users} 
                 />
-                <AssignEs isOpen={isuserDialogopen} entityname={assignentity} onClose={() => setIsuserDialogopen(false)} onCreateUser={handleCreateUser} ></AssignEs>
-                <CreateEn isOpen={isentityDialogOpen} onClose={() => setIsentityDialogOpen(false)} onCreateUser={handleCreateEntity} ></CreateEn>
+                <AssignEs loading={assignloading} isOpen={isuserDialogopen} entityname={assignentity} onClose={() => setIsuserDialogopen(false)} onCreateUser={handleCreateUser} ></AssignEs>
+                <CreateEn loading={enloading} isOpen={isentityDialogOpen} onClose={() => setIsentityDialogOpen(false)} onCreateUser={handleCreateEntity} ></CreateEn>
             
             </Spin>
         </div>

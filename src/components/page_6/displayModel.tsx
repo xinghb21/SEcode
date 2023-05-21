@@ -95,6 +95,7 @@ const DisplayModel = (props: ModelProps) => {
     const [used, setUsed] = useState<string[]>([]);
     // const [showlabels, setShowlabels] = useState<[]>([]);
     const [text, setText] = useState<string>("");
+    const [okloading,setokloading] = useState<boolean>(false);
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(()=>{
         return Object.entries(props.content.additional).map((item) => {
             return (item[0]);
@@ -192,10 +193,12 @@ const DisplayModel = (props: ModelProps) => {
     const handleOk = () => {
         
         if(editRowKeys == null || editRowKeys.length == 0) {
+            setokloading(true);
             let addition = {};
             dataSource.forEach((item) => {
                 addition[item.label] = item.value;
             });
+            
             if(assetDisplay.parent == null || assetDisplay.parent == "暂无上级资产") {
                 request("/api/user/ep/modifyasset", "POST", 
                     {
@@ -206,8 +209,10 @@ const DisplayModel = (props: ModelProps) => {
                     })
                     .then((res) => {
                         message.success("修改成功");
+                        setokloading(false);
                         props.onClose();
                     }).catch((err) => {
+                        setokloading(false);
                         message.error(err.message);
                     });
             } else {
@@ -221,8 +226,10 @@ const DisplayModel = (props: ModelProps) => {
                     })
                     .then((res) => {
                         message.success("修改成功");
+                        setokloading(false);
                         props.onClose();
                     }).catch((err) => {
+                        setokloading(false);
                         message.error(err.message);
                     });
             }
@@ -294,7 +301,7 @@ const DisplayModel = (props: ModelProps) => {
             onClose={props.onClose}
             width="70%"
             footer={[
-                <Button key="back" type="primary" onClick={handleOk}>
+                <Button key="back" type="primary" loading={okloading} onClick={handleOk}>
                     确认
                 </Button>
             ]}

@@ -94,7 +94,12 @@ const Userlist =( () => {
     const [manageappname,setmanagename]=useState<string>("");
     const [ searchname , setsearchname ] = useState<any>();
     const [ searchdepartment,setsearchdepart ] = useState<any>();
+    const [ iscr1loading, setscr1loading ] = useState<boolean>(false);
+    const [ iscr2loading, setscr2loading ] = useState<boolean>(false);
     const [ searchidentity,setsearchidentity ] = useState<any>();
+    const [ isrsloading,setrsloading  ] = useState<boolean>(false);
+    const [isDeloading, setisDeloading ] = useState<boolean>(false);
+    const [deleloading, setdeleloading ] =useState<boolean>(false); 
     const [pagenation,setpagenation] = useState({
         current: 1, // 当前页码
         pageSize: 10, // 每页显示条数
@@ -227,7 +232,8 @@ const Userlist =( () => {
                                 <ArrowUpOutlined  style={{ marginLeft: 10 }} onClick={() => {                            
                                     let temp = row;
                                     temp.character=3;
-                                    changepos(temp);}} />
+                                    changepos(temp);}} 
+                                />
                             </Tooltip>
                         </span>
                     </div>):
@@ -287,14 +293,29 @@ const Userlist =( () => {
     ];
     const handleCreateUser = (user: UserRegister) => {
         if( user.username!== "" && user.department !== ""){
+            if(user.identity === 3){
+                setscr1loading(true);
+            }else{
+                setscr2loading(true);
+            }
             request("api/user/createuser","POST",{name:user.username,password:user.password,entity:user.entityname,department:user.department,identity:user.identity})
                 .then((res)=>{
+                    if(user.identity === 3){
+                        setscr1loading(false);
+                    }else{
+                        setscr2loading(false);
+                    }
                     setcastnum(castnum+1);
                     setcastnum(castnum+1);
                     setIsDialogOpen1(false);
                     setIsDialogOpen2(false);
                 })
                 .catch((err)=>{
+                    if(user.identity === 3){
+                        setscr1loading(false);
+                    }else{
+                        setscr2loading(false);
+                    }
                     message.warning(err.message);
                 });
         }else{
@@ -306,12 +327,16 @@ const Userlist =( () => {
 
 
     const reset=((newuser:User_Password)=>{
+        setrsloading(true);
         request("api/user/es/reset","POST",{name:newuser.username,newpassword:Md5.hashStr(newuser.newpassword)})
             .then((res)=>{
                 message.success("成功重置该员工密码");
+                setrsloading(false);
                 setisreset(false);
             })
             .catch((err)=>{
+                setrsloading(false);
+                setisreset(false);
                 message.warning(err.message);
             });
     });
@@ -326,6 +351,7 @@ const Userlist =( () => {
         setisDEOpen(true);
     });
     const handleapdDE =((newde:User_DEpartment)=>{
+        setisDeloading(true);
         request("api/user/es/alter","POST",{name:newde.username,department:newde.Department})
             .then((res)=>{
                 let i=0;
@@ -339,10 +365,12 @@ const Userlist =( () => {
                         newuserlist.push(userlist[i]);
                     }   
                 }
+                setisDeloading(false);
                 setuserlist(newuserlist);
                 setisDEOpen(false);
             })
             .catch((err)=>{
+                setisDeloading(false);
                 message.warning(err.message);
             });
 
@@ -367,13 +395,16 @@ const Userlist =( () => {
                 }
             }
         }
+        setdeleloading(true);
         request("/api/user/es/batchdelete","DELETE",{names:deletedusername})
             .then((res)=>{
                 let i=castnum+1;
                 setcastnum(i);
                 setSelectedRowKeys([]);
+                setdeleloading(false);
             })
             .catch((err)=>{
+                setdeleloading(false);
                 message.warning(err.message);
             });
         
@@ -416,11 +447,11 @@ const Userlist =( () => {
         <div >
            
             <Appmanage isOpen={ismanageopen} username={manageappname} onClose={()=>{setmanage(false);}}>  </Appmanage>
-            <CreateUser isOpen={isDialogOpen1} onClose={()=>setIsDialogOpen1(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser>
-            <CreateUser2 isOpen={isDialogOpen2} onClose={()=>setIsDialogOpen2(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser2>
-            <Resetpassword isOpen={isrest} onClose={()=>{setisreset(false);}} username={resetname} onCreateUser={reset} ></Resetpassword>
-            <CreateDE isOpen={isDEOpen} onClose={()=>{setisDEOpen(false);}} username={apdDEname} departmentlist={departmentlsit} onCreateUser={handleapdDE}  olddepartment={olddepartment}></CreateDE>
-            <Manageapp isOpen={isappOpen} onClose={()=>{setappopen(false);}} username={appapduser?.username} applist={appapduser?.oldapplist} identity={appapduser.identity} Onok={()=>{setappopen(false);let i=castnum+1;setcastnum(i);}}></Manageapp>
+            <CreateUser isOpen={isDialogOpen1} onClose={()=>setIsDialogOpen1(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} loading={iscr1loading} ></CreateUser>
+            <CreateUser2 isOpen={isDialogOpen2} loading={iscr2loading} onClose={()=>setIsDialogOpen2(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser2>
+            <Resetpassword isOpen={isrest} onClose={()=>{setisreset(false);}} username={resetname} onCreateUser={reset} loading={isrsloading} ></Resetpassword>
+            <CreateDE isOpen={isDEOpen}  loading={isDeloading} onClose={()=>{setisDEOpen(false);}} username={apdDEname} departmentlist={departmentlsit} onCreateUser={handleapdDE}  olddepartment={olddepartment}></CreateDE>
+           
             <Spin spinning={isSpinning}>
                 <ProTable<User_to_show>
                     rowSelection={rowSelection}
@@ -492,6 +523,7 @@ const Userlist =( () => {
                             onCancel={()=>{}}
                             okText="Yes"
                             cancelText="No"
+                            okButtonProps={{loading:deleloading}}
                             key={"delete confirm"}
                             disabled={!hasSelected}
                         >

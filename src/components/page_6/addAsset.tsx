@@ -198,11 +198,13 @@ const AddAsset = () => {
         request("/api/asset/post", "POST", selectedAssert)
             .then(() => {
                 setAsset(newAssets);
+                setSelectedRowKeys([]);
                 message.success("提交成功");
                 setLoading(false);
             })
             .catch((err) => {
                 message.warning(err.message);
+                setSelectedRowKeys([]);
                 setLoading(false);
             });
         setTimeout(() => {

@@ -12,6 +12,7 @@ interface User{
 interface DialogProps{
     isOpen: boolean;
     onClose: () => void;
+    loading:boolean;
     onCreateUser: (user: User) => void;
   }
 
@@ -21,7 +22,6 @@ const CreateES=(props: DialogProps) =>{
     const [newentity, setEntity] = useState("");
     const [loading,setloading]=useState<boolean>(false);
     const handleCreateUser = () => {
-        setloading(true);
         const user: User = {
             key: newusername,
             username: newusername,
@@ -38,12 +38,10 @@ const CreateES=(props: DialogProps) =>{
         if(a != null){
             if(a[0] !== newpassword){
                 message.warning("密码只能包括英文字符或数字");
-                setloading(false);
                 return;
             }
         }else{
             message.warning("密码只能包括英文字符或数字");
-            setloading(false);
             return;
         }
         props.onCreateUser(user);
@@ -54,7 +52,7 @@ const CreateES=(props: DialogProps) =>{
     };
 
     return (
-        <Modal  title="创建企业系统管理员" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} okButtonProps={{loading:loading}} >
+        <Modal  title="创建企业系统管理员" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} okButtonProps={{loading:props.loading}} >
             <div>
                 <label>用户名:</label>
                 <Input type="text" value={newusername} onChange={(e) => setUsername(e.target.value)} />

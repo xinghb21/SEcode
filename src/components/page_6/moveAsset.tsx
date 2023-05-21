@@ -28,7 +28,7 @@ const MoveAsset = (props: DialogProps) => {
     const [reason, setReason] = useState<string>("");
     const [department, setDepartment] = useState<string>("");
     const [assetType, setAssetType] = useState<MoveAssetType[]>([]);
-
+    const [ okloading , setokloading] = useState<boolean>(false);
     let assetTypes: MoveAssetType[] = props.content.map((item) => {
         return {
             id: item.key,
@@ -38,6 +38,7 @@ const MoveAsset = (props: DialogProps) => {
     });
 
     const handleOk = () => {
+        setokloading(true);
         request("/api/user/ep/transfer", "POST", 
             {
                 transfer: assetTypes,
@@ -45,8 +46,10 @@ const MoveAsset = (props: DialogProps) => {
                 department: department, 
             }).then((res) => {
             message.success("提交成功，请等待审批");
+            setokloading(false);
             props.onClose();
         }).catch((err) => {
+            setokloading(false);
             message.error(err.message);
         });
     };
@@ -92,7 +95,7 @@ const MoveAsset = (props: DialogProps) => {
             onCancel={props.onClose}
             title="待调拨资产"
             footer={[
-                <Button key="back" type="primary" onClick={handleOk}>
+                <Button key="back" type="primary" loading={okloading} onClick={handleOk}>
                     确认
                 </Button>
             ]}>

@@ -21,6 +21,7 @@ interface DialogProps{
     isOpen: boolean;
     onClose: () => void;
     entityname:string;
+    loading:boolean;
     departmentlist:department_to_show[];
     onCreateUser: (user:UserRegister ) => void;
   }
@@ -67,7 +68,7 @@ const CreateUser=(props: DialogProps) =>{
     };
 
     return (
-        <Modal  title="创建资产管理员" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} okButtonProps={{loading:loading}} >
+        <Modal  title="创建资产管理员" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} okButtonProps={{loading:props.loading}} >
             <div>
                 <label>业务实体名称:{props.entityname}</label>
             </div>
@@ -84,7 +85,7 @@ const CreateUser=(props: DialogProps) =>{
                 <Select
                     labelInValue
                     defaultValue={{value:"",label:""}}
-                    style={{ width: 120 }}
+                    style={{ minWidth: 180 }}
                     onChange={handleChange}
                     options={props.departmentlist}
                 />
