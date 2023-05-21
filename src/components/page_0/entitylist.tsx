@@ -156,8 +156,8 @@ const Entitylist = (() => {
     });
     return (
         <div >
-            <AssignEs isOpen={isassignopen} entityname={assignentity} onClose={() => setIsassignOpen(false)} onCreateUser={handleCreateUser} ></AssignEs>
-            <CreateEn isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} onCreateUser={handleCreateEntity} ></CreateEn>
+            <AssignEs isOpen={isassignopen} loading={false} entityname={assignentity} onClose={() => setIsassignOpen(false)} onCreateUser={handleCreateUser} ></AssignEs>
+            <CreateEn isOpen={isDialogOpen} loading={false} onClose={() => setIsDialogOpen(false)} onCreateUser={handleCreateEntity} ></CreateEn>
             <ProTable<Entity>
                 toolBarRender={() => {
                     return [
