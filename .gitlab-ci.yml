@@ -34,7 +34,7 @@ build-feature:
   stage: test
 
   before_script:
-    - yarn config set registry https://registry.npmmirror.com
+    - yarn config set registry https://registry.npmjs.org
     - yarn install
 
 style-test:
