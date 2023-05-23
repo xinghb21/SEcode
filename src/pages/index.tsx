@@ -63,19 +63,20 @@ const LoginForm = (props: LoginFormProps) => {
 
                             <Form.Item name="username" rules={[{ required: true, message: "请输入用户名" }]}>
                                 <div className="group">
+                                    <label style={{color: "darkblue"}}>Username</label>
                                     <input type="text" className="input"/>
                                     <span className="highlight"></span>
                                     <span className="bar"></span>
-                                    <label>Username</label>
+                                    
                                 </div>
                             </Form.Item>
 
                             <Form.Item name="password" rules={[{ required: true, message: "请输入密码" }]}>
                                 <div className="group">
+                                    <label style={{color: "darkblue"}}>Password</label>
                                     <input type="password" className="input"/>
                                     <span className="highlight"></span>
                                     <span className="bar"></span>
-                                    <label>Password</label>
                                 </div>
                             </Form.Item>
 
