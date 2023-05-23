@@ -14,12 +14,14 @@ interface DialogProps{
     isOpen: boolean;
     entityname:string;
     onClose: () => void;
+    loading:boolean;
     onCreateUser: (user: User) => void;
   }
 
 const AssignEs=(props: DialogProps) =>{
     const [newusername, setUsername] = useState<string>("");
     const [newpassword, setPassword] = useState<string>("");
+    const [isloading, setloading ] = useState<boolean>(false);
     const [newentity,setEntity]=useState<string>(props.entityname);
     const handleCreateUser = () => {
         const user: User = {
@@ -34,7 +36,7 @@ const AssignEs=(props: DialogProps) =>{
     };
 
     return (
-        <Modal  title="创建企业系统管理员" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} >
+        <Modal  title="创建企业系统管理员" open={props.isOpen} okButtonProps={{loading:props.loading}} onOk={handleCreateUser} onCancel={props.onClose} >
             <div>
                 <label>用户名:</label>
                 <Input type="text" value={newusername} onChange={(e) => setUsername(e.target.value)} />

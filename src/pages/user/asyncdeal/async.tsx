@@ -54,12 +54,12 @@ const client = new OSS({
 
 
 
-
 const Asyncbd = () => {
     const [clicktime, setclicktime] = useState<number>(0);
     const [isTBD, setTBD] = useState(false);//true即有待办任务，false相反
     const [dopen, setDOpen] = useState(false);//是否打开任务中心
     const [tasklist,settasklist] = useState<AsyncTask[]>([]);
+    const [timers,settimers] = useState<number[]>([]);
     const [pagenation,setpagenation] = useState({
         current: 1, // 当前页码
         pageSize: 10, // 每页显示条数

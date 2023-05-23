@@ -6,6 +6,7 @@ import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { request } from "../utils/network";
 import { Md5 } from "ts-md5";
 import Circle from "./background";
+
 import Head from "next/head";
 import SITE_CONFIG from "../settings";
 import ReactCanvasNest from "react-canvas-nest"; 
@@ -63,7 +64,7 @@ const LoginForm = (props: LoginFormProps) => {
 
                             <Form.Item name="username" rules={[{ required: true, message: "请输入用户名" }]}>
                                 <div className="group">
-                                    <label style={{color: "darkblue"}}>Username</label>
+                                    <label style={{color:"darkblue"}}>Username</label>
                                     <input type="text" className="input"/>
                                     <span className="highlight"></span>
                                     <span className="bar"></span>
@@ -73,10 +74,11 @@ const LoginForm = (props: LoginFormProps) => {
 
                             <Form.Item name="password" rules={[{ required: true, message: "请输入密码" }]}>
                                 <div className="group">
-                                    <label style={{color: "darkblue"}}>Password</label>
+                                    <label style={{color:"darkblue"}} >Password</label>
                                     <input type="password" className="input"/>
                                     <span className="highlight"></span>
                                     <span className="bar"></span>
+                                    
                                 </div>
                             </Form.Item>
 

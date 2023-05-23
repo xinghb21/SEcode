@@ -51,6 +51,7 @@ import Exchangeasset from "../../components/page_8/exchange/Exchangeasset";
 import ReactCanvasNest from "react-canvas-nest"; 
 import Head from "next/head";
 
+
 const { Text } = Typography;
 
 const { Header, Content, Footer, Sider } = Layout;

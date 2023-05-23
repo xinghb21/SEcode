@@ -16,6 +16,7 @@ import CreateDE from "./CreateDE";
 import Manageapp from "./Manageapp";
 import Appmanage from "./Appmanage";
 import { ArrowDownOutlined, ArrowUpOutlined, DownOutlined, LockOutlined, PlusSquareOutlined, UnlockOutlined } from "@ant-design/icons";
+
 import Pagination from "antd";
 
 const { Text } = Typography;
@@ -73,8 +74,6 @@ interface User_app{
     identity:number;
 }
 
-const userlists:User_to_show[]=[{key:1,username:"11",departmentname:"111",entityname:"1111",character:3,whetherlocked:true,lockedapp:"111111111111"},{key:2,username:"12",departmentname:"112",entityname:"1111",character:4,whetherlocked:false,lockedapp:"1111111111"},{key:3,username:"112",departmentname:"111111",entityname:"1111111",character:4,whetherlocked:false,lockedapp:"11111221111111"}];
-
 const Userlist =( () => {
     const [isSpinning, setSpnning] = useState(false);
     const [castnum,setcastnum]=useState<number>(1);
@@ -95,7 +94,12 @@ const Userlist =( () => {
     const [manageappname,setmanagename]=useState<string>("");
     const [ searchname , setsearchname ] = useState<any>();
     const [ searchdepartment,setsearchdepart ] = useState<any>();
+    const [ iscr1loading, setscr1loading ] = useState<boolean>(false);
+    const [ iscr2loading, setscr2loading ] = useState<boolean>(false);
     const [ searchidentity,setsearchidentity ] = useState<any>();
+    const [ isrsloading,setrsloading  ] = useState<boolean>(false);
+    const [isDeloading, setisDeloading ] = useState<boolean>(false);
+    const [deleloading, setdeleloading ] =useState<boolean>(false); 
     const [pagenation,setpagenation] = useState({
         current: 1, // 当前页码
         pageSize: 10, // 每页显示条数
@@ -160,6 +164,19 @@ const Userlist =( () => {
             copyable: true,
             ellipsis: true,
             width:"20%",
+            request:async ()=>{
+                let departs:department_to_show[]=[];
+                request("api/entity/getalldep","GET")
+                    .then((res)=>{
+                        let size=res.data.length;
+                        for(let i=0;i<size;i++){
+                            departs.push({value:res.data[i] ,label:res.data[i]});
+                        }})
+                    .catch((err)=>{
+                        message.warning(err.message);
+                    });
+                return departs;
+            },
         // valueEnum: departmentlsit.map((item)=>{return {text:item.label,value:item.value};}),
         // align: 'center',
         // sorter: (a, b) => a.containers - b.containers,
@@ -212,7 +229,11 @@ const Userlist =( () => {
                         <span>👨‍🔧普通员工</span>
                         <span>
                             <Tooltip placement="bottom" title={<span>升职为资产管理员</span>}>
-                                <ArrowUpOutlined  style={{ marginLeft: 10 }} onClick={() => changepos(row)} />
+                                <ArrowUpOutlined  style={{ marginLeft: 10 }} onClick={() => {                            
+                                    let temp = row;
+                                    temp.character=3;
+                                    changepos(temp);}} 
+                                />
                             </Tooltip>
                         </span>
                     </div>):
@@ -220,7 +241,11 @@ const Userlist =( () => {
                         <span>💼资产管理员</span>
                         <span>
                             <Tooltip placement="bottom" title={<span>降职为普通员工</span>}>
-                                <ArrowDownOutlined style={{ marginLeft: 10 }} onClick={() => changepos(row)} />
+                                <ArrowDownOutlined style={{ marginLeft: 10 }} onClick={() => {                            
+                                    let temp = row;
+                                    temp.character=4;
+                                    changepos(temp);
+                                }} />
                             </Tooltip>
                         </span>
                     </div>)
@@ -268,13 +293,29 @@ const Userlist =( () => {
     ];
     const handleCreateUser = (user: UserRegister) => {
         if( user.username!== "" && user.department !== ""){
+            if(user.identity === 3){
+                setscr1loading(true);
+            }else{
+                setscr2loading(true);
+            }
             request("api/user/createuser","POST",{name:user.username,password:user.password,entity:user.entityname,department:user.department,identity:user.identity})
                 .then((res)=>{
+                    if(user.identity === 3){
+                        setscr1loading(false);
+                    }else{
+                        setscr2loading(false);
+                    }
+                    setcastnum(castnum+1);
                     setcastnum(castnum+1);
                     setIsDialogOpen1(false);
                     setIsDialogOpen2(false);
                 })
                 .catch((err)=>{
+                    if(user.identity === 3){
+                        setscr1loading(false);
+                    }else{
+                        setscr2loading(false);
+                    }
                     message.warning(err.message);
                 });
         }else{
@@ -286,12 +327,16 @@ const Userlist =( () => {
 
 
     const reset=((newuser:User_Password)=>{
+        setrsloading(true);
         request("api/user/es/reset","POST",{name:newuser.username,newpassword:Md5.hashStr(newuser.newpassword)})
             .then((res)=>{
                 message.success("成功重置该员工密码");
+                setrsloading(false);
                 setisreset(false);
             })
             .catch((err)=>{
+                setrsloading(false);
+                setisreset(false);
                 message.warning(err.message);
             });
     });
@@ -306,6 +351,7 @@ const Userlist =( () => {
         setisDEOpen(true);
     });
     const handleapdDE =((newde:User_DEpartment)=>{
+        setisDeloading(true);
         request("api/user/es/alter","POST",{name:newde.username,department:newde.Department})
             .then((res)=>{
                 let i=0;
@@ -319,16 +365,19 @@ const Userlist =( () => {
                         newuserlist.push(userlist[i]);
                     }   
                 }
+                setisDeloading(false);
                 setuserlist(newuserlist);
                 setisDEOpen(false);
             })
             .catch((err)=>{
+                setisDeloading(false);
                 message.warning(err.message);
             });
 
     });
     const delete_users=(()=>{
 
+        
         //在这里添加后端通信，删除业务实体，并更改前端
         let i=0;
         const size= selectedRowKeys.length;
@@ -346,13 +395,16 @@ const Userlist =( () => {
                 }
             }
         }
+        setdeleloading(true);
         request("/api/user/es/batchdelete","DELETE",{names:deletedusername})
             .then((res)=>{
                 let i=castnum+1;
                 setcastnum(i);
                 setSelectedRowKeys([]);
+                setdeleloading(false);
             })
             .catch((err)=>{
+                setdeleloading(false);
                 message.warning(err.message);
             });
         
@@ -395,15 +447,16 @@ const Userlist =( () => {
         <div >
            
             <Appmanage isOpen={ismanageopen} username={manageappname} onClose={()=>{setmanage(false);}}>  </Appmanage>
-            <CreateUser isOpen={isDialogOpen1} onClose={()=>setIsDialogOpen1(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser>
-            <CreateUser2 isOpen={isDialogOpen2} onClose={()=>setIsDialogOpen2(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser2>
-            <Resetpassword isOpen={isrest} onClose={()=>{setisreset(false);}} username={resetname} onCreateUser={reset} ></Resetpassword>
-            <CreateDE isOpen={isDEOpen} onClose={()=>{setisDEOpen(false);}} username={apdDEname} departmentlist={departmentlsit} onCreateUser={handleapdDE}  olddepartment={olddepartment}></CreateDE>
-            <Manageapp isOpen={isappOpen} onClose={()=>{setappopen(false);}} username={appapduser?.username} applist={appapduser?.oldapplist} identity={appapduser.identity} Onok={()=>{setappopen(false);let i=castnum+1;setcastnum(i);}}></Manageapp>
+            <CreateUser isOpen={isDialogOpen1} onClose={()=>setIsDialogOpen1(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} loading={iscr1loading} ></CreateUser>
+            <CreateUser2 isOpen={isDialogOpen2} loading={iscr2loading} onClose={()=>setIsDialogOpen2(false)} entityname={entity} departmentlist={departmentlsit} onCreateUser={handleCreateUser} ></CreateUser2>
+            <Resetpassword isOpen={isrest} onClose={()=>{setisreset(false);}} username={resetname} onCreateUser={reset} loading={isrsloading} ></Resetpassword>
+            <CreateDE isOpen={isDEOpen}  loading={isDeloading} onClose={()=>{setisDEOpen(false);}} username={apdDEname} departmentlist={departmentlsit} onCreateUser={handleapdDE}  olddepartment={olddepartment}></CreateDE>
+           
             <Spin spinning={isSpinning}>
                 <ProTable<User_to_show>
                     rowSelection={rowSelection}
                     columns={columns}
+                    options={false}
                     request={(params, sorter, filter) => {
                         // 表单搜索项会从 params 传入，传递给后端接口。
                         setSelectedRowKeys([]);
@@ -435,7 +488,7 @@ const Userlist =( () => {
                                 setuserlist(temptable);
                                 success = true;
                                 setSpnning(false);
-                                message.success("查询成功");
+                                message.success("刷新成功");
                             })
                             .catch((err)=>{
                                 success = false;
@@ -470,6 +523,7 @@ const Userlist =( () => {
                             onCancel={()=>{}}
                             okText="Yes"
                             cancelText="No"
+                            okButtonProps={{loading:deleloading}}
                             key={"delete confirm"}
                             disabled={!hasSelected}
                         >
@@ -483,4 +537,4 @@ const Userlist =( () => {
 }
 );
 
-export default Userlist;
+export default Userlist ;

@@ -1,4 +1,4 @@
-import { Button, message } from "antd";
+import { Button, Spin, message } from "antd";
 import React from "react";
 import { ProColumns, ProFormDateRangePicker, ProFormDigitRange, ProTable } from "@ant-design/pro-components";
 import { useState } from "react";
@@ -143,8 +143,11 @@ const DelAsset = (() => {
     });
     const [check, setcheck] = useState<boolean>(false); //是否处于查询状态
     const [query, setquery] = useState<AssetQueryType>(emptyquery); //查询的内容
+    //spin状态
+    const [isSpinning,setIsSpinning]=useState<boolean>(false);
 
     useEffect(() => {
+        setIsSpinning(true);
         //获取当下部门所有的资产
         request("/api/asset/get", "GET", { page: 1 })
             .then((res) => {
@@ -172,6 +175,9 @@ const DelAsset = (() => {
             }).catch((err) => {
                 message.warning(err.message);
             });
+        setTimeout(() => {
+            setIsSpinning(false);
+        }, 500);
     }, []);
 
     const rowSelection = {
@@ -228,7 +234,6 @@ const DelAsset = (() => {
         request("/api/async/newouttask", "POST")
             .then((res) => {
                 setoupputloading(false);
-                message.success("导出成功，请前往任务中心下载");
             })
             .catch((err) => {
                 message.warning(err.message);
@@ -240,6 +245,7 @@ const DelAsset = (() => {
         // 构造请求参数
         // 发送请求获取数据
         //分页选取的复原
+        setIsSpinning(true);
         if (check) {
             request("/api/user/ep/queryasset", "POST",
                 {
@@ -277,6 +283,9 @@ const DelAsset = (() => {
                 .catch((err) => {
                     message.warning(err.message);
                 });
+            setTimeout(() => {
+                setIsSpinning(false);
+            }, 500);
         }
         else {
             request("/api/asset/get", "GET", { page: page })
@@ -291,6 +300,9 @@ const DelAsset = (() => {
                 .catch((err) => {
                     message.warning(err.message);
                 });
+            setTimeout(() => {
+                setIsSpinning(false);
+            }, 500);
         }
         let keysList = Array.from(selectedRowKeysContainer.keys());
         //如果不存在这个page
@@ -426,6 +438,7 @@ const DelAsset = (() => {
                         tmp_query.custom = (values.cusfeature != undefined) ? values.cusfeature : "";
                         tmp_query.content = (values.cuscontent != undefined) ? values.cuscontent : "";
                         setquery(tmp_query);
+                        setIsSpinning(true);
                         //发送查询请求，注意undefined的情况
                         request("/api/user/ep/queryasset", "POST",
                             {
@@ -462,6 +475,9 @@ const DelAsset = (() => {
                             }).catch((err) => {
                                 message.warning(err.message);
                             });
+                        setTimeout(() => {
+                            setIsSpinning(false);
+                        }, 500);
                     }
                     }
                 >
@@ -554,30 +570,33 @@ const DelAsset = (() => {
                     </ProForm.Group>
                 </QueryFilter>
             </div>
-            <ProTable<Asset>
-                bordered={true}
-                pagination={{
-                    current: pagenation.current,
-                    pageSize: pagenation.pageSize,
-                    onChange: handleFetch,
-                    total: pagenation.total,
-                    showSizeChanger:false,
-                }}
-                columns={columns}
-                rowKey="key"
-                headerTitle="资产列表"
-                rowSelection={rowSelection}
-                search={false}
-                dataSource={assets}
-                toolBarRender={() => [
-                    <Button key="2" type="primary" onClick={change_asset} disabled={!getHasSelected()}>
+            <Spin spinning={isSpinning}>
+                <ProTable<Asset>
+                    bordered={true}
+                    pagination={{
+                        current: pagenation.current,
+                        pageSize: pagenation.pageSize,
+                        onChange: handleFetch,
+                        total: pagenation.total,
+                        showSizeChanger:false
+                    }}
+                    columns={columns}
+                    rowKey="key"
+                    headerTitle="资产列表"
+                    options={{ reload: false }}
+                    rowSelection={rowSelection}
+                    search={false}
+                    dataSource={assets}
+                    toolBarRender={() => [
+                        <Button key="2" type="primary" onClick={change_asset} disabled={!getHasSelected()}>
                         调拨选中资产
-                    </Button>,
-                    <Button key="1" onClick={handleoutput} loading={outputloading} >
+                        </Button>,
+                        <Button key="1" onClick={handleoutput} loading={outputloading} >
                         导出部门内所有资产
-                    </Button>
-                ]}
-            />
+                        </Button>
+                    ]}
+                />
+            </Spin>
             <DisplayModel isOpen={isDetailOpen} onClose={() => { setIsDetailOpen(false); }} content={displaydata} />
             <MoveAsset isOpen={isMoveOpen} onClose={() => { setIsMoveOpen(false); }} content={selectedAssets}></MoveAsset>
         </>

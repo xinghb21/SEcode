@@ -29,21 +29,21 @@ const { confirm } = Modal;
 const columns: ProColumns<Depuser>[] = [
     {
         title: "用户ID",
-        width: 80,
+        width: "30%",
         dataIndex: "id",
         copyable: true,
         ellipsis: true,
     },
     {
         title: "用户名",
-        width: 80,
+        width: "30%",
         dataIndex: "username",
         copyable: true,
         ellipsis: true,
     },
     {
         title: "职位",
-        width: 80,
+        width: "30%",
         dataIndex: "identity",
         hideInSearch: true,
     },
@@ -68,6 +68,7 @@ const Dtree = () => {
     const [parent, setParent] = useState("");
     const [OldName, setOldName] = useState("");
     const router = useRouter();
+    const [isspin2, setisspan2 ] = useState<boolean>(false);
     const [pagenation, setpagenation] = useState({
         current: 1, // 当前页码
         pageSize: 10, // 每页显示条数
@@ -302,6 +303,7 @@ const Dtree = () => {
     };
     //将获得json利用递归转为相应的树组件data
     const fetchDepart = (name: string) => {
+        setisspan2(true);
         request("/api/user/es/staffs", "GET",
             {
                 department: name,
@@ -321,13 +323,16 @@ const Dtree = () => {
                     total: res.count,
                 });
                 // console.log("newUser"+Depusers);
+                setisspan2(false);
             })
             .catch((err) => {
                 message.warning(err.message);
+                setisspan2(false);
             });
     };
 
     const handleFetch = (page, pageSize) => {
+        setisspan2(true);
         request("/api/user/es/staffs", "GET",
             {
                 department: department,
@@ -346,16 +351,18 @@ const Dtree = () => {
                     pageSize: 10,
                     total: res.count,
                 });
+                setisspan2(false);
                 // console.log("newUser"+Depusers);
             })
             .catch((err) => {
+                setisspan2(false);
                 message.warning(err.message);
             });
     };
 
     return (
         <div style={{ display: "flex", flex: "flex-start", flexDirection: "row", height: "100%", width: "100%" }}>
-            <div style={{ width: "40%", height: "100%" }}>
+            <div style={{ width: "50%", height: "100%" }}>
                 <Title  level={3} style={{marginLeft:"2%"}} >
                     部门树结构
                 </Title >
@@ -374,14 +381,17 @@ const Dtree = () => {
                     </Spin>
                 </div>
             </div>
-            
-            <ProTable<Depuser> pagination={{
-                current: pagenation.current,
-                pageSize: pagenation.pageSize,
-                onChange: handleFetch,
-                total: pagenation.total,
-                showSizeChanger: false,
-            }} bordered={true} columns={columns} dataSource={Depusers} search={false} style={{ height: "100%", width: "70%" }} />
+            <div style={{ height: "100%", width: "50%" }} >
+                <Spin spinning={isspin2} size="small">
+                    <ProTable<Depuser> pagination={{
+                        current: pagenation.current,
+                        pageSize: pagenation.pageSize,
+                        onChange: handleFetch,
+                        total: pagenation.total,
+                        showSizeChanger: false,
+                    }} bordered={true} columns={columns} options={false} dataSource={Depusers} search={false} style={{ height: "100%", width: "100%" }} />
+                </Spin>
+            </div>
             <CtCeDT title={"创建下属部门"} subtitle={"部门名称："} isOpen={isDialogOpenCT} onClose={() => setIsDialogOpenCT(false)} onCreateDt={handleCreateDt} />
             <CtCeDT title={"修改部门名称"} subtitle={"新名称："} isOpen={isDialogOpenCE} onClose={() => setIsDialogOpenCE(false)} onCreateDt={handleChangeDt} />
         </div>

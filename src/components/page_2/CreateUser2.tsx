@@ -21,6 +21,7 @@ interface DialogProps{
     isOpen: boolean;
     onClose: () => void;
     entityname:string;
+    loading:boolean;
     departmentlist:department_to_show[];
     onCreateUser: (user:UserRegister ) => void;
   }
@@ -31,7 +32,7 @@ const CreateUser2=(props: DialogProps) =>{
     const [loading,setloading]=useState<boolean>(false);
 
     const handleCreateUser = () => {
-        setloading(true);
+        
         const newuser :UserRegister={
             key:newusername,
             username:newusername,
@@ -50,16 +51,13 @@ const CreateUser2=(props: DialogProps) =>{
         if(a != null){
             if(a[0] !== password){
                 message.warning("密码只能包括英文字符或数字");
-                setloading(false);
                 return;
             }
         }else{
             message.warning("密码只能包括英文字符或数字");
-            setloading(false);
             return;
         }
         props.onCreateUser(newuser);
-        setloading(false);
         setpassword("");
         setusername("");
     };
@@ -69,7 +67,7 @@ const CreateUser2=(props: DialogProps) =>{
     };
 
     return (
-        <Modal  title="创建企业员工" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} okButtonProps={{loading:loading}} >
+        <Modal  title="创建企业员工" open={props.isOpen} onOk={handleCreateUser} onCancel={props.onClose} okButtonProps={{loading:props.loading}} >
             <div>
                 <label>业务实体名称:{props.entityname}</label>
             </div>
@@ -86,7 +84,7 @@ const CreateUser2=(props: DialogProps) =>{
                 <Select
                     labelInValue
                     defaultValue={{value:"",label:""}}
-                    style={{ width: 120 }}
+                    style={{ minWidth: 180 }}
                     onChange={handleChange}
                     options={props.departmentlist}
                 />

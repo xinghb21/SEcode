@@ -8,6 +8,7 @@ import { request } from "../../utils/network";
 import AssignEs from "./assign";
 import { Md5 } from "ts-md5";
 import { ColumnsType } from "antd/es/table";
+import { NoFormStyle } from "antd/es/form/context";
 interface Entity {
     key: React.Key;
     entityname: string;
@@ -155,8 +156,8 @@ const Entitylist = (() => {
     });
     return (
         <div >
-            <AssignEs isOpen={isassignopen} entityname={assignentity} onClose={() => setIsassignOpen(false)} onCreateUser={handleCreateUser} ></AssignEs>
-            <CreateEn isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} onCreateUser={handleCreateEntity} ></CreateEn>
+            <AssignEs isOpen={isassignopen} loading={false} entityname={assignentity} onClose={() => setIsassignOpen(false)} onCreateUser={handleCreateUser} ></AssignEs>
+            <CreateEn isOpen={isDialogOpen} loading={false} onClose={() => setIsDialogOpen(false)} onCreateUser={handleCreateEntity} ></CreateEn>
             <ProTable<Entity>
                 toolBarRender={() => {
                     return [
@@ -169,6 +170,7 @@ const Entitylist = (() => {
                             onConfirm={delete_entity}
                             okText="确认"
                             cancelText="取消"
+                            key={"nmsl"}
                         >
                             <Button  type="default" danger={true} disabled={!hasSelected}> 删除选中业务实体</Button>
                         </Popconfirm>,
